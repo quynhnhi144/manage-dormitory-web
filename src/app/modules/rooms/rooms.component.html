@@ -1,1 +1,151 @@
-<p>rooms works!</p>
+<div *ngIf="campuses" class="main-content">
+  <div class="row">
+    <div class="col-12">
+
+      <div style="float: left">
+        <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Rooms</div>
+      </div>
+      <div style="clear: both"></div>
+      <!-- START TABS -->
+      <div>
+        <div>
+          <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+            (click)="getAllRooms(0, 'all')">
+            All
+          </div>
+
+          <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+            [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllRooms(i + 1, campus.name)">
+            {{campus.name}}
+          </div>
+        </div>
+
+        <hr style="margin-top: 0" />
+
+        <div style="height: 10px"></div>
+      </div>
+      <!-- END TABS -->
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="input-group">
+            <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+              (keydown.enter)="onSearch($event)" placeholder="Search by user manages campus" />
+            <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png" title="Search"
+              width="20" />
+            <button type="button" class="btn-icon btn-round btn-export ml-3">
+              <img src="../../assets/images/export.png" width="15" />
+              Export
+            </button>
+          </div>
+          <div class="table-responsive table-rooms">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>
+                    <div class="dropdown" ngbDropdown>
+                      <button
+                        class="btn btn-dropdown dropdown-toggle {{isClickBtnQuantityStudent ? 'btn-dropdown-active' : ''}}"
+                        type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" ngbDropdownToggle>
+                        Quantity Student
+                      </button>
+                      <div class="dropdown-menu dropdown-quantity-student" aria-labelledby="dropdownMenuButton"
+                        ngbDropdownMenu>
+                        <a *ngFor="let item of quantityStudentList" class="dropdown-item" href="javascript:void(0)"
+                          (click)="resetPageByQuantityStudent(item.id)">{{item.name}}</a>
+                      </div>
+                    </div>
+                  </th>
+                  <th>
+                    <div class="dropdown" ngbDropdown>
+                      <button
+                        class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeRoom ? 'btn-dropdown-active' : ''}}"
+                        type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false" ngbDropdownToggle>
+                        Type Of Room
+                      </button>
+                      <div class="dropdown-menu dropdown-type-room" aria-labelledby="dropdownMenuButton"
+                        ngbDropdownMenu>
+                        <a *ngFor="let item of typeOfRoomList" class="dropdown-item" href="javascript:void(0)"
+                          (click)="resetPageByTypeOfRoom(item)">{{item}}</a>
+                      </div>
+                    </div>
+                  </th>
+                  <th>Campus</th>
+                  <th>Campus Manager</th>
+                  <th>Payment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let room of rooms">
+                  <td>
+                    {{room.name}}
+                  </td>
+                  <td>{{room.quantityStudent}}</td>
+                  <td>{{room.typeRoomName}}</td>
+                  <td>{{room.campusName}}</td>
+                  <td>{{room.userManager}}</td>
+                  <td>
+                    <div *ngIf="room.pay" class="pill pill-1">
+                      COMPLETED
+                    </div>
+                    <div *ngIf="!room.pay && room.quantityStudent > 0" class="pill pill-2">
+                      NOT&nbsp;COMPLETED
+                    </div>
+                    <div *ngIf="!room.pay && room.quantityStudent == 0" class="pill pill-3">
+                      NO&nbsp;DATA
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="roomsTotal == 0">
+                  <td colspan="6" class="no-data">No data
+                    found.</td>
+                </tr>
+
+              </tbody>
+            </table>
+            <div class="tbl-checkins-paging">
+              <div *ngIf="roomsTotal != 0" class="row">
+                <div class="col-xs-12 col-md-6">
+                  <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                              padding-left: 9px;
+                              border: 1px solid #898E93;
+                              border-radius: 16px;
+                              background: white;">
+                    <option>10</option>
+                    <option>25</option>
+                    <option>50</option>
+                  </select>
+                  <div style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                    Results per page</div>
+                </div>
+
+                <div class="col-xs-12 col-md-6">
+
+                  <div class="custom-paging-wrapper">
+                    <ngb-pagination id="page" [collectionSize]="roomsTotal" [(page)]="page" [maxSize]="5"
+                      [pageSize]="pageSize" (pageChange)="changePage($event)" [boundaryLinks]="true">
+                      <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left" aria-hidden="true"></i>
+                      </ng-template>
+                      <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right" aria-hidden="true"></i>
+                      </ng-template>
+                      <ng-template ngbPaginationPrevious>Prev</ng-template>
+                      <ng-template ngbPaginationNext>Next</ng-template>
+                      <ng-template ngbPaginationEllipsis>...</ng-template>
+                    </ngb-pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

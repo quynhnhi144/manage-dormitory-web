@@ -1,0 +1,197 @@
+@import "../../../styles.scss";
+.main-content {
+  .tab-option {
+    margin-right: 45px;
+    display: inline-block;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    color: #8a9099;
+    font-size: 16px;
+
+    &.num-active {
+      font-weight: 500;
+      border-bottom: 2px solid #304ffd;
+      color: #595f69;
+    }
+  }
+
+  .clickable:hover {
+    cursor: pointer;
+  }
+
+  .input-group {
+    margin-bottom: 15px;
+    .btn-search {
+      cursor: pointer;
+      position: absolute;
+      right: 140px;
+      top: 8px;
+    }
+
+    .btn-export {
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px !important;
+      line-height: 21px !important;
+      color: #3f434a !important;
+      background: #fff !important;
+      border: 1px solid #e1e1e6;
+      border-radius: 16px;
+      width: 102px;
+    }
+
+    .search-input {
+      background: #ffffff;
+      border: 1px solid #e1e1e6 !important;
+      box-sizing: border-box;
+      border-radius: 14px;
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 21px;
+      color: #8a9099;
+      z-index: 0 !important;
+    }
+  }
+
+  .table-rooms {
+    position: relative;
+    th {
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 21px;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      color: #8a9099;
+    }
+
+    td {
+      font-family: Poppins;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 20px;
+      letter-spacing: 0.2px;
+      color: #595f69;
+      padding: 0.75rem;
+
+      .pill {
+        border-radius: 20px;
+        padding: 1px;
+        text-align: center;
+        display: inline-block;
+        font-weight: bold;
+        font-size: 0.9em;
+        vertical-align: top;
+
+        &.pill-1 {
+          color: #20a144;
+          background: #f0fbf3;
+          width: 100px;
+        }
+
+        &.pill-2 {
+          color: #f05c54;
+          background: #fff4f4;
+          width: 130px;
+        }
+
+        &.pill-3 {
+          color: #ebdc10;
+          background: #fef7f4;
+          width: 81px;
+        }
+      }
+
+      &.no-data {
+        text-align: center;
+      }
+    }
+
+    .dropdown {
+      .btn-dropdown {
+        display: flex;
+        font-family: Poppins;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 21px;
+        letter-spacing: 0.2px;
+        text-transform: uppercase;
+        color: #8a9099;
+        padding: 0;
+
+        &.btn-dropdown-active,
+        .btn-dropdown-active:hover,
+        .btn-dropdown-active:active,
+        .btn-dropdown-active:focus,
+        .btn-dropdown-active:active:hover,
+        .show > .btn.btn-dropdown-active.dropdown-toggle,
+        .show > .btn.btn-dropdown-active.dropdown-toggle:hover {
+          color: #6e6bc6 !important;
+        }
+      }
+
+      .dropdown-quantity-student {
+        height: 176px;
+        overflow-y: scroll;
+        padding: 0px !important;
+        &.show {
+          top: 0px;
+          left: 0px;
+          will-change: transform;
+          position: absolute;
+          transition: ease 0.3s;
+          transform: translate(0px, 23px) !important;
+        }
+
+        &::-webkit-scrollbar {
+          width: 6px;
+          border-radius: 8px;
+          background-color: white;
+          overflow: hidden;
+          overflow-y: auto;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          width: 6px;
+          border-radius: 30px;
+          background-color: #c4c4c4;
+        }
+      }
+
+      .dropdown-type-room {
+        height: 128px;
+        padding: 0px !important;
+      }
+
+      .dropdown-quantity-student,
+      .dropdown-type-room {
+        .dropdown-item {
+          font-family: Poppins;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 14px;
+          line-height: 20px;
+          letter-spacing: 0.2px;
+          color: #595f69;
+          padding: 0.75rem;
+          text-transform: capitalize;
+        }
+      }
+    }
+  }
+
+  .tbl-checkins-paging {
+    margin-top: 4%;
+    overflow: hidden;
+    .custom-paging-wrapper {
+      display: inline;
+      float: right;
+    }
+  }
+}
