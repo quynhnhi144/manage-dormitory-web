@@ -84,21 +84,21 @@
               </thead>
               <tbody>
                 <tr *ngFor="let room of rooms">
-                  <td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom, room)">
                     {{room.name}}
                   </td>
-                  <td>{{room.quantityStudent}}</td>
-                  <td>{{room.typeRoomName}}</td>
-                  <td>{{room.campusName}}</td>
-                  <td>{{room.userManager}}</td>
-                  <td>
-                    <div *ngIf="room.pay" class="pill pill-1">
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.quantityStudent}}</td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.typeRoomName}}</td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.campusName}}</td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.userManager}}</td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                    <div *ngIf="room.isPay" class="pill pill-1">
                       COMPLETED
                     </div>
-                    <div *ngIf="!room.pay && room.quantityStudent > 0" class="pill pill-2">
+                    <div *ngIf="!room.isPay && room.quantityStudent > 0" class="pill pill-2">
                       NOT&nbsp;COMPLETED
                     </div>
-                    <div *ngIf="!room.pay && room.quantityStudent == 0" class="pill pill-3">
+                    <div *ngIf="!room.isPay && room.quantityStudent == 0" class="pill pill-3">
                       NO&nbsp;DATA
                     </div>
                   </td>
@@ -149,3 +149,106 @@
     </div>
   </div>
 </div>
+
+<!-- START USER MODAL -->
+<ng-template #modalDetailARoom let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="exampleModalLabel-2">ROOM DETAIL</h3>
+      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="section-info">
+        <div class="row">
+          <div class="col-xs-6 col-md-2 col-title">ROOM ID</div>
+          <div class="col-xs-6 col-md-3">
+            {{ modalRoom.roomId}}
+          </div>
+
+          <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+          <div class="col-xs-6 col-md-4">
+            {{ modalRoom.roomName}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-2 col-title">TYPE ROOM</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.typeRoom}}
+          </div>
+
+          <div class="col-xs-6 col-md-3 col-title">QUANTITY STUDENT</div>
+          <div class="col-xs-6 col-md-4">
+            {{modalRoom.quantityStudent}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-2 col-title">CAMPUS NAME</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.campusName}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+          <div class="col-xs-6 col-md-4">
+            {{modalRoom.userManager}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-2 col-title">PRICE ROOM</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.priceRoom}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">PAYMENT</div>
+          <div class="col-xs-6 col-md-4"
+            [ngStyle]=" {'color': modalRoom.pay && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.pay && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.pay && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.pay && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Detail in a Room -->
+      <div class="section-student-wrapper">
+        <div class="section-result">
+          <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
+            <div class="row">
+              <div class="col-xs-12 col-section-title">Student</div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-md-2 col-title">ID</div>
+              <div class="col-xs-6 col-md-3">
+                {{ student.id }}
+              </div>
+              <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
+              <div class="col-xs-6 col-md-4">
+                {{ student.phone }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-md-2 col-title">NAME</div>
+              <div class="col-xs-6 col-md-3">
+                {{ student.name |uppercase}}
+              </div>
+              <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+              <div class="col-xs-6 col-md-4">
+                {{student.email}}
+              </div>
+            </div>
+          </div>
+
+          <div class="section-student" *ngIf=" modalRoom.students == null">
+            <div class="row">
+              <div class="col-xs-12 col-section-title">Student</div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>
