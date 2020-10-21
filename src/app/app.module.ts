@@ -8,9 +8,8 @@ import { AppComponent } from './app.component';
 import { ShareModule } from './shared/share.module';
 import { AdminLayoutModule } from './layout/admin-layout/admin-layout.module';
 import { IconsModule } from './icons/icons.module';
-import { ModalComponent } from './modal/modal.component';
 @NgModule({
-  declarations: [AppComponent, ModalComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

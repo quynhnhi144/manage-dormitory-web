@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-rooms',
@@ -34,8 +35,29 @@ export class RoomsComponent implements OnInit {
   isClickBtnQuantityStudent = false;
   isClickBtnTypeRoom = false;
   isClickSearch = false;
+  //modal
+  modalRoom = {
+    roomId: 1,
+    roomName: 'A101',
+    quantityStudent: 2,
+    priceRoom: 550000,
+    campusName: 'Campus A',
+    userManager: 'Nguyễn Văn A',
+    typeRoom: 'Package Room',
+    students: [
+      {
+        id: 1,
+        name: 'Lê Văn Tèo',
+        phone: '1234567890',
+        email: 'teo_le@gmail.com',
+      },
+    ],
+    pay: true,
+  };
+  message = '';
+  currentRoomId = 0;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private modalService: NgbModal) {}
 
   ngOnInit(): void {
     this.getAllCampuses();
@@ -129,5 +151,31 @@ export class RoomsComponent implements OnInit {
     this.isClickBtnTypeRoom = true;
     this.typeOfRoom = typeOfRoom;
     this.getAllRooms(this.campusIndex, this.campusType);
+  }
+
+  // open modal
+  openModal(modalName) {
+    this.modalService.open(modalName);
+  }
+
+  openModalDetailARoom(modalDetailARoom, room: any) {
+    this.currentRoomId = room.id;
+    this.getDetailARoom();
+    this.openModal(modalDetailARoom);
+  }
+
+  getDetailARoom() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    console.log(this.currentRoomId);
+    let url = GlobalConstants.apiURL + '/api/rooms/' + this.currentRoomId;
+    this.httpClient.get(url, { headers }).subscribe(
+      (data: any) => {
+        console.log('detailRoom: ', data);
+        this.modalRoom = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 }

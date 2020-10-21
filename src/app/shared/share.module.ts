@@ -5,10 +5,21 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SpinnerComponent } from './spinner/spinner.component';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
-  declarations: [SidebarComponent, NavbarComponent, SpinnerComponent],
+  declarations: [
+    SidebarComponent,
+    NavbarComponent,
+    SpinnerComponent,
+    ModalComponent,
+  ],
   imports: [CommonModule, NgbModule, RouterModule],
-  exports: [SidebarComponent, NavbarComponent, SpinnerComponent],
+  exports: [
+    SidebarComponent,
+    NavbarComponent,
+    SpinnerComponent,
+    ModalComponent,
+  ],
 })
 export class ShareModule {}

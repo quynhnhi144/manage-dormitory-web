@@ -29,7 +29,7 @@
     }
 
     .btn-export {
-      font-family: Poppins;
+      font-family: $font-family;
       font-style: normal;
       font-weight: normal;
       font-size: 14px !important;
@@ -46,7 +46,7 @@
       border: 1px solid #e1e1e6 !important;
       box-sizing: border-box;
       border-radius: 14px;
-      font-family: Poppins;
+      font-family: $font-family;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
@@ -59,7 +59,7 @@
   .table-rooms {
     position: relative;
     th {
-      font-family: Poppins;
+      font-family: $font-family;
       font-style: normal;
       font-weight: 500;
       font-size: 14px;
@@ -70,7 +70,7 @@
     }
 
     td {
-      font-family: Poppins;
+      font-family: $font-family;
       font-style: normal;
       font-weight: normal;
       font-size: 14px;
@@ -87,7 +87,6 @@
         font-weight: bold;
         font-size: 0.9em;
         vertical-align: top;
-
         &.pill-1 {
           color: #20a144;
           background: #f0fbf3;
@@ -115,7 +114,7 @@
     .dropdown {
       .btn-dropdown {
         display: flex;
-        font-family: Poppins;
+        font-family: $font-family;
         font-style: normal;
         font-weight: 500;
         font-size: 14px;
@@ -172,7 +171,7 @@
       .dropdown-quantity-student,
       .dropdown-type-room {
         .dropdown-item {
-          font-family: Poppins;
+          font-family: $font-family;
           font-style: normal;
           font-weight: normal;
           font-size: 14px;
@@ -192,6 +191,56 @@
     .custom-paging-wrapper {
       display: inline;
       float: right;
+    }
+  }
+}
+
+.modal-content {
+  .modal-body {
+    .section-info,
+    .section-student {
+      width: 100%;
+      display: inline-block;
+      border: 1px solid #e1e1e6;
+      box-sizing: border-box;
+      border-radius: 20px;
+      padding: 32px 24px;
+      font-family: $font-family;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 18px;
+      line-height: 20px;
+      color: #333333;
+      letter-spacing: 0.2px;
+      margin-bottom: 24px;
+      word-break: break-all;
+
+      .row {
+        height: 37px;
+      }
+
+      .col-title {
+        font-family: $font-family;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 21px;
+        color: #8a9099;
+      }
+    }
+
+    .section-student-wrapper {
+      .section-result {
+        .col-section-title {
+          font-family: $font-family;
+          font-style: normal;
+          font-weight: 500;
+          font-size: 20px;
+          line-height: 30px;
+          color: #3f434a;
+          margin: 0 0 0 15px;
+        }
+      }
     }
   }
 }
