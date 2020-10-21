@@ -51,7 +51,7 @@
 @import "./assets/scss/components/bootstrap-alerts";
 @import "./assets/scss/components/tabs";
 @import "./assets/scss/components/dropdowns";
-@import "./assets/scss/components/pagination";
+// @import "./assets/scss/components/pagination";
 @import "./assets/scss/components/portfolio";
 @import "./assets/scss/components/todo-list";
 
@@ -59,3 +59,4 @@
 
 /* === Layout === */
 @import "./assets/scss/layout";
+@import "./assets/scss/customs/admin.scss";

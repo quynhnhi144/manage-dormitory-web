@@ -1,0 +1,12 @@
+{
+  // Set the default
+  "editor.formatOnSave": true,
+  "prettier.printWidth": 160,
+  "prettier.singleQuote": true,
+  "[markdown]": {
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  }
+}
