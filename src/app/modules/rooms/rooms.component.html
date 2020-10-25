@@ -34,7 +34,7 @@
         <div class="card-body">
           <div class="input-group">
             <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-              (keydown.enter)="onSearch($event)" placeholder="Search by user manages campus" />
+              (keydown.enter)="onSearch($event)" placeholder="Search by user manager campus" />
             <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png" title="Search"
               width="20" />
             <button type="button" class="btn-icon btn-round btn-export ml-3">
@@ -79,32 +79,77 @@
                   </th>
                   <th>Campus</th>
                   <th>Campus Manager</th>
-                  <th>Payment</th>
+                  <th>Room Payment</th>
+                  <th>Water Payment</th>
+                  <th>Vehicle Payment</th>
+                  <th>Power Payment</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let room of rooms">
                   <td (click)="openModalDetailARoom(modalDetailARoom, room)">
-                    {{room.name}}
+                    {{room.roomName}}
                   </td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.quantityStudent}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.typeRoomName}}</td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                    {{room.typeRoom == null ? 'No Data' : room.typeRoom}}</td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.campusName}}</td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.userManager}}</td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">
-                    <div *ngIf="room.isPay" class="pill pill-1">
+                    <div *ngIf="room.isPayRoom" class="pill pill-1">
                       COMPLETED
                     </div>
-                    <div *ngIf="!room.isPay && room.quantityStudent > 0" class="pill pill-2">
+                    <div *ngIf="!room.isPayRoom && room.quantityStudent > 0" class="pill pill-2">
                       NOT&nbsp;COMPLETED
                     </div>
-                    <div *ngIf="!room.isPay && room.quantityStudent == 0" class="pill pill-3">
+                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
                       NO&nbsp;DATA
                     </div>
                   </td>
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                    <div *ngIf="room.isPayWaterBill" class="pill pill-1">
+                      COMPLETED
+                    </div>
+                    <div *ngIf="!room.isPayWaterBill && room.quantityStudent > 0" class="pill pill-2">
+                      NOT&nbsp;COMPLETED
+                    </div>
+                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
+                      NO&nbsp;DATA
+                    </div>
+                  </td>
+
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                    <div *ngIf="room.isPayVehicleBill" class="pill pill-1">
+                      COMPLETED
+                    </div>
+                    <div *ngIf="!room.isPayVehicleBill && room.quantityStudent > 0" class="pill pill-2">
+                      NOT&nbsp;COMPLETED
+                    </div>
+                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
+                      NO&nbsp;DATA
+                    </div>
+                  </td>
+
+                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                    <div *ngIf="room.isPayPowerBill" class="pill pill-1">
+                      COMPLETED
+                    </div>
+                    <div *ngIf="!room.isPayPowerBill && room.quantityStudent > 0" class="pill pill-2">
+                      NOT&nbsp;COMPLETED
+                    </div>
+                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
+                      NO&nbsp;DATA
+                    </div>
+                  </td>
+
+                  <td>
+                    <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                      (click)="openModalUpdateARoom(modalUpdateARoom, room)"></i>
+                  </td>
                 </tr>
                 <tr *ngIf="roomsTotal == 0">
-                  <td colspan="6" class="no-data">No data
+                  <td colspan="9" class="no-data">No data
                     found.</td>
                 </tr>
 
@@ -150,11 +195,150 @@
   </div>
 </div>
 
-<!-- START USER MODAL -->
-<ng-template #modalDetailARoom let-modal class="modal fade" id="exampleModal-2" aria-labelledby="exampleModalLabel-2">
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-2">
   <div class="modal-content">
     <div class="modal-header">
       <h3 class="modal-title" id="exampleModalLabel-2">ROOM DETAIL</h3>
+      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="section-info">
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title">ROOM ID</div>
+          <div class="col-xs-6 col-md-3">
+            {{ modalRoom.roomId}}
+          </div>
+
+          <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+          <div class="col-xs-6 col-md-3">
+            {{ modalRoom.roomName}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.typeRoom}}
+          </div>
+
+          <div class="col-xs-6 col-md-3 col-title">QUANTITY STUDENT</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.quantityStudent}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.campusName}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.userManager}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title">PRICE ROOM</div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.priceRoom}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">ROOM PAYMENT</div>
+          <div class="col-xs-6 col-md-3"
+            [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title"></div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.priceRoom}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
+          <div class="col-xs-6 col-md-3"
+            [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title"></div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.priceRoom}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+          <div class="col-xs-6 col-md-3"
+            [ngStyle]=" {'color': modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-xs-6 col-md-3 col-title"></div>
+          <div class="col-xs-6 col-md-3">
+            {{modalRoom.priceRoom}}
+          </div>
+          <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
+          <div class="col-xs-6 col-md-3"
+            [ngStyle]=" {'color': modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+          </div>
+        </div>
+      </div>
+
+      <!-- Student Detail in a Room -->
+      <div class="section-student-wrapper">
+        <div class="section-result">
+          <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
+            <div class="row">
+              <div class="col-xs-12 col-section-title">Student</div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-md-3 col-title">ID</div>
+              <div class="col-xs-6 col-md-3">
+                {{ student.id }}
+              </div>
+              <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
+              <div class="col-xs-6 col-md-3">
+                {{ student.phone }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-6 col-md-3 col-title">NAME</div>
+              <div class="col-xs-6 col-md-3">
+                {{ student.name |uppercase}}
+              </div>
+              <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+              <div class="col-xs-6 col-md-3">
+                {{student.email}}
+              </div>
+            </div>
+          </div>
+
+          <div class="section-student" *ngIf=" modalRoom.students == null">
+            <div class="row">
+              <div class="col-xs-12 col-section-title">Student</div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- START UPDATE ROOM MODAL -->
+<ng-template #modalUpdateARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-3">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="exampleModalLabel-3">UPDATE ROOM</h3>
       <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -203,8 +387,8 @@
           </div>
           <div class="col-xs-6 col-md-3 col-title">PAYMENT</div>
           <div class="col-xs-6 col-md-4"
-            [ngStyle]=" {'color': modalRoom.pay && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.pay && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-            {{modalRoom.pay && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.pay && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+            [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+            {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
           </div>
         </div>
       </div>
