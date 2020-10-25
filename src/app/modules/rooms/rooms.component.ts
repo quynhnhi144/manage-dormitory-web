@@ -52,7 +52,10 @@ export class RoomsComponent implements OnInit {
         email: 'teo_le@gmail.com',
       },
     ],
-    pay: true,
+    isPayRoom: true,
+    isPayWaterBill: true,
+    isPayVehicleBill: true,
+    isPayPowerBill: true,
   };
   message = '';
   currentRoomId = 0;
@@ -158,8 +161,9 @@ export class RoomsComponent implements OnInit {
     this.modalService.open(modalName);
   }
 
+  // modal room detail
   openModalDetailARoom(modalDetailARoom, room: any) {
-    this.currentRoomId = room.id;
+    this.currentRoomId = room.roomId;
     this.getDetailARoom();
     this.openModal(modalDetailARoom);
   }
@@ -177,5 +181,11 @@ export class RoomsComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  // modal update room
+  openModalUpdateARoom(modalUpdateARoom, room: any) {
+    this.currentRoomId = room.id;
+    this.openModal(modalUpdateARoom);
   }
 }

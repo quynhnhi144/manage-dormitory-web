@@ -1,1 +1,270 @@
-<p>students works!</p>
+<div *ngIf="campuses" class="main-content">
+    <div class="row">
+        <div class="col-12">
+
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Rooms</div>
+            </div>
+            <div style="clear: both"></div>
+            <!-- START TABS -->
+            <div>
+                <div>
+                    <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+                        (click)="getAllStudents(0, 'all')">
+                        All
+                    </div>
+
+                    <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+                        [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllStudents(i + 1, campus.name)">
+                        {{campus.name}}
+                    </div>
+                </div>
+
+                <hr style="margin-top: 0" />
+
+                <div style="height: 10px"></div>
+            </div>
+            <!-- END TABS -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)" placeholder="Search by user manager or room name" />
+                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                            title="Search" width="20" />
+                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                            <img src="../../assets/images/export.png" width="15" />
+                            Export
+                        </button>
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Room</th>
+                                    <th>Room Payment</th>
+                                    <th>Water Payment</th>
+                                    <th>Vehicle Payment</th>
+                                    <th>Power Payment</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let student of students">
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        {{student.id}}
+                                    </td>
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">{{student.name}}
+                                    </td>
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        {{student.phone}}</td>
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">{{student.roomName}}
+                                    </td>
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        <div *ngIf="student.isPayRoom" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!student.isPayRoom" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        <div *ngIf="student.isPayWaterBill" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!student.isPayWaterBill" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        <div *ngIf="student.isPayVehicleBill" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!student.isPayVehicleBill" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        <div *ngIf="student.isPayPowerBill" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!student.isPayPowerBill" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdateARoom(modalDetailAStudent, student)"></i>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="studentTotal == 0">
+                                    <td colspan="8" class="no-data">No data
+                                        found.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="studentTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Results per page</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="studentTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
+                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailAStudent let-modal class="modal fade" id="exampleModal-3"
+    aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel-2">STUDENT DETAIL</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">STUDENT ID</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{ modalStudent.id}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">STUDENT NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{ modalStudent.name}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">BIRTHDAY</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.birthday}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">PHONE</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.phone}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.email}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">ADDRESS</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.address}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">START DATE</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.startingDateOfStay}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">END DATE</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.endingDateOfStay ? modalStudent.endingDateOfStay : 'N/A'}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.roomName}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.campusName}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.typeRoom}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalStudent.userManager}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">ROOM PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayVehicleBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayVehicleBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayPowerBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayPowerBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
