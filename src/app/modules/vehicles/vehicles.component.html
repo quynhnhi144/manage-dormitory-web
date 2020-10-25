@@ -1,1 +1,226 @@
-<p>vehicles works!</p>
+<div *ngIf="campuses" class="main-content">
+    <div class="row">
+        <div class="col-12">
+
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Rooms</div>
+            </div>
+            <div style="clear: both"></div>
+            <!-- START TABS -->
+            <div>
+                <div>
+                    <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+                        (click)="getAllVehicle(0, 'all')">
+                        All
+                    </div>
+
+                    <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+                        [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllVehicle(i + 1, campus.name)">
+                        {{campus.name}}
+                    </div>
+                </div>
+
+                <hr style="margin-top: 0" />
+
+                <div style="height: 10px"></div>
+            </div>
+            <!-- END TABS -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)" placeholder="Search by license plates" />
+                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                            title="Search" width="20" />
+                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                            <img src="../../assets/images/export.png" width="15" />
+                            Export
+                        </button>
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>License Plates</th>
+                                    <th>
+                                        <div class="dropdown" ngbDropdown>
+                                            <button
+                                                class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeVehicle ? 'btn-dropdown-active' : ''}}"
+                                                type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false" ngbDropdownToggle>
+                                                Type Of Room
+                                            </button>
+                                            <div class="dropdown-menu dropdown-type-room"
+                                                aria-labelledby="dropdownMenuButton" ngbDropdownMenu>
+                                                <a *ngFor="let item of typeOfVehicleList" class="dropdown-item"
+                                                    href="javascript:void(0)"
+                                                    (click)="resetPageByTypeOfVehicle(item)">{{item}}</a>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th>Student Id</th>
+                                    <th>Student Name</th>
+                                    <th>Payment</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let vehicle of vehicles">
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        {{vehicle.id}}
+                                    </td>
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        {{vehicle.licensePlates}}
+                                    </td>
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        {{vehicle.typeVehicle}}</td>
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        {{vehicle.studentId}}
+                                    </td>
+
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        {{vehicle.studentName}}
+                                    </td>
+
+                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                        <div *ngIf="vehicle.isPayVehicleBill" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!vehicle.isPayVehicleBill" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdateARoom(modalDetailAVehicle, vehicle)"></i>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="vehicleTotal == 0">
+                                    <td colspan="7" class="no-data">No data
+                                        found.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="vehicleTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Results per page</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="vehicleTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
+                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailAVehicle let-modal class="modal fade" id="exampleModal-3"
+    aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel-2">STUDENT DETAIL</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">VEHICLE ID</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{ modalVehicle.id}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">LICENSE PLATES</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{ modalVehicle.licensePlates}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">TYPE VEHICLE</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.typeVehicle}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">STUDENT ID</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.studentId}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">STUDENT NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.studentName}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.roomName}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.campusName}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">USER MANANGER</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalVehicle.userManager}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-3 col-title"></div>
+                    <div class="col-xs-6 col-md-3">
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalVehicle.isPayVehicleBill ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalVehicle.isPayVehicleBill ? "COMPLETED" :  'NOT COMPLETED'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

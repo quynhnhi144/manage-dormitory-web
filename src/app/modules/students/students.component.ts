@@ -83,7 +83,6 @@ export class StudentsComponent implements OnInit {
     url +=
       '/api/students?' +
       choosedCampus +
-      paramSearchText +
       '&skip=' +
       this.skip +
       '&take=' +

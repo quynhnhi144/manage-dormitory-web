@@ -102,7 +102,7 @@ export class RoomsComponent implements OnInit {
       ? `&typeRoom=${this.typeOfRoom}`
       : ``;
     let paramSearchText = this.isClickSearch
-      ? `&userManager=${this.searchText}`
+      ? `&searchText=${this.searchText}`
       : ``;
 
     url +=
