@@ -205,130 +205,139 @@
       </button>
     </div>
     <div class="modal-body">
-      <div class="section-info">
+      <div class="container-fluid d-flex flex-column">
         <div class="row">
-          <div class="col-xs-6 col-md-3 col-title">ROOM ID</div>
-          <div class="col-xs-6 col-md-3">
-            {{ modalRoom.roomId}}
-          </div>
+          <div class="col-12">
+            <div class="section-info">
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">ROOM ID</div>
+                <div class="col-xs-6 col-md-3">
+                  {{ modalRoom.roomId}}
+                </div>
 
-          <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
-          <div class="col-xs-6 col-md-3">
-            {{ modalRoom.roomName}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.typeRoom}}
-          </div>
-
-          <div class="col-xs-6 col-md-3 col-title">QUANTITY STUDENT</div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.quantityStudent}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.campusName}}
-          </div>
-          <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.userManager}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title">PRICE ROOM</div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.priceRoom}}
-          </div>
-          <div class="col-xs-6 col-md-3 col-title">ROOM PAYMENT</div>
-          <div class="col-xs-6 col-md-3"
-            [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-            {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title"></div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.priceRoom}}
-          </div>
-          <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
-          <div class="col-xs-6 col-md-3"
-            [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-            {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title"></div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.priceRoom}}
-          </div>
-          <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
-          <div class="col-xs-6 col-md-3"
-            [ngStyle]=" {'color': modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-            {{modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-6 col-md-3 col-title"></div>
-          <div class="col-xs-6 col-md-3">
-            {{modalRoom.priceRoom}}
-          </div>
-          <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
-          <div class="col-xs-6 col-md-3"
-            [ngStyle]=" {'color': modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-            {{modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
-          </div>
-        </div>
-      </div>
-
-      <!-- Student Detail in a Room -->
-      <div class="section-student-wrapper">
-        <div class="section-result">
-          <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
-            <div class="row">
-              <div class="col-xs-12 col-section-title">Student</div>
-            </div>
-            <div class="row">
-              <div class="col-xs-6 col-md-3 col-title">ID</div>
-              <div class="col-xs-6 col-md-3">
-                {{ student.id }}
+                <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+                <div class="col-xs-6 col-md-4">
+                  {{ modalRoom.roomName}}
+                </div>
               </div>
-              <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
-              <div class="col-xs-6 col-md-3">
-                {{ student.phone }}
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">TYPE ROOM</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.typeRoom}}
+                </div>
+
+                <div class="col-xs-6 col-md-3 col-title">QUANTITY STUDENT</div>
+                <div class="col-xs-6 col-md-4">
+                  {{modalRoom.quantityStudent}}
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-xs-6 col-md-3 col-title">NAME</div>
-              <div class="col-xs-6 col-md-3">
-                {{ student.name |uppercase}}
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">CAMPUS NAME</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.campusName}}
+                </div>
+                <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+                <div class="col-xs-6 col-md-4">
+                  {{modalRoom.userManager}}
+                </div>
               </div>
-              <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
-              <div class="col-xs-6 col-md-3">
-                {{student.email}}
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">PRICE ROOM</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.priceRoom}}
+                </div>
+                <div class="col-xs-6 col-md-3 col-title">ROOM PAYMENT</div>
+                <div class="col-xs-6 col-md-4"
+                  [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                  {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">PRICE WATER</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.priceRoom}}
+                </div>
+                <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
+                <div class="col-xs-6 col-md-4"
+                  [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                  {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">PRICE VEHICLE</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.priceRoom}}
+                </div>
+                <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                <div class="col-xs-6 col-md-4"
+                  [ngStyle]=" {'color': modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                  {{modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-xs-6 col-md-2 col-title">PRICE POWER</div>
+                <div class="col-xs-6 col-md-3">
+                  {{modalRoom.priceRoom}}
+                </div>
+                <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
+                <div class="col-xs-6 col-md-4"
+                  [ngStyle]=" {'color': modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                  {{modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayPowerBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div class="section-student" *ngIf=" modalRoom.students == null">
-            <div class="row">
-              <div class="col-xs-12 col-section-title">Student</div>
-            </div>
-            <div class="row">
-              <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+        <div class="row">
+          <div class="col-12">
+            <!-- Student Detail in a Room -->
+            <div class="section-student-wrapper">
+              <div class="section-result">
+                <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
+                  <div class="row">
+                    <div class="col-xs-12 col-section-title">Student</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">ID</div>
+                    <div class="col-xs-6 col-md-3">
+                      {{ student.id }}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+                    <div class="col-xs-6 col-md-4">
+                      {{student.email}}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                      {{ student.name |uppercase}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
+                    <div class="col-xs-6 col-md-4">
+                      {{ student.phone }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section-student" *ngIf=" modalRoom.students == null">
+                  <div class="row">
+                    <div class="col-xs-12 col-section-title">Student</div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -405,9 +414,10 @@
               <div class="col-xs-6 col-md-3">
                 {{ student.id }}
               </div>
-              <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
+
+              <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
               <div class="col-xs-6 col-md-4">
-                {{ student.phone }}
+                {{student.email}}
               </div>
             </div>
             <div class="row">
@@ -415,9 +425,9 @@
               <div class="col-xs-6 col-md-3">
                 {{ student.name |uppercase}}
               </div>
-              <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+              <div class="col-xs-6 col-md-3 col-title">PHONE NUMBER</div>
               <div class="col-xs-6 col-md-4">
-                {{student.email}}
+                {{ student.phone }}
               </div>
             </div>
           </div>

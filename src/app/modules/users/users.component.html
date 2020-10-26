@@ -1,1 +1,189 @@
-<p>users works!</p>
+<div class="main-content">
+    <div class="row">
+        <div class="col-12">
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Users</div>
+            </div>
+            <div class="create-user-btn" style="float: right;">
+                <button type="button" class="btn btn-round btn-new-user">+ Create New User</button>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)" placeholder="Search by full name" />
+                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                            title="Search" width="20" />
+                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                            <img src="../../assets/images/export.png" width="15" />
+                            Export
+                        </button>
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
+                                    <th>Birthday</th>
+                                    <th>Email</th>
+                                    <th>Address</th>
+                                    <th>Phone</th>
+                                    <th>Campus Name</th>
+                                    <th></th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of users">
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.id}}
+                                    </td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.username}}
+                                    </td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.fullName}}</td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.birthday}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.email}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.address}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.phone}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        <span *ngFor="let campus of user.campuses">{{campus.name}} </span>
+                                    </td>
+
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdateAUser(modalDetailAUser, user)"></i>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="userTotal == 0">
+                                    <td colspan="7" class="no-data">No data
+                                        found.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="userTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Results per page</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="userTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
+                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailAUser let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel-2">USER DETAIL</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">USER ID</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{ modalUser.id}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">USERNAME</div>
+                    <div class="col-xs-6 col-md-4">
+                        {{ modalUser.username}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">FULL NAME</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.fullName}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">BIRTHDAY</div>
+                    <div class="col-xs-6 col-md-4">
+                        {{modalUser.birthday}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">EMAIL</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.email}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">ADDRESS</div>
+                    <div class="col-xs-6 col-md-4">
+                        {{modalUser.address}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">PHONE</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.phone}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
+                    <div class="col-xs-6 col-md-4">
+                        <span *ngFor="let campus of modalUser.campuses">{{campus.name}} </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
