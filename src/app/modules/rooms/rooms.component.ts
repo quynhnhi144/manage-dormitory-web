@@ -183,6 +183,34 @@ export class RoomsComponent implements OnInit {
     );
   }
 
+  // export excel file
+  exportExcel() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/rooms/export';
+    this.httpClient.get(url, { responseType: 'blob', headers }).subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  downloadFile(data: any, type: string) {
+    let blob = new Blob([data], { type: type });
+    let url = window.URL.createObjectURL(blob);
+    let pwa = window.open(url);
+    if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
+      alert('Please disable your Pop-up blocker and try again.');
+    }
+  }
+
   // modal update room
   openModalUpdateARoom(modalUpdateARoom, room: any) {
     this.currentRoomId = room.id;
