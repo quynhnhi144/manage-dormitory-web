@@ -67,7 +67,8 @@
                                     </td>
                                     <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
                                         {{student.phone}}</td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">{{student.roomName}}
+                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                        {{student.roomName ? student.roomName: '--'}}
                                     </td>
                                     <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayRoom" class="pill pill-1">
@@ -202,7 +203,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.roomName}}
+                        {{modalStudent.roomName ? modalStudent.roomName : '--'}}
                     </div>
                 </div>
 
@@ -214,7 +215,7 @@
 
                     <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.typeRoom}}
+                        {{modalStudent.typeRoom ? modalStudent.typeRoom : '--'}}
                     </div>
                 </div>
 
@@ -225,7 +226,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.campusName}}
+                        {{modalStudent.campusName ? modalStudent.campusName : '--'}}
                     </div>
                 </div>
 
@@ -236,7 +237,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.userManager}}
+                        {{modalStudent.userManager ? modalStudent.userManager :'--'}}
                     </div>
                 </div>
 

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 const appRoutes: Routes = [
   //{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },

@@ -319,3 +319,36 @@
     }
   }
 }
+
+.ng-select {
+  &.people-select {
+    &.ng-select-multiple {
+      .ng-select-container {
+        min-height: 40px;
+        border-radius: 20px;
+        // background-image: url("../../images/search_icon.png");
+        background-repeat: no-repeat;
+        padding-left: 40px;
+        background-position: 10px 10px;
+      }
+    }
+  }
+
+  .ng-select-container {
+    height: 37px !important;
+  }
+
+  .ng-clear-wrapper {
+    height: 17px !important;
+  }
+  .ng-arrow-wrapper {
+    .ng-arrow {
+      width: 8px !important;
+      height: 8px !important;
+    }
+  }
+}
+
+.btn {
+  font-family: $font-family;
+}

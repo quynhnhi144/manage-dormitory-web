@@ -1,0 +1,88 @@
+.create-room-section {
+  .section-info {
+    display: inline-block;
+    width: 100%;
+    border: none;
+    .newRoomForm {
+      label {
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        color: #333333;
+        margin-bottom: 0px !important;
+      }
+
+      input {
+        border: 1px solid #e5eaef;
+        box-sizing: border-box;
+        border-radius: 4px;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 21px;
+        color: #2c2c2c;
+        width: 100%;
+        height: 37px;
+        padding-left: 10px;
+      }
+
+      .disable-input {
+        background: #e1e1e6 !important;
+      }
+    }
+  }
+
+  .section-student-room {
+    padding: 0px 24px;
+    .section-result {
+      .btn-remove {
+        position: absolute;
+        right: 10px;
+        top: -56px;
+        width: 102px;
+        height: 45px;
+        background: #ffffff;
+        color: #3f434a;
+        border: 1px solid #898e93;
+        box-sizing: border-box;
+        border-radius: 14px;
+        font-family: Roboto;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 21px;
+        display: flex;
+        align-items: center;
+        padding: 14px;
+        img {
+          margin-right: 10px;
+        }
+      }
+    }
+    .section-search {
+      display: inline-block;
+      width: 100%;
+      padding: 20px 0;
+      .section-search-multiselect,
+      .section-search-btn-wrapper {
+        display: inline-block;
+        width: 50%;
+        .people-select {
+          .ng-dropdown-panel {
+            .ng-dropdown-panel-items {
+              .ng-option {
+                &.ng-option-marked {
+                  background-color: #f2f2f7 !important;
+                  height: 54px !important;
+                  width: 478px;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
