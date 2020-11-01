@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { ShareModule } from './shared/share.module';
 import { AdminLayoutModule } from './layout/admin-layout/admin-layout.module';
 import { IconsModule } from './icons/icons.module';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { FormsModule } from '@angular/forms';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -18,6 +20,7 @@ import { IconsModule } from './icons/icons.module';
     AdminLayoutModule,
     IconsModule,
     HttpClientModule,
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
