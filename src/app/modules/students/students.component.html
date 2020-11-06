@@ -60,17 +60,17 @@
                             </thead>
                             <tbody>
                                 <tr *ngFor="let student of students">
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         {{student.id}}
                                     </td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">{{student.name}}
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">{{student.name}}
                                     </td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         {{student.phone}}</td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
-                                        {{student.roomName ? student.roomName: '--'}}
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
+                                        {{student.roomDto ? student.roomDto.name: '--'}}
                                     </td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayRoom" class="pill pill-1">
                                             COMPLETED
                                         </div>
@@ -78,7 +78,7 @@
                                             NOT&nbsp;COMPLETED
                                         </div>
                                     </td>
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayWaterBill" class="pill pill-1">
                                             COMPLETED
                                         </div>
@@ -87,7 +87,7 @@
                                         </div>
                                     </td>
 
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayVehicleBill" class="pill pill-1">
                                             COMPLETED
                                         </div>
@@ -96,7 +96,7 @@
                                         </div>
                                     </td>
 
-                                    <td (click)="openModalDetailARoom(modalDetailAStudent,student)">
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayPowerBill" class="pill pill-1">
                                             COMPLETED
                                         </div>
@@ -107,7 +107,7 @@
 
                                     <td>
                                         <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                                            (click)="openModalUpdateARoom(modalDetailAStudent, student)"></i>
+                                            (click)="openModalUpdateAStudent(modalUpdateAStudent, student)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="studentTotal == 0">
@@ -203,7 +203,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.roomName ? modalStudent.roomName : '--'}}
+                        {{modalStudent.roomDto ? modalStudent.roomDto.name : '--'}}
                     </div>
                 </div>
 
@@ -215,7 +215,7 @@
 
                     <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.typeRoom ? modalStudent.typeRoom : '--'}}
+                        {{modalStudent.roomDto ? modalStudent.roomDto.typeRoomName : '--'}}
                     </div>
                 </div>
 
@@ -226,7 +226,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.campusName ? modalStudent.campusName : '--'}}
+                        {{modalStudent.roomDto ? modalStudent.roomDto.campusName : '--'}}
                     </div>
                 </div>
 
@@ -237,7 +237,7 @@
                     </div>
                     <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
                     <div class="col-xs-6 col-md-4">
-                        {{modalStudent.userManager ? modalStudent.userManager :'--'}}
+                        {{modalStudent.roomDto ? modalStudent.roomDto.userManager :'--'}}
                     </div>
                 </div>
 
@@ -267,6 +267,164 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- START UPDATE STUDENT MODAL -->
+<ng-template #modalUpdateAStudent let-modal class="modal fade" id="exampleModal-3"
+    aria-labelledby="exampleModalLabel-3">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE STUDENT</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Student Id</label>
+                                    <input name="id" [(ngModel)]="modalStudentUpdate.id" class="disable-input"
+                                        readonly />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="email">Email</label>
+                                    <input name="email" [(ngModel)]="modalStudentUpdate.email" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Student Name</label>
+                                    <input name="name" [(ngModel)]="modalStudentUpdate.name" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="address">Address</label>
+                                    <input name="address" [(ngModel)]="modalStudentUpdate.address" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left form-group">
+                                    <label for="birthday">Birthday</label>
+                                    <input type="text" name="birthday" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]=" modalStudentUpdate.birthday" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="roomName">Room Name</label>
+                                    <div class="section-search">
+                                        <div class="section-search-multiselect">
+                                            <ng-select name="roomName" class="people-select" [multiple]="true"
+                                                [items]="arrRooms" [(ngModel)]="selectedRoomIds" bindLabel="name"
+                                                bindValue="id" placeholder="Search student by name or email"
+                                                (search)="onSearchMultiSelect($event)">
+                                                <ng-template ng-label-tmp let-item="item">
+                                                    <span class="ng-value-icon left" (click)="unselect(item)"
+                                                        aria-hidden="true">×</span>
+                                                    <span class="ng-value-label">{{ item.label }}</span>
+                                                </ng-template>
+                                                <ng-template ng-option-tmp let-item="item">
+                                                    <div>{{ item.name }}</div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="phone">Phone</label>
+                                    <input name="phone" [(ngModel)]="modalStudentUpdate.phone" required />
+                                </div>
+                                <!-- <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="typeRoom">Type Room</label>
+                                    <input name="typeRoom" [(ngModel)]="modalStudentUpdate.typeRoom"
+                                        class="disable-input" readonly />
+                                </div> -->
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="text" name="startDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
+                                </div>
+                                <!-- <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="campusName">Campus Name</label>
+                                    <input name="campusName" [(ngModel)]="modalStudentUpdate.campusName"
+                                        class="disable-input" readonly />
+                                </div> -->
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="endDate">End Date</label>
+                                    <input type="text" name="endDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]="modalStudentUpdate.endingDateOfStay" />
+                                </div>
+                                <!-- <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="userManager">User Manager</label>
+                                    <input name="userManager" [(ngModel)]="modalStudentUpdate.userManager"
+                                        class="disable-input" readonly />
+                                </div> -->
+                            </div>
+
+                            <div class="row" *ngIf="studentUpdateError">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger" style="margin-bottom: 0;">{{studentUpdateError}}</p>
+                                </div>
+                            </div>
+
+                            <!-- <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">ROOM PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
+                    <div class="col-xs-6 col-md-4"
+                        [ngStyle]=" {'color': modalStudent.isPayPowerBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayPowerBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">WATER PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                    <div class="col-xs-6 col-md-4"
+                        [ngStyle]=" {'color': modalStudent.isPayVehicleBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayVehicleBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                </div> -->
+
+                            <!-- <div class="row" *ngIf="typeRoomError">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
+                  </div>
+                </div> -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="saveChange()">Submit</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
         </div>
     </div>
 </ng-template>

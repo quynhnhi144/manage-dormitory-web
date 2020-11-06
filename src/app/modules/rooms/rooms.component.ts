@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { async } from '@angular/core/testing';
   selector: 'app-rooms',
   templateUrl: './rooms.component.html',
   styleUrls: ['./rooms.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class RoomsComponent implements OnInit {
   quantityStudentList = [
@@ -29,7 +30,7 @@ export class RoomsComponent implements OnInit {
     { id: 1, name: 'Package Room' },
     { id: 2, name: 'Shared Room' },
   ];
-  rooms;
+  rooms: Room[] = [];
   roomsTotal = 5;
   campusIndex = 0;
   campusType = 'all';
@@ -46,33 +47,9 @@ export class RoomsComponent implements OnInit {
   isClickSearch = false;
 
   //modal Detail Room
-  modalRoom = {
-    roomId: 1,
-    roomName: 'A101',
-    quantityStudent: 2,
-    priceRoom: 550000,
-    campusName: 'Campus A',
-    userManager: 'Nguyễn Văn A',
-    typeRoom: { id: 1, name: 'Package Room', maxQuantity: 4 },
-    students: [
-      {
-        id: 1,
-        name: 'Lê Văn Tèo',
-        phone: '1234567890',
-        email: 'teo_le@gmail.com',
-      },
-    ],
-    isPayRoom: true,
-    isPayWaterBill: true,
-    isPayVehicleBill: true,
-    isPayPowerBill: true,
-  };
-  message = '';
-  currentRoomId = 0;
-
-  newRoomForm = new Room({
-    roomId: 1,
-    roomName: 'A101',
+  modalRoom = new Room({
+    id: 1,
+    name: 'A101',
     quantityStudent: 2,
     priceRoom: 550000,
     campusName: 'Campus A',
@@ -91,6 +68,10 @@ export class RoomsComponent implements OnInit {
     isPayVehicleBill: true,
     isPayPowerBill: true,
   });
+  message = '';
+  currentRoomId = 0;
+
+  newRoomForm = this.modalRoom;
 
   //modal Upate Room
   arrStudent = [];
@@ -207,7 +188,7 @@ export class RoomsComponent implements OnInit {
 
   // modal room detail
   openModalDetailARoom(modalDetailARoom, room: any) {
-    this.currentRoomId = room.roomId;
+    this.currentRoomId = room.id;
     this.getDetailARoom();
     this.openModal(modalDetailARoom);
   }
@@ -257,7 +238,7 @@ export class RoomsComponent implements OnInit {
 
   // modal update room
   openModalUpdateARoom(modalUpdateARoom, room: any) {
-    this.currentRoomId = room.roomId;
+    this.currentRoomId = room.id;
     this.getUpdateRoom();
     this.openModal(modalUpdateARoom);
   }
@@ -289,7 +270,7 @@ export class RoomsComponent implements OnInit {
         );
         this.newRoomForm.students.splice(index, 1);
         const indexRoom = this.rooms.findIndex(
-          (r) => r.roomId === this.currentRoomId
+          (r) => r.id === this.currentRoomId
         );
         await this.getUpdateRoom();
         this.rooms[indexRoom] = this.newRoomForm;
@@ -363,8 +344,8 @@ export class RoomsComponent implements OnInit {
     );
     let typeRoom = this.typeOfRoomList[indexTypeRoom];
     let roomUpdate = new Room({
-      roomId: this.newRoomForm.roomId,
-      roomName: this.newRoomForm.roomName,
+      id: this.newRoomForm.id,
+      name: this.newRoomForm.name,
       quantityStudent: this.newRoomForm.quantityStudent,
       campusName: this.newRoomForm.campusName,
       userManager: this.newRoomForm.userManager,
@@ -380,7 +361,7 @@ export class RoomsComponent implements OnInit {
       (data: Room) => {
         this.newRoomForm = data;
         let indexRoom = this.rooms.findIndex(
-          (room) => room.roomId === this.newRoomForm.roomId
+          (room) => room.id === this.newRoomForm.id
         );
         this.rooms[indexRoom] = data;
         this.modalService.dismissAll();

@@ -51,27 +51,25 @@
                     <div class="dropdown" ngbDropdown>
                       <button
                         class="btn btn-dropdown dropdown-toggle {{isClickBtnQuantityStudent ? 'btn-dropdown-active' : ''}}"
-                        type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false" ngbDropdownToggle>
+                        type="button" id="quantityStudentDropdown" ngbDropdownToggle>
                         Quantity Student
                       </button>
-                      <div class="dropdown-menu dropdown-quantity-student" aria-labelledby="dropdownMenuButton"
-                        ngbDropdownMenu>
+                      <div class="dropdown-menu dropdown-quantity-student" ngbDropdownMenu
+                        aria-labelledby="quantityStudentDropdown">
                         <a *ngFor="let item of quantityStudentList" class="dropdown-item" href="javascript:void(0)"
                           (click)="resetPageByQuantityStudent(item.id)">{{item.name}}</a>
                       </div>
                     </div>
                   </th>
+
                   <th>
                     <div class="dropdown" ngbDropdown>
                       <button
                         class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeRoom ? 'btn-dropdown-active' : ''}}"
-                        type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                        aria-expanded="false" ngbDropdownToggle>
+                        type="button" id="typeRoomDropdown" ngbDropdownToggle>
                         Type Of Room
                       </button>
-                      <div class="dropdown-menu dropdown-type-room" aria-labelledby="dropdownMenuButton"
-                        ngbDropdownMenu>
+                      <div class="dropdown-menu dropdown-type-room" aria-labelledby="typeRoomDropdown" ngbDropdownMenu>
                         <a *ngFor="let item of typeOfRoomList" class="dropdown-item" href="javascript:void(0)"
                           (click)="resetPageByTypeOfRoom(item.name)">{{item.name}}</a>
                       </div>
@@ -89,7 +87,7 @@
               <tbody>
                 <tr *ngFor="let room of rooms">
                   <td (click)="openModalDetailARoom(modalDetailARoom, room)">
-                    {{room.roomName}}
+                    {{room.name}}
                   </td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.quantityStudent}}</td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">
@@ -211,12 +209,12 @@
               <div class="row">
                 <div class="col-xs-6 col-md-2 col-title">ROOM ID</div>
                 <div class="col-xs-6 col-md-3">
-                  {{ modalRoom.roomId}}
+                  {{ modalRoom.id}}
                 </div>
 
                 <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
                 <div class="col-xs-6 col-md-4">
-                  {{ modalRoom.roomName}}
+                  {{ modalRoom.name}}
                 </div>
               </div>
 
@@ -360,11 +358,11 @@
               <div class="row">
                 <div class="col-xs-12 col-md-6 col-left">
                   <label for="roomId">Room Id</label>
-                  <input name="roomId" [(ngModel)]="newRoomForm.roomId" class="disable-input" readonly />
+                  <input name="roomId" [(ngModel)]="newRoomForm.id" class="disable-input" readonly />
                 </div>
                 <div class="col-xs-12 col-md-6 col-right">
                   <label for="roomName">Room Name</label>
-                  <input name="roomName" [(ngModel)]="newRoomForm.roomName" class="disable-input" readonly />
+                  <input name="roomName" [(ngModel)]="newRoomForm.name" class="disable-input" readonly />
                 </div>
               </div>
 
@@ -382,7 +380,6 @@
                 <div class="col-xs-12 col-md-6 col-left">
 
                   <label for="typeRoom">Type Room</label>
-                  <!-- <input name="typeRoom" [(ngModel)]="newRoomForm.typeRoom" required /> -->
                   <ng-select name="typeRoom" [items]="typeOfRoomList" [virtualScroll]="true" bindLabel="name"
                     bindValue="id" [(ngModel)]="typeRoomId" (change)="checkQuantityStudent(typeRoomId)">
                   </ng-select>

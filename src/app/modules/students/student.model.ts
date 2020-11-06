@@ -1,3 +1,4 @@
+import { RoomUpdate } from '../rooms/room-update.model';
 export class Student {
   id: number;
   name: string;
@@ -7,10 +8,7 @@ export class Student {
   address: string;
   startingDateOfStay: Date;
   endingDateOfStay: Date;
-  roomName: string;
-  campusName: string;
-  typeRoom: string;
-  userManager: string;
+  roomDto: RoomUpdate;
   isPayRoom: boolean;
   isPayWaterBill: boolean;
   isPayVehicleBill: boolean;
