@@ -1,18 +1,16 @@
-import { Student } from '../students/student.model';
-export class Room {
+export class RoomUpdate {
   id: number;
   name: string;
   quantityStudent: number;
-  priceRoom: number;
+  typeRoomName: string;
   campusName: string;
   userManager: string;
-  typeRoom: any;
-  students: Student[];
   isPayRoom: boolean;
   isPayWaterBill: boolean;
   isPayVehicleBill: boolean;
   isPayPowerBill: boolean;
-  constructor(init?: Partial<Room>) {
+
+  constructor(init?: Partial<RoomUpdate>) {
     Object.assign(this, init);
   }
 }

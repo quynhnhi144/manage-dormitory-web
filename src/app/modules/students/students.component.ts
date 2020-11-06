@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalConstants } from '../../common/global-constants';
+import { StudentsService } from './students.service';
+import { Student } from './student.model';
+import { RoomService } from '../rooms/room.service';
 
 @Component({
   selector: 'app-students',
@@ -9,7 +12,7 @@ import { GlobalConstants } from '../../common/global-constants';
   styleUrls: ['./students.component.scss'],
 })
 export class StudentsComponent implements OnInit {
-  students;
+  students = [];
   studentTotal = 5;
   campusIndex = 0;
   campusType = 'all';
@@ -21,28 +24,21 @@ export class StudentsComponent implements OnInit {
 
   isClickSearch = false;
   //modal
-  modalStudent = {
-    id: 1,
-    name: 'Lê Thị Quỳnh Nhi',
-    birthday: '1997-09-09',
-    phone: '090123456',
-    email: 'manager_dormitory@gmail.com',
-    address: null,
-    startingDateOfStay: '2019-09-05',
-    endingDateOfStay: null,
-    roomName: 'A101',
-    campusName: 'Campus A',
-    typeRoom: 'Package Room',
-    userManager: 'Nguyễn Văn A',
-    isPayRoom: true,
-    isPayWaterBill: true,
-    isPayVehicleBill: true,
-    isPayPowerBill: true,
-  };
+  modalStudent = new Student();
   message = '';
   currentStudentId = 0;
 
-  constructor(private httpClient: HttpClient, private modalService: NgbModal) {}
+  modalStudentUpdate = new Student();
+  studentUpdateError = null;
+
+  arrRooms = [];
+  selectedRoomIds = [];
+  constructor(
+    private httpClient: HttpClient,
+    private modalService: NgbModal,
+    private studentService: StudentsService,
+    private roomService: RoomService
+  ) {}
 
   ngOnInit(): void {
     this.getAllCampuses();
@@ -123,17 +119,14 @@ export class StudentsComponent implements OnInit {
   }
 
   // modal room detail
-  openModalDetailARoom(modalDetailAStudent, student: any) {
+  openModalDetailAStudent(modalDetailAStudent, student: any) {
     this.currentStudentId = student.id;
     this.getDetailAStudent();
     this.openModal(modalDetailAStudent);
   }
 
   getDetailAStudent() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    console.log(this.currentStudentId);
-    let url = GlobalConstants.apiURL + '/api/students/' + this.currentStudentId;
-    this.httpClient.get(url, { headers }).subscribe(
+    this.studentService.getAStudent(this.currentStudentId).subscribe(
       (data: any) => {
         console.log('detailStudent: ', data);
         this.modalStudent = data;
@@ -144,9 +137,165 @@ export class StudentsComponent implements OnInit {
     );
   }
 
-  // modal update room
-  openModalUpdateARoom(modalUpdateAStudent, room: any) {
-    this.currentStudentId = room.id;
+  getUpdateAStudent() {
+    this.studentService.getAStudent(this.currentStudentId).subscribe(
+      (data: any) => {
+        this.modalStudentUpdate = new Student({
+          id: data.id,
+          name: data.name,
+          birthday: new Date(data.birthday),
+          phone: data.phone,
+          email: data.email,
+          address: data.address,
+          startingDateOfStay: new Date(data.startingDateOfStay),
+          roomDto: data.roomDto,
+          isPayRoom: data.isPayRoom,
+          isPayWaterBill: data.isPayWaterBill,
+          isPayVehicleBill: data.isPayVehicleBill,
+          isPayPowerBill: data.isPayPowerBill,
+        });
+        if (data.endingDateOfStay) {
+          this.modalStudentUpdate.endingDateOfStay = new Date(
+            data.endingDateOfStay
+          );
+        }
+
+        this.arrRooms = [];
+        if (data.roomDto) {
+          this.selectedRoomIds = [...this.selectedRoomIds, data.roomDto.id];
+          this.setUpRoomInSearchMultipleSelect(
+            data.roomDto,
+            data.roomDto.name,
+            null
+          );
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  // modal update student
+  openModalUpdateAStudent(modalUpdateAStudent, student: any) {
+    this.currentStudentId = student.id;
+    this.getUpdateAStudent();
     this.openModal(modalUpdateAStudent);
+  }
+
+  saveChange() {
+    if (!this.modalStudentUpdate.name) {
+      this.studentUpdateError = 'Name is required';
+      this.turnOffNotification();
+      return;
+    }
+    if (!this.modalStudentUpdate.birthday) {
+      this.studentUpdateError = 'Birthday is required';
+      this.turnOffNotification();
+      return;
+    }
+    if (!this.modalStudentUpdate.phone) {
+      this.studentUpdateError = 'Phone is required';
+      this.turnOffNotification();
+      return;
+    }
+    if (!this.modalStudentUpdate.email) {
+      this.studentUpdateError = 'Email is required';
+      this.turnOffNotification();
+      return;
+    }
+    if (!this.modalStudentUpdate.address) {
+      this.studentUpdateError = 'Address is required';
+      this.turnOffNotification();
+      return;
+    }
+    // if (!this.studentUpdate.room) {
+    //   this.studentUpdateError = 'Room is required';
+    //   this.turnOffNotification();
+    //   return;
+    // }
+
+    if (!this.modalStudentUpdate.startingDateOfStay) {
+      this.studentUpdateError = 'Starting date of stay is required';
+      this.turnOffNotification();
+      return;
+    }
+    let studentUpdate = {
+      id: this.modalStudentUpdate.id,
+      name: this.modalStudentUpdate.name,
+      birthday: this.modalStudentUpdate.birthday,
+      phone: this.modalStudentUpdate.phone,
+      email: this.modalStudentUpdate.email,
+      address: this.modalStudentUpdate.address,
+      startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
+      endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
+      roomId: this.selectedRoomIds[0],
+    };
+
+    this.studentService
+      .updateStudent(this.currentStudentId, studentUpdate)
+      .subscribe(
+        (data: Student) => {
+          console.log('studentUpdated: ', data);
+          let index = this.students.findIndex(
+            (student) => student.id === this.currentStudentId
+          );
+          this.students[index] = data;
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  turnOffNotification() {
+    setTimeout(() => {
+      this.studentUpdateError = '';
+    }, 5000);
+  }
+
+  onSearchMultiSelect(event) {
+    if (event && event.term) {
+      var keyword = event.term;
+      console.log('keyword: ', keyword);
+      let token = '';
+      const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+      this.roomService.getAllRooms(0, 100, keyword).subscribe((data: any) => {
+        this.arrRooms = [];
+        let roomList = data.data.data;
+        console.log('rooms: ', roomList);
+        for (let i = 0; i < roomList.length; i++) {
+          let room = roomList[i];
+          let label = room.name;
+          let name = null;
+          this.setUpRoomInSearchMultipleSelect(room, label, name);
+        }
+      });
+    }
+  }
+
+  setUpRoomInSearchMultipleSelect(room: any, label: string, name: string) {
+    if (room.typeRoom != null) {
+      name =
+        room.name +
+        ' < Remaining Quantity Student: ' +
+        (room.typeRoom.maxQuantity - room.quantityStudent) +
+        ' >';
+    } else {
+      name = room.name + ' <>';
+    }
+    let item = {
+      id: room.id,
+      name: name,
+      label: label,
+    };
+    this.arrRooms = [...this.arrRooms, item];
+  }
+
+  unselect(item) {
+    this.selectedRoomIds = this.selectedRoomIds.filter(
+      (rid) => rid !== item.id
+    );
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Student } from './student.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
+import { Student } from './student.model';
 
 @Injectable({
   providedIn: 'root',
@@ -22,5 +22,15 @@ export class StudentsService {
       '&searchText=' +
       searchText;
     return this.http.get<Student[]>(url, { headers: this.headers });
+  }
+
+  getAStudent(id: number) {
+    let url = this.baseUrl + '/api/students/' + id;
+    return this.http.get<Student>(url, { headers: this.headers });
+  }
+
+  updateStudent(id: number, student: any) {
+    let url = this.baseUrl + '/api/students/' + id;
+    return this.http.put(url, student, { headers: this.headers });
   }
 }

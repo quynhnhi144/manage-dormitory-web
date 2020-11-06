@@ -8,8 +8,9 @@ import { AppComponent } from './app.component';
 import { ShareModule } from './shared/share.module';
 import { AdminLayoutModule } from './layout/admin-layout/admin-layout.module';
 import { IconsModule } from './icons/icons.module';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -21,6 +22,8 @@ import { FormsModule } from '@angular/forms';
     IconsModule,
     HttpClientModule,
     FormsModule,
+    BrowserAnimationsModule,
+    BsDatepickerModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent],
