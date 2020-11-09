@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalConstants } from '../../common/global-constants';
 import { StudentsService } from './students.service';
 import { Student } from './student.model';
 import { RoomService } from '../rooms/room.service';
+import { CampusService } from 'src/app/services/campus.service';
 
 @Component({
   selector: 'app-students',
@@ -30,6 +31,7 @@ export class StudentsComponent implements OnInit {
 
   modalStudentUpdate = new Student();
   studentUpdateError = null;
+  modalOption: NgbModalOptions = {};
 
   arrRooms = [];
   selectedRoomIds = [];
@@ -37,7 +39,8 @@ export class StudentsComponent implements OnInit {
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private studentService: StudentsService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private campusService: CampusService
   ) {}
 
   ngOnInit(): void {
@@ -46,10 +49,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getAllCampuses() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/campuses';
-    this.httpClient.get(url, { headers }).subscribe(
+    this.campusService.getAllCampuses().subscribe(
       (data: any) => {
         this.campuses = data;
       },
@@ -115,7 +115,9 @@ export class StudentsComponent implements OnInit {
 
   // open modal
   openModal(modalName) {
-    this.modalService.open(modalName);
+    this.modalOption.backdrop = 'static';
+    this.modalOption.keyboard = false;
+    const modalRef = this.modalService.open(modalName, this.modalOption);
   }
 
   // modal room detail
@@ -296,6 +298,22 @@ export class StudentsComponent implements OnInit {
   unselect(item) {
     this.selectedRoomIds = this.selectedRoomIds.filter(
       (rid) => rid !== item.id
+    );
+  }
+
+  openModalDeleteStudent(modalDeleteStudent, student: any) {
+    this.currentStudentId = student.id;
+    this.openModal(modalDeleteStudent);
+  }
+
+  saveDelete() {
+    this.studentService.deleteStudent(this.currentStudentId).subscribe(
+      (data: any) => {
+        this.modalService.dismissAll();
+      },
+      (error) => {
+        console.log(error);
+      }
     );
   }
 }

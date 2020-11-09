@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../students/students.service';
 import { TypeRoomService } from '../../services/typeroom.service';
 import { Room } from './room.model';
@@ -45,6 +45,7 @@ export class RoomsComponent implements OnInit {
   isClickBtnQuantityStudent = false;
   isClickBtnTypeRoom = false;
   isClickSearch = false;
+  modalOption: NgbModalOptions = {};
 
   //modal Detail Room
   modalRoom = new Room({
@@ -183,7 +184,9 @@ export class RoomsComponent implements OnInit {
 
   // open modal
   openModal(modalName) {
-    this.modalService.open(modalName);
+    this.modalOption.backdrop = 'static';
+    this.modalOption.keyboard = false;
+    const modalRef = this.modalService.open(modalName, this.modalOption);
   }
 
   // modal room detail
