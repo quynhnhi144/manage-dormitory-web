@@ -33,4 +33,9 @@ export class StudentsService {
     let url = this.baseUrl + '/api/students/' + id;
     return this.http.put(url, student, { headers: this.headers });
   }
+
+  deleteStudent(id: number) {
+    let url = this.baseUrl + '/api/students/' + id;
+    return this.http.delete(url, { headers: this.headers });
+  }
 }

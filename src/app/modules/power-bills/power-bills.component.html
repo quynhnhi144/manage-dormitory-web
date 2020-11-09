@@ -1,1 +1,429 @@
-<p>power-bills works!</p>
+<div *ngIf="campuses" class="main-content">
+    <div class="row">
+        <div class="col-12">
+
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Power Bill</div>
+            </div>
+            <div style="clear: both"></div>
+            <!-- START TABS -->
+            <div>
+                <div>
+                    <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+                        (click)="getAllPowerBills(0, 'all')">
+                        All
+                    </div>
+
+                    <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+                        [ngClass]="{ 'num-active': campusIndex == i + 1 }"
+                        (click)="getAllPowerBills(i + 1, campus.name)">
+                        {{campus.name}}
+                    </div>
+                </div>
+
+                <hr style="margin-top: 0" />
+
+                <div style="height: 10px"></div>
+            </div>
+            <!-- END TABS -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)"
+                            placeholder="Search by student name or user manager or room name" />
+                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                            title="Search" width="20" />
+                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                            <img src="../../assets/images/export.png" width="15" />
+                            Export
+                        </button>
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Room</th>
+                                    <th>Campus</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Number Of Power Begin</th>
+                                    <th>Number Of Power End</th>
+                                    <th>Number Of Power Used</th>
+                                    <th>Number Of Money Must Pay</th>
+                                    <th>Payment</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let room of rooms">
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.roomDto.id}}
+                                    </td>
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.roomDto.name}}
+                                    </td>
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.roomDto.campusName}}</td>
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.startDate ? room.startDate: '--'}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.endDate ? room.endDate: '--'}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.numberOfPowerBegin != null ? room.numberOfPowerBegin : "--"}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.numberOfPowerEnd != null ? room.numberOfPowerEnd : "--"}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.numberOfPowerUsed != null ? room.numberOfPowerUsed : "--"}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        {{room.numberOfMoneyMustPay != null ? (room.numberOfMoneyMustPay + "đ") : "--"}}
+                                    </td>
+
+                                    <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
+                                        <div *ngIf="room.pay" class="pill pill-1">
+                                            COMPLETED
+                                        </div>
+                                        <div *ngIf="!room.pay" class="pill pill-2">
+                                            NOT&nbsp;COMPLETED
+                                        </div>
+                                    </td>
+
+                                    <!-- <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdateAStudent(modalUpdateAPowerBill, room)"></i>
+                                    </td> -->
+                                    <!-- <td>
+                                        <i class="icon-delete mdi mdi-24px mdi-delete-outline"
+                                            (click)="openModalDeleteStudent(modalUpdateAPowerBill, room)"></i>
+                                    </td> -->
+                                </tr>
+                                <tr *ngIf="roomTotal == 0">
+                                    <td colspan="11" class="no-data">No data
+                                        found.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="roomTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Results per page</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="roomTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
+                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailAPowerBill let-modal class="modal fade" id="modalDetailPowerBill"
+    aria-labelledby="modalDetailPowerBill">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/electricity-bill.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalDetailPowerBill">POWER BILL DETAIL</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" *ngIf="modalRoomPowerBill.roomDto">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div class="col-xs-6 col-md-3">
+                        <img class="icon-bill" src="../../assets/images/electricity-bill.svg"
+                            style="margin-bottom: 15px;" />
+                    </div>
+                    <div class="col-xs-6 col-md-2"></div>
+                    <div class="col-xs-6 col-md-6">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ID ROOM
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRoomPowerBill.roomDto.id}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ROOM NAME
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRoomPowerBill.roomDto.name}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ID BILL
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRoomPowerBill.billId}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">START DATE
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRoomPowerBill.startDate}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">END DATE
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRoomPowerBill.endDate}}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1 "></div>
+                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER BEGIN</div>
+                    <div class="col-xs-6 col-md-2">
+                        {{ modalRoomPowerBill.numberOfPowerBegin}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER USED</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalRoomPowerBill.numberOfPowerUsed}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1 "></div>
+                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER END</div>
+                    <div class="col-xs-6 col-md-2">
+                        {{modalRoomPowerBill.numberOfPowerEnd}}
+                    </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">TOTAL MONEY MUST PAY</div>
+                    <div class="col-xs-6 col-md-2">
+                        {{modalRoomPowerBill.numberOfMoneyMustPay}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1 "></div>
+                    <div class="col-xs-6 col-md-3 col-title">PAYMENT</div>
+                    <div class="col-xs-6 col-md-2"
+                        [ngStyle]=" {'color': modalRoomPowerBill.pay ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalRoomPowerBill.pay ? "COMPLETED" :  'NOT COMPLETED'}}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<!-- START UPDATE STUDENT MODAL -->
+<!-- <ng-template #modalUpdateAStudent let-modal class="modal fade" id="exampleModal-3"
+    aria-labelledby="exampleModalLabel-3">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE STUDENT</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Student Id</label>
+                                    <input name="id" [(ngModel)]="modalStudentUpdate.id" class="disable-input"
+                                        readonly />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="email">Email</label>
+                                    <input name="email" [(ngModel)]="modalStudentUpdate.email" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Student Name</label>
+                                    <input name="name" [(ngModel)]="modalStudentUpdate.name" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="address">Address</label>
+                                    <input name="address" [(ngModel)]="modalStudentUpdate.address" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left form-group">
+                                    <label for="birthday">Birthday</label>
+                                    <input type="text" name="birthday" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]=" modalStudentUpdate.birthday" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="roomName">Room Name</label>
+                                    <div class="section-search">
+                                        <div class="section-search-multiselect">
+                                            <ng-select name="roomName" class="people-select" [multiple]="true"
+                                                [items]="arrRooms" [(ngModel)]="selectedRoomIds" bindLabel="name"
+                                                bindValue="id" placeholder="Search student by name or email"
+                                                (search)="onSearchMultiSelect($event)">
+                                                <ng-template ng-label-tmp let-item="item">
+                                                    <span class="ng-value-icon left" (click)="unselect(item)"
+                                                        aria-hidden="true">×</span>
+                                                    <span class="ng-value-label">{{ item.label }}</span>
+                                                </ng-template>
+                                                <ng-template ng-option-tmp let-item="item">
+                                                    <div>{{ item.name }}</div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="phone">Phone</label>
+                                    <input name="phone" [(ngModel)]="modalStudentUpdate.phone" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="startDate">Start Date</label>
+                                    <input type="text" name="startDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="endDate">End Date</label>
+                                    <input type="text" name="endDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [(ngModel)]="modalStudentUpdate.endingDateOfStay" />
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="studentUpdateError">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger" style="margin-bottom: 0;">{{studentUpdateError}}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">ROOM PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
+                    <div class="col-xs-6 col-md-4"
+                        [ngStyle]=" {'color': modalStudent.isPayPowerBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayPowerBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-2 col-title">WATER PAYMENT</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                    <div class="col-xs-6 col-md-4"
+                        [ngStyle]=" {'color': modalStudent.isPayVehicleBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayVehicleBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                    </div>
+                </div> 
+
+                             <div class="row" *ngIf="typeRoomError">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
+                  </div>
+                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="saveChange()">Submit</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalDeleteStudent let-modal class="modal fade" id="modalDelete" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalDelete">Delete Student</h5>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure want to delete this student?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+        </div>
+    </div>
+</ng-template> -->

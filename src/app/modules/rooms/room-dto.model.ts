@@ -1,4 +1,4 @@
-export class RoomUpdate {
+export class RoomDto {
   id: number;
   name: string;
   quantityStudent: number;
@@ -10,7 +10,7 @@ export class RoomUpdate {
   isPayVehicleBill: boolean;
   isPayPowerBill: boolean;
 
-  constructor(init?: Partial<RoomUpdate>) {
+  constructor(init?: Partial<RoomDto>) {
     Object.assign(this, init);
   }
 }

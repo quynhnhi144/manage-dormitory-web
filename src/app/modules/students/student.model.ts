@@ -1,4 +1,4 @@
-import { RoomUpdate } from '../rooms/room-update.model';
+import { RoomDto } from '../rooms/room-dto.model';
 export class Student {
   id: number;
   name: string;
@@ -8,7 +8,7 @@ export class Student {
   address: string;
   startingDateOfStay: Date;
   endingDateOfStay: Date;
-  roomDto: RoomUpdate;
+  roomDto: RoomDto;
   isPayRoom: boolean;
   isPayWaterBill: boolean;
   isPayVehicleBill: boolean;

@@ -166,7 +166,8 @@
           }
         }
 
-        .icon-edit {
+        .icon-edit,
+        .icon-delete {
           visibility: hidden;
           opacity: 0;
         }
@@ -178,7 +179,8 @@
 
       &:hover {
         td {
-          .icon-edit {
+          .icon-edit,
+          .icon-delete {
             opacity: 1;
             visibility: visible;
             color: #bba8bff5;
@@ -285,7 +287,7 @@
     font-family: $font-family;
     font-style: normal;
     font-weight: normal;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 20px;
     color: #333333;
     letter-spacing: 0.2px;
@@ -298,7 +300,7 @@
         font-family: $font-family;
         font-style: normal;
         font-weight: 500;
-        font-size: 14px;
+        font-size: 17px;
         line-height: 21px;
         color: #8a9099;
       }
@@ -394,4 +396,17 @@
 .input-date {
   border: 1px solid #dddddd !important;
   border-radius: 10px !important;
+}
+
+// icon-bill
+.icon-bill {
+  height: $icon-bill-height;
+}
+
+.icon-bill-small {
+  height: $icon-bill-small-height;
+}
+
+.icon-middle {
+  height: $icon-middle-height;
 }
