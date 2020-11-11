@@ -6,7 +6,7 @@ import { StudentsService } from '../students/students.service';
 import { TypeRoomService } from '../../services/typeroom.service';
 import { Room } from './room.model';
 import { Student } from '../students/student.model';
-import { async } from '@angular/core/testing';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-rooms',
@@ -67,7 +67,6 @@ export class RoomsComponent implements OnInit {
     isPayRoom: true,
     isPayWaterBill: true,
     isPayVehicleBill: true,
-    isPayPowerBill: true,
   });
   message = '';
   currentRoomId = 0;
@@ -220,7 +219,8 @@ export class RoomsComponent implements OnInit {
       (response: any) => {
         this.downloadFile(
           response,
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'rooms.xlsx'
         );
         console.log(response);
       },
@@ -230,13 +230,9 @@ export class RoomsComponent implements OnInit {
     );
   }
 
-  downloadFile(data: any, type: string) {
+  downloadFile(data: any, type: string, fileName: string) {
     let blob = new Blob([data], { type: type });
-    let url = window.URL.createObjectURL(blob);
-    let pwa = window.open(url);
-    if (!pwa || pwa.closed || typeof pwa.closed == 'undefined') {
-      alert('Please disable your Pop-up blocker and try again.');
-    }
+    FileSaver.saveAs(blob, fileName);
   }
 
   // modal update room
@@ -355,9 +351,8 @@ export class RoomsComponent implements OnInit {
       typeRoom: typeRoom,
       students: this.newRoomForm.students,
       isPayRoom: this.newRoomForm.isPayRoom,
-      isPayWaterBill: this.newRoomForm.isPayPowerBill,
+      isPayWaterBill: this.newRoomForm.isPayWaterBill,
       isPayVehicleBill: this.newRoomForm.isPayVehicleBill,
-      isPayPowerBill: this.newRoomForm.isPayPowerBill,
     });
 
     this.httpClient.put(url, roomUpdate, { headers }).subscribe(

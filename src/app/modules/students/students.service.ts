@@ -24,6 +24,11 @@ export class StudentsService {
     return this.http.get<Student[]>(url, { headers: this.headers });
   }
 
+  getTotalStudents() {
+    let url = this.baseUrl + '/api/students/all';
+    return this.http.get<Student[]>(url, { headers: this.headers });
+  }
+
   getAStudent(id: number) {
     let url = this.baseUrl + '/api/students/' + id;
     return this.http.get<Student>(url, { headers: this.headers });

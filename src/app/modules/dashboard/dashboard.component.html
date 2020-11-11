@@ -1,1 +1,374 @@
-<p>dashboard works!</p>
+<div class="main-content">
+
+    <div class="row">
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-danger card-img-holder text-white">
+                <div class="card-body" (click)="openModalUserCampus(modalUserCampus)">
+                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-4">TOTAL USERS AND CAMPUSES</h4>
+                    <h5 class="mb-4">{{'Total Number Of Users: ' + dashboard.totalNumberUser}}</h5>
+                    <h5 class="mb-4">{{'Total Number Of Campuses: ' + dashboard.totalNumberCampus}}</h5>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #modalUserCampus let-modal class="modal fade" id="modalUserCampus"
+            aria-labelledby="modalUserCampusLabel">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalUserCampusLabel">TOTAL USERS AND CAMPUSES</h3>
+                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid d-flex flex-column">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/manager.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Users: " + dashboard.totalNumberUser}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        FULLNAME
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-6">
+                                                        CAMPUSES
+                                                    </div>
+                                                </div>
+                                                <div *ngFor="let user of users" class="row">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        {{user.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        {{user.fullName}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-6">
+                                                        <span *ngFor="let campus of user.campuses">
+                                                            {{campus.name}}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/campus.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Campuses: " + dashboard.totalNumberCampus}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-11">
+                                                        NAME
+                                                    </div>
+                                                </div>
+                                                <div *ngFor="let campus of campuses" class="row">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        {{campus.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-11">
+                                                        {{campus.name}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-info card-img-holder text-white">
+                <div class="card-body" (click)="openModalRoomAndRemainingRoom(modalRoomRemainingRoom)">
+                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-4">TOTAL ROOMS AND REMAINING ROOMS</h4>
+                    <h5 class="mb-4">{{'Total Number Of Rooms: ' + dashboard.totalNumberRoom}}</h5>
+                    <h5 class="mb-4">{{'Total Number Of RemainingRooms: ' + dashboard.totalNumberRemainingRoom}}</h5>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #modalRoomRemainingRoom let-modal class="modal fade" id="modalRoomRemainingRoom"
+            aria-labelledby="modalRoomRemainingRoomLabel">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalRoomRemainingRoomLabel">TOTAL ROOMS AND REMAINING ROOMS</h3>
+                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid d-flex flex-column">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/room.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Rooms: " + dashboard.totalNumberRoom}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info section-info-custom">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-2">
+                                                        NAME
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        TOTAL STUDENTS
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-6">
+                                                        CAMPUSES
+                                                    </div>
+                                                </div>
+                                                <div *ngFor="let room of rooms" class="row">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        {{room.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-2">
+                                                        {{room.name}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-3">
+                                                        {{room.students.length}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-6">
+                                                        {{room.campusName}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/room.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Remaining Rooms: " + dashboard.totalNumberRemainingRoom}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info section-info-custom">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-2">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-2">
+                                                        NAME
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        MAX QUANTITY STUDENT
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-4">
+                                                        NUMBER OF REMAINING STUDENT
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-2">
+                                                        CAMPUSES
+                                                    </div>
+                                                </div>
+
+                                                <div *ngFor="let remainingRoom of remainingRooms" class="row">
+                                                    <div class="col-xs-6 col-md-1">
+                                                        {{remainingRoom.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-2">
+                                                        {{remainingRoom.name}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-3">
+                                                        {{remainingRoom.typeRoom ? remainingRoom.typeRoom.maxQuantity: '--'}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-4">
+                                                        {{remainingRoom.typeRoom ? (remainingRoom.typeRoom.maxQuantity - remainingRoom.quantityStudent) : '--'}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-2">
+                                                        {{remainingRoom.campusName}}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+        <div class="col-md-4 stretch-card grid-margin">
+            <div class="card bg-gradient-success card-img-holder text-white">
+                <div class="card-body" (click)="openModalStudentVehicle(modalStudentVehicle)">
+                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                    <h4 class="font-weight-normal mb-4">TOTAL STUDENTS AND VEHICLES</h4>
+                    <h5 class="mb-4">{{'Total Number Of Students: ' + dashboard.totalNumberStudent}}</h5>
+                    <h5 class="mb-4">{{'Total Number Of Vehicle: ' + dashboard.totalNumberVehicle}}</h5>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #modalStudentVehicle let-modal class="modal fade" id="modalStudentVehicle"
+            aria-labelledby="modalStudentVehicleLabel">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modalStudentVehicleLabel">TOTAL STUDENTS AND VEHICLES</h3>
+                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid d-flex flex-column">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/student.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Students: " + dashboard.totalNumberStudent}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info section-info-custom">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-1"></div>
+                                                    <div class="col-xs-6 col-md-2">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        NAME
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-3">
+                                                        ROOM NAME
+                                                    </div>
+                                                </div>
+                                                <div *ngFor="let student of students" class="row">
+                                                    <div class="col-xs-6 col-md-1"></div>
+                                                    <div class="col-xs-6 col-md-2">
+                                                        {{student.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        {{student.name}}
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-3">
+                                                        {{student.roomDto.name}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="section-info">
+                                    <div class="row titlte-sumary">
+                                        <img class="icon-title" src="../../assets/images/motorbike.svg"
+                                            style="margin-right: 20px;" />
+                                        <span>{{"Total Number Of Campuses: " + dashboard.totalNumberVehicle}}</span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="section-info section-info-custom">
+                                                <div class="row title-detail">
+                                                    <div class="col-xs-6 col-md-1"></div>
+                                                    <div class="col-xs-6 col-md-2">
+                                                        ID
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        LICENSE PLATES
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        ROOM NAME
+                                                    </div>
+                                                </div>
+                                                <div *ngFor="let vehicle of vehicles" class="row">
+                                                    <div class="col-xs-6 col-md-1">
+                                                    </div>
+                                                    <div class="col-xs-6 col-md-2">
+                                                        {{vehicle.id}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-6">
+                                                        {{vehicle.licensePlates}}
+                                                    </div>
+
+                                                    <div class="col-xs-6 col-md-3">
+                                                        {{vehicle.roomName}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+
+    </div>
+</div>

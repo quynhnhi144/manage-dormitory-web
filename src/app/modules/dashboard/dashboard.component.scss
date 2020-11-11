@@ -1,0 +1,59 @@
+@import "../../../styles.scss";
+
+.main-content {
+  .card-body {
+    font-family: $font-family !important;
+    text-transform: uppercase;
+    h4 {
+      font-weight: bold !important;
+    }
+  }
+}
+
+.modal-content {
+  .modall-header {
+    .modal-title {
+      font-family: $font-family;
+      font-weight: bold !important;
+    }
+  }
+  .modal-body {
+    .titlte-sumary {
+      display: flex;
+      align-items: center;
+      margin-left: 40px;
+      font-size: 20px;
+      text-transform: uppercase;
+      color: #8a9099;
+      font-weight: 500;
+    }
+
+    .section-info {
+      .section-info {
+        &.section-info-custom {
+          height: 500px;
+          overflow-y: scroll;
+
+          &::-webkit-scrollbar {
+            width: 6px;
+            border-radius: 8px;
+            background-color: white;
+            overflow: hidden;
+            overflow-y: auto;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            width: 6px;
+            border-radius: 30px;
+            background-color: #c4c4c4;
+          }
+        }
+        .title-detail {
+          text-transform: uppercase;
+          color: #8a9099;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
