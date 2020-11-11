@@ -25,6 +25,16 @@ export class RoomService {
     return this.http.get<Room[]>(url, { headers: this.headers });
   }
 
+  getTotalRooms() {
+    let url = this.baseUrl + '/api/rooms/all';
+    return this.http.get<Room[]>(url, { headers: this.headers });
+  }
+
+  getTotalRemainingRooms() {
+    let url = this.baseUrl + '/api/rooms/remaining-room';
+    return this.http.get<Room[]>(url, { headers: this.headers });
+  }
+
   // getAStudent(id: number) {
   //   let url = this.baseUrl + '/api/students/' + id;
   //   return this.http.get<Student>(url, { headers: this.headers });

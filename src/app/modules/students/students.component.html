@@ -333,6 +333,7 @@
                                     <label for="birthday">Birthday</label>
                                     <input type="text" name="birthday" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]=" modalStudentUpdate.birthday" required />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">

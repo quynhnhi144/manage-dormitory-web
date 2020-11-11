@@ -25,7 +25,14 @@ export class PowerBillsComponent implements OnInit {
   currentRoomId = 0;
 
   modalRoomPowerBill = new PowerBill();
+  modalRoomPowerBillUpdate = new PowerBill();
+
   modalOption: NgbModalOptions = {};
+
+  messageMail = null;
+  isSent = false;
+
+  modalUpdatePowerBillError = null;
 
   constructor(
     private httpClient: HttpClient,
@@ -62,13 +69,17 @@ export class PowerBillsComponent implements OnInit {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ');
     let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
+    let paramSearchText = this.isClickSearch
+      ? `&searchText=${this.searchText}`
+      : ``;
     url +=
       '/api/powerBills?' +
       choosedCampus +
       '&skip=' +
       this.skip +
       '&take=' +
-      this.pageSize;
+      this.pageSize +
+      paramSearchText;
 
     this.httpClient.get(url, { headers }).subscribe(
       (data: any) => {
@@ -106,16 +117,42 @@ export class PowerBillsComponent implements OnInit {
 
   // modal power bill detail
   openModalDetailAPowerBill(modalDetailAPowerBill, room: PowerBill) {
-    this.currentRoomId = room.roomDto.id;
+    this.currentRoomId = room.detailRoomDto.id;
     this.getDetailAPowerBill();
     this.openModal(modalDetailAPowerBill);
   }
 
   getDetailAPowerBill() {
+    this.powerBillsService
+      .getAPowerBill(this.currentRoomId)
+      .subscribe((data: any) => {
+        console.log('detail power bill: ', data);
+        this.modalRoomPowerBill = data;
+      });
+  }
+
+  openModalUpdateAStudent(modalUpdateAPowerBill, room: any) {
+    this.currentRoomId = room.detailRoomDto.id;
+    this.getPowerBillUpdate();
+    this.openModal(modalUpdateAPowerBill);
+  }
+
+  getPowerBillUpdate() {
     this.powerBillsService.getAPowerBill(this.currentRoomId).subscribe(
       (data: any) => {
         console.log('detail power bill: ', data);
-        this.modalRoomPowerBill = data;
+        this.modalRoomPowerBillUpdate = new PowerBill({
+          detailRoomDto: data.detailRoomDto,
+          billId: data.billId,
+          startDate: new Date(data.startDate),
+          endDate: new Date(data.endDate),
+          numberOfPowerBegin: data.numberOfPowerBegin,
+          numberOfPowerEnd: data.numberOfPowerEnd,
+          numberOfPowerUsed: data.numberOfPowerUsed,
+          priceAKWH: data.priceAKWH,
+          numberOfMoneyMustPay: data.numberOfMoneyMustPay,
+          pay: data.pay,
+        });
       },
       (error) => {
         console.log(error);
@@ -123,7 +160,69 @@ export class PowerBillsComponent implements OnInit {
     );
   }
 
-  openModalUpdateAStudent(modalUpdateAPowerBill, room: any) {}
+  changeStatusPayment(modalRoomPowerBillUpdate) {
+    modalRoomPowerBillUpdate.pay = !modalRoomPowerBillUpdate.pay;
+  }
+
+  saveUpdate() {}
+
+  sendMail(room: PowerBill) {
+    let roomSendRequest = {
+      detailRoomDto: room.detailRoomDto,
+      billId: room.billId,
+      startDate: new Date(room.startDate),
+      endDate: new Date(room.endDate),
+      numberOfPowerBegin: room.numberOfPowerBegin,
+      numberOfPowerEnd: room.numberOfPowerEnd,
+      numberOfPowerUsed: room.numberOfPowerUsed,
+      priceAKWH: room.priceAKWH,
+      numberOfMoneyMustPay: room.numberOfMoneyMustPay,
+      pay: room.pay,
+    };
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/powerBills/send-notification';
+
+    this.httpClient.post(url, roomSendRequest, { headers }).subscribe(
+      (data: any) => {
+        this.isSent = true;
+        this.messageMail = 'Mail sent successfully!!!';
+        setTimeout(() => {
+          this.messageMail = '';
+        }, 5000);
+        console.log('mail: ' + data.message);
+      },
+      (error) => {
+        this.isSent = false;
+        this.messageMail =
+          'Error! An error occurred. Please try again later!!!';
+        setTimeout(() => {
+          this.messageMail = '';
+        }, 5000);
+        console.log(error);
+      }
+    );
+  }
+
+  changeNumberOfPowerUsed() {
+    if (
+      this.modalRoomPowerBillUpdate.numberOfPowerBegin >
+      this.modalRoomPowerBillUpdate.numberOfPowerEnd
+    ) {
+      this.modalUpdatePowerBillError =
+        'Number of Power Begin cannot bigger than End';
+    } else {
+      this.modalRoomPowerBillUpdate.numberOfPowerUsed =
+        this.modalRoomPowerBillUpdate.numberOfPowerEnd -
+        this.modalRoomPowerBillUpdate.numberOfPowerBegin;
+    }
+  }
+
+  turnOffNotification() {
+    setTimeout(() => {
+      this.modalUpdatePowerBillError = '';
+    }, 5000);
+  }
 }
 
 // (data: any) => {

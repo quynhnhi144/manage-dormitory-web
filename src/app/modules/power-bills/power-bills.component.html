@@ -33,10 +33,14 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
+                    <div *ngIf="messageMail">
+                        <div class="col-xs-12 col-md-6 col-left">
+                            <p [ngClass]="isSent ? 'alert alert-success ' : 'alert alert-danger' ">{{messageMail}}</p>
+                        </div>
+                    </div>
                     <div class="input-group">
                         <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-                            (keydown.enter)="onSearch($event)"
-                            placeholder="Search by student name or user manager or room name" />
+                            (keydown.enter)="onSearch($event)" placeholder="Search by room name" />
                         <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
                             title="Search" width="20" />
                         <button type="button" class="btn-icon btn-round btn-export ml-3">
@@ -59,18 +63,19 @@
                                     <th>Number Of Money Must Pay</th>
                                     <th>Payment</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngFor="let room of rooms">
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
-                                        {{room.roomDto.id}}
+                                        {{room.detailRoomDto.id}}
                                     </td>
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
-                                        {{room.roomDto.name}}
+                                        {{room.detailRoomDto.name}}
                                     </td>
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
-                                        {{room.roomDto.campusName}}</td>
+                                        {{room.detailRoomDto.campusName}}</td>
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
                                         {{room.startDate ? room.startDate: '--'}}
                                     </td>
@@ -92,26 +97,38 @@
                                     </td>
 
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
-                                        {{room.numberOfMoneyMustPay != null ? (room.numberOfMoneyMustPay + "đ") : "--"}}
+                                        {{room.numberOfMoneyMustPay != null ? ((room.numberOfMoneyMustPay | number) + "đ") : "--"}}
                                     </td>
 
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
                                         <div *ngIf="room.pay" class="pill pill-1">
                                             COMPLETED
                                         </div>
-                                        <div *ngIf="!room.pay" class="pill pill-2">
+                                        <div *ngIf="room.billId && !room.pay" class="pill pill-2">
                                             NOT&nbsp;COMPLETED
+                                        </div>
+                                        <div *ngIf="!room.billId && !room.pay" class="pill pill-3">
+                                            NO&nbsp;DATA
                                         </div>
                                     </td>
 
-                                    <!-- <td>
+                                    <td>
                                         <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                                            (click)="openModalUpdateAStudent(modalUpdateAPowerBill, room)"></i>
-                                    </td> -->
-                                    <!-- <td>
-                                        <i class="icon-delete mdi mdi-24px mdi-delete-outline"
-                                            (click)="openModalDeleteStudent(modalUpdateAPowerBill, room)"></i>
-                                    </td> -->
+                                            (click)="openModalUpdateAStudent(modalUpdateAPowerBill,room)"></i>
+                                    </td>
+                                    <td>
+                                        <div class="dropdown dropdown-mail" ngbDropdown>
+                                            <button class="btn btn-dropdown dropdown-toggle " type="button"
+                                                id="sendMailDropdown" ngbDropdownToggle>
+                                                <i class="icon-delete mdi mdi-24px mdi-dots-vertical"></i>
+                                            </button>
+                                            <div class="dropdown-menu" ngbDropdownMenu
+                                                aria-labelledby="sendMailDropdown">
+                                                <a class="dropdown-item" href="javascript:void(0)"
+                                                    (click)="sendMail(room)">Send Mail</a>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr *ngIf="roomTotal == 0">
                                     <td colspan="11" class="no-data">No data
@@ -175,7 +192,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body" *ngIf="modalRoomPowerBill.roomDto">
+        <div class="modal-body" *ngIf="modalRoomPowerBill.detailRoomDto">
             <div class="section-info">
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
@@ -189,7 +206,7 @@
                             <div class="col-xs-6 col-md-6 col-title">ID ROOM
                             </div>
                             <div class="col-xs-6 col-md-6">
-                                {{ modalRoomPowerBill.roomDto.id}}
+                                {{ modalRoomPowerBill.detailRoomDto.id}}
                             </div>
                         </div>
 
@@ -197,7 +214,7 @@
                             <div class="col-xs-6 col-md-6 col-title">ROOM NAME
                             </div>
                             <div class="col-xs-6 col-md-6">
-                                {{ modalRoomPowerBill.roomDto.name}}
+                                {{ modalRoomPowerBill.detailRoomDto.name}}
                             </div>
                         </div>
 
@@ -213,7 +230,7 @@
                             <div class="col-xs-6 col-md-6 col-title">START DATE
                             </div>
                             <div class="col-xs-6 col-md-6">
-                                {{ modalRoomPowerBill.startDate}}
+                                {{ modalRoomPowerBill.startDate | date: 'dd-MM-yyy'}}
                             </div>
                         </div>
 
@@ -221,7 +238,7 @@
                             <div class="col-xs-6 col-md-6 col-title">END DATE
                             </div>
                             <div class="col-xs-6 col-md-6">
-                                {{ modalRoomPowerBill.endDate}}
+                                {{ modalRoomPowerBill.endDate| date: 'dd-MM-yyy'}}
                             </div>
                         </div>
                     </div>
@@ -249,7 +266,7 @@
 
                     <div class="col-xs-6 col-md-3 col-title">TOTAL MONEY MUST PAY</div>
                     <div class="col-xs-6 col-md-2">
-                        {{modalRoomPowerBill.numberOfMoneyMustPay}}
+                        {{(modalRoomPowerBill.numberOfMoneyMustPay |number) + 'đ' }}
                     </div>
                 </div>
 
@@ -268,16 +285,17 @@
 </ng-template>
 
 <!-- START UPDATE STUDENT MODAL -->
-<!-- <ng-template #modalUpdateAStudent let-modal class="modal fade" id="exampleModal-3"
+<ng-template #modalUpdateAPowerBill let-modal class="modal fade" id="exampleModal-3"
     aria-labelledby="exampleModalLabel-3">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE STUDENT</h3>
+            <img class="icon-bill-small" src="../../assets/images/electricity-bill.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE POWER BILL</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" *ngIf="modalRoomPowerBillUpdate.detailRoomDto">
             <div class="row create-room-section">
                 <div class="col-12">
                     <div class="section-info">
@@ -285,36 +303,48 @@
                         <form name="newRoomForm" class="newRoomForm">
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="id">Student Id</label>
-                                    <input name="id" [(ngModel)]="modalStudentUpdate.id" class="disable-input"
-                                        readonly />
+                                    <label for="id">Room Id</label>
+                                    <input name="id" [(ngModel)]="modalRoomPowerBillUpdate.detailRoomDto.id"
+                                        class="disable-input" readonly />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="email">Email</label>
-                                    <input name="email" [(ngModel)]="modalStudentUpdate.email" required />
+                                    <label for="email">Room Name</label>
+                                    <input name="email" [(ngModel)]="modalRoomPowerBillUpdate.detailRoomDto.name"
+                                        class="disable-input" readonly />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="name">Student Name</label>
-                                    <input name="name" [(ngModel)]="modalStudentUpdate.name" required />
+                                    <label for="name">Bill Id</label>
+                                    <input name="name" [(ngModel)]="modalRoomPowerBillUpdate.billId"
+                                        class="disable-input" readonly />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="address">Address</label>
-                                    <input name="address" [(ngModel)]="modalStudentUpdate.address" required />
+                                    <label for="startDate">Start Date</label>
+                                    <input type="text" name="startDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]=" modalRoomPowerBillUpdate.startDate" required />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left form-group">
-                                    <label for="birthday">Birthday</label>
-                                    <input type="text" name="birthday" placeholder="Datepicker"
+                                    <label for="endDate">End Date</label>
+                                    <input type="text" name="endDate" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
-                                        [(ngModel)]=" modalStudentUpdate.birthday" required />
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]=" modalRoomPowerBillUpdate.endDate" required />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="roomName">Room Name</label>
+                                    <label for="numberOfPowerBegin">Number Of Power Begin</label>
+                                    <input type="number" name="numberOfPowerBegin"
+                                        [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerBegin"
+                                        (change)="changeNumberOfPowerUsed()" required />
+                                </div>
+                                <!-- <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="roomName">Number Of Power Begin</label>
                                     <div class="section-search">
                                         <div class="section-search-multiselect">
                                             <ng-select name="roomName" class="people-select" [multiple]="true"
@@ -333,84 +363,66 @@
                                         </div>
                                     </div>
 
+                                </div> -->
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="numberOfPowerEnd">Number Of Power End</label>
+                                    <input type="number" name="numberOfPowerEnd"
+                                        [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerEnd" required />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="numberOfPowerUsed">Number Of Power Used</label>
+                                    <input type="number" name="numberOfPowerUsed"
+                                        [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerUsed " required />
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="phone">Phone</label>
-                                    <input name="phone" [(ngModel)]="modalStudentUpdate.phone" required />
+                                    <label for="totalMonetMustPay">Total Money Must Pay</label>
+                                    <input name="totalMonetMustPay"
+                                        [ngModel]="(modalRoomPowerBillUpdate.numberOfMoneyMustPay | number) + 'đ'"
+                                        (ngModelChange)="modalRoomPowerBillUpdate.numberOfMoneyMustPay" required />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <p for="payment">PayMent</p>
+                                    <p style="cursor: pointer;"
+                                        [ngClass]=" modalRoomPowerBillUpdate.pay ?  'pill pill-1' : 'pill pill-2' "
+                                        (click)="changeStatusPayment(modalRoomPowerBillUpdate)">
+                                        {{ modalRoomPowerBillUpdate.pay ? "Completed" : "Not Completed" }}</p>
                                 </div>
                             </div>
 
-                            <div class="row">
+                            <div class="row" *ngIf="modalUpdatePowerBillError">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="startDate">Start Date</label>
-                                    <input type="text" name="startDate" placeholder="Datepicker"
-                                        class="form-control input-date" bsDatepicker
-                                        [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
+                                    <p class="alert alert-danger" style="margin-bottom: 0;">
+                                        {{modalUpdatePowerBillError}}</p>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="endDate">End Date</label>
-                                    <input type="text" name="endDate" placeholder="Datepicker"
-                                        class="form-control input-date" bsDatepicker
-                                        [(ngModel)]="modalStudentUpdate.endingDateOfStay" />
-                                </div>
-                            </div>
 
-                            <div class="row" *ngIf="studentUpdateError">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <p class="alert alert-danger" style="margin-bottom: 0;">{{studentUpdateError}}</p>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                    <div class="col-xs-6 col-md-2 col-title">ROOM PAYMENT</div>
-                    <div class="col-xs-6 col-md-3"
-                        [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
-                    </div>
-                    <div class="col-xs-6 col-md-3 col-title">POWER PAYMENT</div>
-                    <div class="col-xs-6 col-md-4"
-                        [ngStyle]=" {'color': modalStudent.isPayPowerBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayPowerBill ? "COMPLETED" : 'NOT COMPLETED' }}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-6 col-md-2 col-title">WATER PAYMENT</div>
-                    <div class="col-xs-6 col-md-3"
-                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
-                    </div>
-                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
-                    <div class="col-xs-6 col-md-4"
-                        [ngStyle]=" {'color': modalStudent.isPayVehicleBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayVehicleBill ? "COMPLETED" : 'NOT COMPLETED' }}
-                    </div>
-                </div> 
-
-                             <div class="row" *ngIf="typeRoomError">
+                            <!-- <div class="row" *ngIf="typeRoomError">
                   <div class="col-xs-12 col-md-6 col-left">
                     <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
                   </div>
-                </div>
+                </div> -->
                         </form>
                     </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="saveChange()">Submit</button>
+            <button type="button" class="btn btn-success" (click)="saveUpdate()">Submit</button>
             <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
         </div>
     </div>
 </ng-template>
 
-<ng-template #modalDeleteStudent let-modal class="modal fade" id="modalDelete" aria-labelledby="exampleModalLabel-2">
+<!-- <ng-template #modalDeleteStudent let-modal class="modal fade" id="modalDelete" aria-labelledby="exampleModalLabel-2">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title" id="modalDelete">Delete Student</h5>

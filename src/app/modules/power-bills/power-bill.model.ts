@@ -1,6 +1,6 @@
-import { RoomDto } from '../rooms/room-dto.model';
+import { Room } from '../rooms/room.model';
 export class PowerBill {
-  roomDto: RoomDto;
+  detailRoomDto: Room;
   billId: number;
   startDate: Date;
   endDate: Date;

@@ -4,6 +4,9 @@ export class Room {
   name: string;
   quantityStudent: number;
   priceRoom: number;
+  priceWater: number;
+  priceVehicle: number;
+  pricePower: number;
   campusName: string;
   userManager: string;
   typeRoom: any;
@@ -11,7 +14,6 @@ export class Room {
   isPayRoom: boolean;
   isPayWaterBill: boolean;
   isPayVehicleBill: boolean;
-  isPayPowerBill: boolean;
   constructor(init?: Partial<Room>) {
     Object.assign(this, init);
   }
