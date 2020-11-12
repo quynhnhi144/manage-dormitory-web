@@ -1,3 +1,7 @@
+body {
+  font-family: $font-family;
+}
+
 // custom pagination of ng-boostrap
 .pagination {
   & > li {
@@ -422,5 +426,16 @@
         content: "";
       }
     }
+  }
+}
+
+.month-year-picker {
+  input {
+    border-radius: 20px;
+    font-size: 16px;
+    font-family: "ROBOTO";
+    outline: none;
+    width: 111px;
+    color: #8a9099;
   }
 }

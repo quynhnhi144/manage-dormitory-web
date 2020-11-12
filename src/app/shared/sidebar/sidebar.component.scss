@@ -4,7 +4,7 @@
 .sidebar {
   min-height: calc(100vh - #{$navbar-height});
   background: $sidebar-bg;
-  font-family: $type1-regular;
+  font-family: $font-family;
   padding: 0;
   width: $sidebar-width-lg;
   z-index: 11;

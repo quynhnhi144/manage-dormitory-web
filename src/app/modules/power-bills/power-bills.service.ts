@@ -21,8 +21,13 @@ export class PowerBillsService {
       searchText;
   }
 
-  getAPowerBill(roomId: number) {
-    let url = this.baseUrl + '/api/powerBills/' + roomId;
+  getAPowerBill(roomId: number, date: Date) {
+    let url =
+      this.baseUrl +
+      '/api/powerBills/' +
+      roomId +
+      '?&date=' +
+      encodeURIComponent(date.toISOString());
     return this.http.get(url, { headers: this.headers });
   }
 }
