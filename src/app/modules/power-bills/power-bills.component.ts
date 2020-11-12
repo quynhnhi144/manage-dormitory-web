@@ -33,6 +33,7 @@ export class PowerBillsComponent implements OnInit {
   isSent = false;
 
   modalUpdatePowerBillError = null;
+  currentDate = new Date();
 
   constructor(
     private httpClient: HttpClient,
@@ -79,7 +80,11 @@ export class PowerBillsComponent implements OnInit {
       this.skip +
       '&take=' +
       this.pageSize +
-      paramSearchText;
+      paramSearchText +
+      '&date=' +
+      encodeURIComponent(this.currentDate.toISOString());
+
+    console.log('url: ', url);
 
     this.httpClient.get(url, { headers }).subscribe(
       (data: any) => {
@@ -91,6 +96,13 @@ export class PowerBillsComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  onOpenCalendar(container) {
+    container.monthSelectHandler = (event: any): void => {
+      container._store.dispatch(container._actions.select(event.date));
+    };
+    container.setViewMode('month');
   }
 
   resetPage() {
@@ -124,7 +136,7 @@ export class PowerBillsComponent implements OnInit {
 
   getDetailAPowerBill() {
     this.powerBillsService
-      .getAPowerBill(this.currentRoomId)
+      .getAPowerBill(this.currentRoomId, this.currentDate)
       .subscribe((data: any) => {
         console.log('detail power bill: ', data);
         this.modalRoomPowerBill = data;
@@ -138,33 +150,83 @@ export class PowerBillsComponent implements OnInit {
   }
 
   getPowerBillUpdate() {
-    this.powerBillsService.getAPowerBill(this.currentRoomId).subscribe(
-      (data: any) => {
-        console.log('detail power bill: ', data);
-        this.modalRoomPowerBillUpdate = new PowerBill({
-          detailRoomDto: data.detailRoomDto,
-          billId: data.billId,
-          startDate: new Date(data.startDate),
-          endDate: new Date(data.endDate),
-          numberOfPowerBegin: data.numberOfPowerBegin,
-          numberOfPowerEnd: data.numberOfPowerEnd,
-          numberOfPowerUsed: data.numberOfPowerUsed,
-          priceAKWH: data.priceAKWH,
-          numberOfMoneyMustPay: data.numberOfMoneyMustPay,
-          pay: data.pay,
-        });
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.powerBillsService
+      .getAPowerBill(this.currentRoomId, this.currentDate)
+      .subscribe(
+        (data: any) => {
+          console.log('detail power bill: ', data);
+          this.modalRoomPowerBillUpdate = new PowerBill({
+            detailRoomDto: data.detailRoomDto,
+            billId: data.billId,
+            startDate: new Date(data.startDate),
+            endDate: new Date(data.endDate),
+            numberOfPowerBegin: data.numberOfPowerBegin,
+            numberOfPowerEnd: data.numberOfPowerEnd,
+            numberOfPowerUsed: data.numberOfPowerUsed,
+            priceAKWH: data.priceAKWH,
+            numberOfMoneyMustPay: data.numberOfMoneyMustPay,
+            pay: data.pay,
+          });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   changeStatusPayment(modalRoomPowerBillUpdate) {
     modalRoomPowerBillUpdate.pay = !modalRoomPowerBillUpdate.pay;
   }
 
-  saveUpdate() {}
+  saveUpdate() {
+    if (!this.modalRoomPowerBillUpdate.startDate) {
+      this.modalUpdatePowerBillError = 'Start Date is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (!this.modalRoomPowerBillUpdate.endDate) {
+      this.modalUpdatePowerBillError = 'End Date is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.modalRoomPowerBillUpdate.numberOfPowerBegin == null) {
+      this.modalUpdatePowerBillError = 'Number of Power Begin is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.modalRoomPowerBillUpdate.numberOfPowerEnd == null) {
+      this.modalUpdatePowerBillError = 'Number of Power End is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.modalRoomPowerBillUpdate.numberOfPowerUsed == null) {
+      this.modalUpdatePowerBillError = 'Number of Power Used is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/powerBills/' + this.currentRoomId;
+    this.httpClient
+      .put(url, this.modalRoomPowerBillUpdate, { headers })
+      .subscribe(
+        (data: any) => {
+          let index = this.rooms.findIndex(
+            (room) => room.detailRoomDto.id === this.currentRoomId
+          );
+          this.rooms[index] = data;
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
 
   sendMail(room: PowerBill) {
     let roomSendRequest = {
@@ -211,10 +273,22 @@ export class PowerBillsComponent implements OnInit {
     ) {
       this.modalUpdatePowerBillError =
         'Number of Power Begin cannot bigger than End';
+      this.turnOffNotification();
+      return;
     } else {
       this.modalRoomPowerBillUpdate.numberOfPowerUsed =
         this.modalRoomPowerBillUpdate.numberOfPowerEnd -
         this.modalRoomPowerBillUpdate.numberOfPowerBegin;
+
+      const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+      let url = GlobalConstants.apiURL;
+      url += '/api/powerBills/calculate-powerBill';
+      this.httpClient
+        .post(url, this.modalRoomPowerBillUpdate, { headers })
+        .subscribe((data: any) => {
+          console.log('data: ', data);
+          this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
+        });
     }
   }
 
