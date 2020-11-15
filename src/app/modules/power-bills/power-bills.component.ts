@@ -5,6 +5,8 @@ import { CampusService } from '../../services/campus.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { PowerBillsService } from './power-bills.service';
 import { PowerBill } from './power-bill.model';
+import { ToastrService } from 'ngx-toastr';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-power-bills',
@@ -29,9 +31,6 @@ export class PowerBillsComponent implements OnInit {
 
   modalOption: NgbModalOptions = {};
 
-  messageMail = null;
-  isSent = false;
-
   modalUpdatePowerBillError = null;
   currentDate = new Date();
 
@@ -39,7 +38,9 @@ export class PowerBillsComponent implements OnInit {
     private httpClient: HttpClient,
     private campusService: CampusService,
     private modalService: NgbModal,
-    private powerBillsService: PowerBillsService
+    private powerBillsService: PowerBillsService,
+    private toastr: ToastrService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +48,7 @@ export class PowerBillsComponent implements OnInit {
     this.getAllPowerBills(0, 'all', 1);
   }
 
+  // get all power bills
   getAllCampuses() {
     this.campusService.getAllCampuses().subscribe(
       (data: any) => {
@@ -82,7 +84,7 @@ export class PowerBillsComponent implements OnInit {
       this.pageSize +
       paramSearchText +
       '&date=' +
-      encodeURIComponent(this.currentDate.toISOString());
+      this.formatDate(this.currentDate);
 
     console.log('url: ', url);
 
@@ -96,6 +98,13 @@ export class PowerBillsComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  formatDate(currentDate: Date) {
+    let year = currentDate.getFullYear();
+    let month = currentDate.getMonth() + 1;
+    let date = currentDate.getDate();
+    return year + '-' + month + '-' + date;
   }
 
   onOpenCalendar(container) {
@@ -136,13 +145,14 @@ export class PowerBillsComponent implements OnInit {
 
   getDetailAPowerBill() {
     this.powerBillsService
-      .getAPowerBill(this.currentRoomId, this.currentDate)
+      .getAPowerBill(this.currentRoomId, this.formatDate(this.currentDate))
       .subscribe((data: any) => {
         console.log('detail power bill: ', data);
         this.modalRoomPowerBill = data;
       });
   }
 
+  // modal power bill update
   openModalUpdateAStudent(modalUpdateAPowerBill, room: any) {
     this.currentRoomId = room.detailRoomDto.id;
     this.getPowerBillUpdate();
@@ -151,7 +161,7 @@ export class PowerBillsComponent implements OnInit {
 
   getPowerBillUpdate() {
     this.powerBillsService
-      .getAPowerBill(this.currentRoomId, this.currentDate)
+      .getAPowerBill(this.currentRoomId, this.formatDate(this.currentDate))
       .subscribe(
         (data: any) => {
           console.log('detail power bill: ', data);
@@ -176,6 +186,32 @@ export class PowerBillsComponent implements OnInit {
 
   changeStatusPayment(modalRoomPowerBillUpdate) {
     modalRoomPowerBillUpdate.pay = !modalRoomPowerBillUpdate.pay;
+  }
+
+  changeNumberOfPowerUsed() {
+    if (
+      this.modalRoomPowerBillUpdate.numberOfPowerBegin >
+      this.modalRoomPowerBillUpdate.numberOfPowerEnd
+    ) {
+      this.modalUpdatePowerBillError =
+        'Number of Power Begin cannot bigger than End';
+      this.turnOffNotification();
+      return;
+    } else {
+      this.modalRoomPowerBillUpdate.numberOfPowerUsed =
+        this.modalRoomPowerBillUpdate.numberOfPowerEnd -
+        this.modalRoomPowerBillUpdate.numberOfPowerBegin;
+
+      const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+      let url = GlobalConstants.apiURL;
+      url += '/api/powerBills/calculate-powerBill';
+      this.httpClient
+        .post(url, this.modalRoomPowerBillUpdate, { headers })
+        .subscribe((data: any) => {
+          console.log('data: ', data);
+          this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
+        });
+    }
   }
 
   saveUpdate() {
@@ -228,6 +264,7 @@ export class PowerBillsComponent implements OnInit {
       );
   }
 
+  // send power bill mail
   sendMail(room: PowerBill) {
     let roomSendRequest = {
       detailRoomDto: room.detailRoomDto,
@@ -247,49 +284,45 @@ export class PowerBillsComponent implements OnInit {
 
     this.httpClient.post(url, roomSendRequest, { headers }).subscribe(
       (data: any) => {
-        this.isSent = true;
-        this.messageMail = 'Mail sent successfully!!!';
-        setTimeout(() => {
-          this.messageMail = '';
-        }, 5000);
+        this.notificationService.sendNotificationMessage({
+          message: 'Mail is successful !!!',
+          isSuccess: true,
+        });
         console.log('mail: ' + data.message);
       },
       (error) => {
-        this.isSent = false;
-        this.messageMail =
-          'Error! An error occurred. Please try again later!!!';
-        setTimeout(() => {
-          this.messageMail = '';
-        }, 5000);
+        this.notificationService.sendNotificationMessage({
+          message: 'Error! An error occurred. Please try again later!!!',
+          isSuccess: false,
+        });
         console.log(error);
       }
     );
   }
 
-  changeNumberOfPowerUsed() {
-    if (
-      this.modalRoomPowerBillUpdate.numberOfPowerBegin >
-      this.modalRoomPowerBillUpdate.numberOfPowerEnd
-    ) {
-      this.modalUpdatePowerBillError =
-        'Number of Power Begin cannot bigger than End';
-      this.turnOffNotification();
-      return;
-    } else {
-      this.modalRoomPowerBillUpdate.numberOfPowerUsed =
-        this.modalRoomPowerBillUpdate.numberOfPowerEnd -
-        this.modalRoomPowerBillUpdate.numberOfPowerBegin;
-
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-      let url = GlobalConstants.apiURL;
-      url += '/api/powerBills/calculate-powerBill';
-      this.httpClient
-        .post(url, this.modalRoomPowerBillUpdate, { headers })
-        .subscribe((data: any) => {
-          console.log('data: ', data);
-          this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
+  sendMailForAllPowerBills() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url +=
+      '/api/powerBills/send-notification-for-powerBills?' +
+      '&date=' +
+      this.formatDate(this.currentDate);
+    this.httpClient.get(url, { headers }).subscribe(
+      (data: any) => {
+        this.notificationService.sendNotificationMessage({
+          message: 'Mail is successful !!!',
+          isSuccess: true,
         });
-    }
+        console.log('mail: ' + data.message);
+      },
+      (error) => {
+        this.notificationService.sendNotificationMessage({
+          message: 'Error! An error occurred. Please try again later!!!',
+          isSuccess: false,
+        });
+        console.log(error);
+      }
+    );
   }
 
   turnOffNotification() {
@@ -298,18 +331,3 @@ export class PowerBillsComponent implements OnInit {
     }, 5000);
   }
 }
-
-// (data: any) => {
-//   this.modalRoomPowerBill = new PowerBill({
-//     roomDto: data.roomDto,
-//     billId: data.billId,
-//     startDate: data.startDate,
-//     endDate: data.endDate,
-//     numberOfPowerBegin: data.numberOfPowerBegin,
-//     numberOfPowerEnd: data.numberOfPowerEnd,
-//     numberOfPowerUsed: data.numberOfPowerUsed,
-//     priceAKWH: data.priceAKWH,
-//     numberOfMoneyMustPay: data.numberOfMoneyMustPay,
-//     pay: data.pay,
-//   });
-// }

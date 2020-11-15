@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PowerBillsComponent } from './power-bills.component';
 import { PowerBillsRoutingModule } from './power-bills-routing.module';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ToastrModule } from 'ngx-toastr';
 
 @NgModule({
   declarations: [PowerBillsComponent],
@@ -14,6 +15,10 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     FormsModule,
     NgbModule,
     BsDatepickerModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
   exports: [BsDatepickerModule],
 })

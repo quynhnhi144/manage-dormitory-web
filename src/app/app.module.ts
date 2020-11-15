@@ -11,6 +11,7 @@ import { IconsModule } from './icons/icons.module';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { ToastrModule } from 'ngx-toastr';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -24,6 +25,10 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     FormsModule,
     BrowserAnimationsModule,
     BsDatepickerModule.forRoot(),
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],

@@ -34,14 +34,22 @@
       .section-search-btn-wrapper {
         display: inline-block;
         width: 50%;
+        .btn-add {
+          width: 134px;
+          height: 45px;
+          border: 1px solid #898e93;
+          padding: 14px;
+          border-radius: 14px;
+          margin-left: 20px;
+        }
         .people-select {
           .ng-dropdown-panel {
             .ng-dropdown-panel-items {
               .ng-option {
                 &.ng-option-marked {
                   background-color: #f2f2f7 !important;
-                  height: 54px !important;
-                  width: 478px;
+                  // height: 54px !important;
+                  // width: 478px;
                 }
               }
             }
