@@ -1,0 +1,10 @@
+.input-group {
+  .btn-search {
+    &.btn-search-custom {
+      cursor: pointer;
+      position: absolute;
+      right: 406px;
+      top: 8px;
+    }
+  }
+}

@@ -100,7 +100,7 @@ body {
       background: #fff !important;
       border: 1px solid #e1e1e6;
       border-radius: 16px;
-      width: 102px;
+      width: 112px;
     }
 
     .search-input {
@@ -438,4 +438,8 @@ body {
     width: 111px;
     color: #8a9099;
   }
+}
+
+.toast-top-right {
+  top: 65px;
 }

@@ -7,6 +7,7 @@ import { TypeRoomService } from '../../services/typeroom.service';
 import { Room } from './room.model';
 import { Student } from '../students/student.model';
 import * as FileSaver from 'file-saver';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-rooms',
@@ -68,7 +69,6 @@ export class RoomsComponent implements OnInit {
     isPayWaterBill: true,
     isPayVehicleBill: true,
   });
-  message = '';
   currentRoomId = 0;
 
   newRoomForm = this.modalRoom;
@@ -295,7 +295,7 @@ export class RoomsComponent implements OnInit {
           for (let i = 0; i < studentList.length; i++) {
             let label = studentList[i].name;
             let name =
-              studentList[i].name + ' <' + studentList[i].roomName + '> ';
+              studentList[i].name + ' <' + studentList[i].roomDto.name + '> ';
             let item = {
               id: studentList[i].id,
               name: name,
@@ -307,7 +307,11 @@ export class RoomsComponent implements OnInit {
     }
   }
 
-  unselect(item) {}
+  unselect(item) {
+    this.selectedStudentIds = this.selectedStudentIds.filter(
+      (sid) => sid !== item.id
+    );
+  }
 
   checkQuantityStudent(typeRoomId: number) {
     if (typeRoomId == null) {
