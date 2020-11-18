@@ -13,10 +13,6 @@
                         (ngModelChange)="getAllPowerBills(campusIndex,campusType)">
                 </form>
             </div>
-
-            <div class="create-user-btn" style="float: right;">
-                <button type="button" class="btn btn-round btn-new-power-bill">+ Create New Power Bill</button>
-            </div>
             <div style="clear: both"></div>
             <!-- START TABS -->
             <div>
@@ -82,6 +78,7 @@
                                     <th>Payment</th>
                                     <th></th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,7 +128,7 @@
 
                                     <td>
                                         <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                                            (click)="openModalUpdateAStudent(modalUpdateAPowerBill,room)"></i>
+                                            (click)="openModalUpdatePowerBill(modalUpdateAPowerBill,room)"></i>
                                     </td>
                                     <td>
                                         <div class="dropdown dropdown-mail" ngbDropdown>
@@ -145,6 +142,10 @@
                                                     (click)="sendMail(room)">Send Mail</a>
                                             </div>
                                         </div>
+                                    </td>
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-plus"
+                                            (click)="openModalNewPowerBill(modalUpdateAPowerBill,room)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="roomTotal == 0">
@@ -348,7 +349,7 @@
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]="modalRoomPowerBillUpdate.startDate" required />
                                 </div>
-                                <div class="col-xs-12 col-md-6 col-right">
+                                <div *ngIf="!isNew" class="col-xs-12 col-md-6 col-right">
                                     <label for="name">Bill Id</label>
                                     <input name="name" [(ngModel)]="modalRoomPowerBillUpdate.billId"
                                         class="disable-input" readonly />
@@ -382,7 +383,7 @@
                                 <div class="col-xs-12 col-md-6 col-right">
                                     <label for="totalMonetMustPay">Total Money Must Pay</label>
                                     <input name="totalMonetMustPay" class="disable-input"
-                                        [ngModel]="(modalRoomPowerBillUpdate.numberOfMoneyMustPay | number) + 'đ'"
+                                        [ngModel]="modalRoomPowerBillUpdate.numberOfMoneyMustPay ? (modalRoomPowerBillUpdate.numberOfMoneyMustPay | number) + 'đ' : null"
                                         (ngModelChange)="modalRoomPowerBillUpdate.numberOfMoneyMustPay" readonly />
                                 </div>
                             </div>
