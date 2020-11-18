@@ -7,7 +7,7 @@ export class PowerBill {
   numberOfPowerBegin: number;
   numberOfPowerEnd: number;
   numberOfPowerUsed: number;
-  priceAKWH: number;
+  priceList: any;
   numberOfMoneyMustPay: number;
   pay: boolean;
 

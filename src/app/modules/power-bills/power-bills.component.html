@@ -13,6 +13,10 @@
                         (ngModelChange)="getAllPowerBills(campusIndex,campusType)">
                 </form>
             </div>
+
+            <div class="create-user-btn" style="float: right;">
+                <button type="button" class="btn btn-round btn-new-power-bill">+ Create New Power Bill</button>
+            </div>
             <div style="clear: both"></div>
             <!-- START TABS -->
             <div>
@@ -46,11 +50,13 @@
                             (keydown.enter)="onSearch($event)" placeholder="Search by room name" />
                         <img class="btn-search btn-search-custom" (click)="onSearch($event)"
                             src="../../assets/images/search_icon.png" title="Search" width="20" />
-                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                        <button type="button" class="btn-icon btn-round btn-export ml-3"
+                            (click)="openModalImportFile(modalImportFile)">
                             <img src="../../assets/images/import.png" width="15" />
                             Import
                         </button>
-                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                        <button type="button" class="btn-icon btn-round btn-export ml-3"
+                            (click)="exportPowerBillExcel()">
                             <img src="../../assets/images/export.png" width="15" />
                             Export
                         </button>
@@ -284,9 +290,18 @@
                 <div class="row">
                     <div class="col-xs-6 col-md-1 "></div>
                     <div class="col-xs-6 col-md-3 col-title">PAYMENT</div>
-                    <div class="col-xs-6 col-md-2"
-                        [ngStyle]=" {'color': modalRoomPowerBill.pay ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalRoomPowerBill.pay ? "COMPLETED" :  'NOT COMPLETED'}}
+
+                    <div *ngIf="modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
+                        [ngStyle]="{'color': ' #20a144','font-weight': 'bold'}">
+                        COMPLETED
+                    </div>
+                    <div *ngIf="modalRoomPowerBill.billId && !modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
+                        [ngStyle]="{'color': ' #f05c54','font-weight': 'bold'}">
+                        NOT&nbsp;COMPLETED
+                    </div>
+                    <div *ngIf="!modalRoomPowerBill.billId && !modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
+                        [ngStyle]="{'color': ' #eb9510','font-weight': 'bold'}">
+                        NO&nbsp;DATA
                     </div>
                 </div>
 
@@ -400,6 +415,35 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="saveUpdate()">Submit</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalImportFile let-modal class="modal fade" id="modalImportFile" aria-labelledby="modalImportFileLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalImportFileLabel">IMPORT FILE</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input class="input-file" type="file" (change)="onFileSelected($event)" id="file-browser">
+
+            <div style="margin-top: 20px;">
+                <span class="alert-danger" style="font-size: 16px; padding: 5px;" *ngIf="!isExtention">
+                    This is not a excel file!!!</span>
+            </div>
+
+            <div class="progress" *ngIf="progress" style="margin-top: 20px; height: 15px;">
+                <div class="progress-bar bg-success" [style.width]="progress + '%'" aria-valuemin="0"
+                    aria-valuemax="100">
+                    {{progress}}%</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="submit()">Submit</button>
             <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
         </div>
     </div>

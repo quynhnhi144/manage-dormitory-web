@@ -1,3 +1,13 @@
+.main-content {
+  .btn-new-power-bill {
+    font-family: Roboto;
+    background: #b66dff !important;
+    color: #ffffff !important;
+    margin-bottom: 17px;
+    border-radius: 14px;
+  }
+}
+
 .input-group {
   .btn-search {
     &.btn-search-custom {
@@ -5,6 +15,40 @@
       position: absolute;
       right: 406px;
       top: 8px;
+    }
+  }
+}
+
+.modal-body {
+  #file-browser {
+    margin-left: 36px;
+    &::-webkit-file-upload-button {
+      visibility: hidden;
+    }
+    &::before {
+      content: "Choose File";
+      text-transform: uppercase;
+      display: inline-block;
+      background: #39d2b4;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 14px;
+      outline: none;
+      white-space: nowrap;
+      -webkit-user-select: none;
+      font-weight: 500;
+      font-size: 16px;
+      cursor: pointer;
+      position: absolute;
+      left: 15px;
+      top: 10px;
+    }
+
+    &:hover {
+      &::before {
+        background: #34495e;
+        color: #39d2b4;
+      }
     }
   }
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
 import { CampusService } from '../../services/campus.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { PowerBillsService } from './power-bills.service';
 import { PowerBill } from './power-bill.model';
-import { ToastrService } from 'ngx-toastr';
 import { NotificationService } from '../../services/notification.service';
+import * as FileSaver from 'file-saver';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-power-bills',
@@ -34,12 +35,18 @@ export class PowerBillsComponent implements OnInit {
   modalUpdatePowerBillError = null;
   currentDate = new Date();
 
+  progress: number;
+
+  selectedFile: File = null;
+
+  isExtention = true;
+  isSubmit = true;
+
   constructor(
     private httpClient: HttpClient,
     private campusService: CampusService,
     private modalService: NgbModal,
     private powerBillsService: PowerBillsService,
-    private toastr: ToastrService,
     private notificationService: NotificationService
   ) {}
 
@@ -173,7 +180,7 @@ export class PowerBillsComponent implements OnInit {
             numberOfPowerBegin: data.numberOfPowerBegin,
             numberOfPowerEnd: data.numberOfPowerEnd,
             numberOfPowerUsed: data.numberOfPowerUsed,
-            priceAKWH: data.priceAKWH,
+            priceList: data.priceList,
             numberOfMoneyMustPay: data.numberOfMoneyMustPay,
             pay: data.pay,
           });
@@ -205,10 +212,11 @@ export class PowerBillsComponent implements OnInit {
       const headers = new HttpHeaders().set('Authorization', 'Bearer ');
       let url = GlobalConstants.apiURL;
       url += '/api/powerBills/calculate-powerBill';
+
+      console.log('aa: ' + this.modalRoomPowerBillUpdate);
       this.httpClient
         .post(url, this.modalRoomPowerBillUpdate, { headers })
         .subscribe((data: any) => {
-          console.log('data: ', data);
           this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
         });
     }
@@ -274,7 +282,7 @@ export class PowerBillsComponent implements OnInit {
       numberOfPowerBegin: room.numberOfPowerBegin,
       numberOfPowerEnd: room.numberOfPowerEnd,
       numberOfPowerUsed: room.numberOfPowerUsed,
-      priceAKWH: room.priceAKWH,
+      priceList: room.priceList,
       numberOfMoneyMustPay: room.numberOfMoneyMustPay,
       pay: room.pay,
     };
@@ -329,5 +337,121 @@ export class PowerBillsComponent implements OnInit {
     setTimeout(() => {
       this.modalUpdatePowerBillError = '';
     }, 5000);
+  }
+
+  openModalImportFile(modalImportFile) {
+    this.openModal(modalImportFile);
+  }
+
+  onFileSelected(event) {
+    this.selectedFile = event.target.files[0];
+
+    let extention = this.selectedFile.name.substring(
+      this.selectedFile.name.lastIndexOf('.') + 1
+    );
+    if (extention !== 'xlsx' && extention !== 'xls') {
+      this.isExtention = false;
+      this.isSubmit = false;
+      setTimeout(() => {
+        this.isExtention = true;
+      }, 3000);
+    } else {
+      this.isSubmit = true;
+    }
+  }
+
+  submit() {
+    if (!this.selectedFile && !this.progress) {
+      this.isExtention = false;
+      this.progress = null;
+      setTimeout(() => {
+        this.isExtention = true;
+      }, 3000);
+      return;
+    }
+    if (!this.isSubmit) {
+      this.isExtention = false;
+      this.progress = null;
+      setTimeout(() => {
+        this.isExtention = true;
+      }, 3000);
+      return;
+    }
+    this.progress = 1;
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url +=
+      '/api/powerBills/uploadFile?' +
+      '&date=' +
+      this.formatDate(this.currentDate);
+
+    this.httpClient
+      .post(url, formData, { headers, reportProgress: true, observe: 'events' })
+      .subscribe(
+        async (event: any) => {
+          switch (event.type) {
+            case HttpEventType.Response:
+              this.progress = null;
+              console.log('event: ', event.body);
+              break;
+            case HttpEventType.UploadProgress:
+              if (
+                Math.round(this.progress) !==
+                Math.round((event.loaded / event.total) * 100)
+              ) {
+                this.progress = (event.loaded / event.total) * 100;
+              }
+              await this.powerBillsService
+                .getAllPowerBills(
+                  this.skip,
+                  this.pageSize,
+                  this.formatDate(this.currentDate)
+                )
+                .toPromise();
+              this.modalService.dismissAll();
+              this.notificationService.sendNotificationMessage({
+                message: 'Đã thực hiện thành công!!!',
+                isSuccess: true,
+              });
+              break;
+          }
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Lỗi! Một lỗi đã xảy ra. Hãy kiểm tra lại!!!',
+            isSuccess: false,
+          });
+          this.progress = null;
+          this.modalService.dismissAll();
+        }
+      );
+  }
+
+  exportPowerBillExcel() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url +=
+      '/api/powerBills/export?' + '&date=' + this.formatDate(this.currentDate);
+    this.httpClient.get(url, { responseType: 'blob', headers }).subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'powerBills.xlsx'
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  downloadFile(data: any, type: string, fileName: string) {
+    let blob = new Blob([data], { type: type });
+    FileSaver.saveAs(blob, fileName);
   }
 }
