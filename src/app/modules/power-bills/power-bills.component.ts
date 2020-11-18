@@ -7,7 +7,6 @@ import { PowerBillsService } from './power-bills.service';
 import { PowerBill } from './power-bill.model';
 import { NotificationService } from '../../services/notification.service';
 import * as FileSaver from 'file-saver';
-import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-power-bills',
@@ -41,6 +40,10 @@ export class PowerBillsComponent implements OnInit {
 
   isExtention = true;
   isSubmit = true;
+
+  modalNewPowerBill = new PowerBill();
+
+  isNew = false;
 
   constructor(
     private httpClient: HttpClient,
@@ -159,8 +162,16 @@ export class PowerBillsComponent implements OnInit {
       });
   }
 
+  //modal new power bill
+  openModalNewPowerBill(modalUpdateAPowerBill, room: any) {
+    this.currentRoomId = room.detailRoomDto.id;
+    this.isNew = true;
+    this.getPowerBillUpdate();
+    this.openModal(modalUpdateAPowerBill);
+  }
+
   // modal power bill update
-  openModalUpdateAStudent(modalUpdateAPowerBill, room: any) {
+  openModalUpdatePowerBill(modalUpdateAPowerBill, room: any) {
     this.currentRoomId = room.detailRoomDto.id;
     this.getPowerBillUpdate();
     this.openModal(modalUpdateAPowerBill);
@@ -172,18 +183,33 @@ export class PowerBillsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           console.log('detail power bill: ', data);
-          this.modalRoomPowerBillUpdate = new PowerBill({
-            detailRoomDto: data.detailRoomDto,
-            billId: data.billId,
-            startDate: new Date(data.startDate),
-            endDate: new Date(data.endDate),
-            numberOfPowerBegin: data.numberOfPowerBegin,
-            numberOfPowerEnd: data.numberOfPowerEnd,
-            numberOfPowerUsed: data.numberOfPowerUsed,
-            priceList: data.priceList,
-            numberOfMoneyMustPay: data.numberOfMoneyMustPay,
-            pay: data.pay,
-          });
+          if (this.isNew) {
+            this.modalRoomPowerBillUpdate = new PowerBill({
+              detailRoomDto: data.detailRoomDto,
+              billId: null,
+              startDate: new Date(data.endDate),
+              endDate: null,
+              numberOfPowerBegin: data.numberOfPowerEnd,
+              numberOfPowerEnd: null,
+              numberOfPowerUsed: null,
+              priceList: data.priceList,
+              numberOfMoneyMustPay: null,
+              pay: null,
+            });
+          } else {
+            this.modalRoomPowerBillUpdate = new PowerBill({
+              detailRoomDto: data.detailRoomDto,
+              billId: data.billId,
+              startDate: new Date(data.startDate),
+              endDate: new Date(data.endDate),
+              numberOfPowerBegin: data.numberOfPowerBegin,
+              numberOfPowerEnd: data.numberOfPowerEnd,
+              numberOfPowerUsed: data.numberOfPowerUsed,
+              priceList: data.priceList,
+              numberOfMoneyMustPay: data.numberOfMoneyMustPay,
+              pay: data.pay,
+            });
+          }
         },
         (error) => {
           console.log(error);
@@ -212,8 +238,6 @@ export class PowerBillsComponent implements OnInit {
       const headers = new HttpHeaders().set('Authorization', 'Bearer ');
       let url = GlobalConstants.apiURL;
       url += '/api/powerBills/calculate-powerBill';
-
-      console.log('aa: ' + this.modalRoomPowerBillUpdate);
       this.httpClient
         .post(url, this.modalRoomPowerBillUpdate, { headers })
         .subscribe((data: any) => {
@@ -256,20 +280,38 @@ export class PowerBillsComponent implements OnInit {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ');
     let url = GlobalConstants.apiURL;
     url += '/api/powerBills/' + this.currentRoomId;
-    this.httpClient
-      .put(url, this.modalRoomPowerBillUpdate, { headers })
-      .subscribe(
-        (data: any) => {
-          let index = this.rooms.findIndex(
-            (room) => room.detailRoomDto.id === this.currentRoomId
-          );
-          this.rooms[index] = data;
-          this.modalService.dismissAll();
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
+    if (!this.isNew) {
+      this.httpClient
+        .put(url, this.modalRoomPowerBillUpdate, { headers })
+        .subscribe(
+          (data: any) => {
+            let index = this.rooms.findIndex(
+              (room) => room.detailRoomDto.id === this.currentRoomId
+            );
+            this.rooms[index] = data;
+            this.modalService.dismissAll();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    } else {
+      this.httpClient
+        .post(url, this.modalRoomPowerBillUpdate, { headers })
+        .subscribe(
+          (data: any) => {
+            console.log('new data: ', data);
+            let index = this.rooms.findIndex(
+              (room) => room.detailRoomDto.id === this.currentRoomId
+            );
+            this.rooms[index] = data;
+            this.modalService.dismissAll();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    }
   }
 
   // send power bill mail
