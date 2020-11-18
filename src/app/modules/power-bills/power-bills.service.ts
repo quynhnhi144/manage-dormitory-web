@@ -10,7 +10,7 @@ export class PowerBillsService {
   headers = new HttpHeaders().set('Authorization', 'Bearer ');
   constructor(private http: HttpClient) {}
 
-  getAllPowerBills(skip: number, take: number, searchText: string) {
+  getAllPowerBills(skip: number, take: number, currentDate: string) {
     let url =
       this.baseUrl +
       '/api/powerBills?' +
@@ -18,7 +18,9 @@ export class PowerBillsService {
       skip +
       '&take=' +
       take +
-      searchText;
+      '&date=' +
+      currentDate;
+    return this.http.get(url, { headers: this.headers });
   }
 
   getAPowerBill(roomId: number, dateString: string) {
