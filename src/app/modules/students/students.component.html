@@ -54,7 +54,7 @@
                                     <th>Room Payment</th>
                                     <th>Water Payment</th>
                                     <th>Vehicle Payment</th>
-                                    <th></th>
+                                    <th>Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -96,13 +96,18 @@
                                         </div>
                                     </td>
 
+                                    <td (click)="openModalDeleteStudent(modalDeleteStudent, student)">
+                                        <div *ngIf="student.active" class="pill pill-1">
+                                            ACTIVED
+                                        </div>
+                                        <div *ngIf="!student.active" class="pill pill-2">
+                                            UNACTIVED
+                                        </div>
+                                    </td>
+
                                     <td>
                                         <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                             (click)="openModalUpdateAStudent(modalUpdateAStudent, student)"></i>
-                                    </td>
-                                    <td>
-                                        <i class="icon-delete mdi mdi-24px mdi-delete-outline"
-                                            (click)="openModalDeleteStudent(modalDeleteStudent, student)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="studentTotal == 0">
@@ -157,12 +162,12 @@
 </div>
 
 <!-- START ROOM DETAIL MODAL -->
-<ng-template #modalDetailAStudent let-modal class="modal fade" id="exampleModal-3"
-    aria-labelledby="exampleModalLabel-2">
+<ng-template #modalDetailAStudent let-modal class="modal fade" id="modalDetailAStudent"
+    aria-labelledby="modalDetailAStudentLabel">
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="exampleModalLabel-2">STUDENT DETAIL</h3>
+            <h3 class="modal-title" id="modalDetailAStudentLabel">STUDENT DETAIL</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -282,6 +287,12 @@
                         [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
                         {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
                     </div>
+
+                    <div class="col-xs-6 col-md-3 col-title">STATUS</div>
+                    <div class="col-xs-6 col-md-3"
+                        [ngStyle]=" {'color': modalStudent.active ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.active ? "ACTIVED" : 'UNACTIVED' }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -289,12 +300,12 @@
 </ng-template>
 
 <!-- START UPDATE STUDENT MODAL -->
-<ng-template #modalUpdateAStudent let-modal class="modal fade" id="exampleModal-3"
-    aria-labelledby="exampleModalLabel-3">
+<ng-template #modalUpdateAStudent let-modal class="modal fade" id="modalUpdateAStudent"
+    aria-labelledby="modalUpdateAStudentLabel">
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE STUDENT</h3>
+            <h3 class="modal-title" id="modalUpdateAStudentLabel">UPDATE STUDENT</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -433,16 +444,25 @@
     </div>
 </ng-template>
 
-<ng-template #modalDeleteStudent let-modal class="modal fade" id="modalDelete" aria-labelledby="exampleModalLabel-2">
+<ng-template #modalDeleteStudent let-modal class="modal fade modal-a" id="modalDelete"
+    aria-labelledby="modalDeleteStudentLabel">
     <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title" id="modalDelete">Delete Student</h5>
+            <h3 class="modal-title" id="modalDelete">CHANGE STUDENT STATUS</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body">
-            <p>Are you sure want to delete this student?</p>
+        <div class="modal-body" style="text-align: center; font-family: Roboto;">
+            <h4>Bạn có chắc là muốn vô hiệu hóa sinh viên này không?</h4>
+            <h5>Số tiền phòng mà sinh viên {{studentLeft.numberOfRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
+                {{(studentLeft.numberOfRoomMoney | number) + 'đ'}}</h5>
+            <h5>Số tiền nước mà sinh viên {{studentLeft.numberOfWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}} lại
+                là:
+                {{(studentLeft.numberOfWaterMoney | number) + 'đ'}}</h5>
+            <h5>Số tiền xe mà sinh viên {{studentLeft.numberOfVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}} lại
+                là:
+                {{(studentLeft.numberOfVehicleMoney | number) + 'đ'}}</h5>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>

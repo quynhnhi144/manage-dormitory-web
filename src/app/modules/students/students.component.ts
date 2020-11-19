@@ -6,6 +6,9 @@ import { StudentsService } from './students.service';
 import { Student } from './student.model';
 import { RoomService } from '../rooms/room.service';
 import { CampusService } from 'src/app/services/campus.service';
+import { getTestBed } from '@angular/core/testing';
+import { StudentLeft } from './student-left.model';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-students',
@@ -35,12 +38,15 @@ export class StudentsComponent implements OnInit {
 
   arrRooms = [];
   selectedRoomIds = [];
+
+  studentLeft = new StudentLeft();
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private studentService: StudentsService,
     private roomService: RoomService,
-    private campusService: CampusService
+    private campusService: CampusService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -139,6 +145,13 @@ export class StudentsComponent implements OnInit {
     );
   }
 
+  // modal update student
+  openModalUpdateAStudent(modalUpdateAStudent, student: any) {
+    this.currentStudentId = student.id;
+    this.getUpdateAStudent();
+    this.openModal(modalUpdateAStudent);
+  }
+
   getUpdateAStudent() {
     this.studentService.getAStudent(this.currentStudentId).subscribe(
       (data: any) => {
@@ -155,6 +168,7 @@ export class StudentsComponent implements OnInit {
           isPayWaterBill: data.isPayWaterBill,
           isPayVehicleBill: data.isPayVehicleBill,
           isPayPowerBill: data.isPayPowerBill,
+          active: data.active,
         });
         if (data.endingDateOfStay) {
           this.modalStudentUpdate.endingDateOfStay = new Date(
@@ -164,7 +178,7 @@ export class StudentsComponent implements OnInit {
 
         this.arrRooms = [];
         if (data.roomDto) {
-          this.selectedRoomIds = [...this.selectedRoomIds, data.roomDto.id];
+          this.selectedRoomIds = [data.roomDto.id];
           this.setUpRoomInSearchMultipleSelect(
             data.roomDto,
             data.roomDto.name,
@@ -176,13 +190,6 @@ export class StudentsComponent implements OnInit {
         console.log(error);
       }
     );
-  }
-
-  // modal update student
-  openModalUpdateAStudent(modalUpdateAStudent, student: any) {
-    this.currentStudentId = student.id;
-    this.getUpdateAStudent();
-    this.openModal(modalUpdateAStudent);
   }
 
   saveChange() {
@@ -303,16 +310,43 @@ export class StudentsComponent implements OnInit {
 
   openModalDeleteStudent(modalDeleteStudent, student: any) {
     this.currentStudentId = student.id;
+    this.getRoomBill();
     this.openModal(modalDeleteStudent);
   }
 
+  getRoomBill() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/students/' + this.currentStudentId + '/studentLeft';
+    this.httpClient.get(url, { headers }).subscribe((data: any) => {
+      console.log('studentLeft: ' + data);
+      this.studentLeft = data;
+    });
+  }
+
   saveDelete() {
-    this.studentService.deleteStudent(this.currentStudentId).subscribe(
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/students' + '/studentLeft';
+    this.httpClient.post(url, this.studentLeft, { headers }).subscribe(
       (data: any) => {
+        console.log('data:' + data);
+        let index = this.students.findIndex(
+          (student) => student.id === this.studentLeft.id
+        );
+        this.students[index].active = !this.students[index].active;
         this.modalService.dismissAll();
+        this.notificationService.sendNotificationMessage({
+          message: 'Đã đổi trạng thái sinh viên thành công !!!',
+          isSuccess: true,
+        });
       },
       (error) => {
         console.log(error);
+        this.notificationService.sendNotificationMessage({
+          message: 'Có lỗi xảy ra !!!',
+          isSuccess: false,
+        });
       }
     );
   }
