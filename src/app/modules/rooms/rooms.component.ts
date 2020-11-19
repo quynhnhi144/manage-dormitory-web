@@ -7,7 +7,6 @@ import { TypeRoomService } from '../../services/typeroom.service';
 import { Room } from './room.model';
 import { Student } from '../students/student.model';
 import * as FileSaver from 'file-saver';
-import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-rooms',
@@ -17,7 +16,7 @@ import { NotificationService } from '../../services/notification.service';
 })
 export class RoomsComponent implements OnInit {
   quantityStudentList = [
-    { id: -1, name: 'All' },
+    { id: -1, name: 'Tất cả' },
     { id: 0, name: '0' },
     { id: 1, name: '1' },
     { id: 2, name: '2' },
@@ -27,9 +26,9 @@ export class RoomsComponent implements OnInit {
     { id: 6, name: 6 },
   ];
   typeOfRoomList = [
-    { id: 0, name: 'All' },
-    { id: 1, name: 'Package Room' },
-    { id: 2, name: 'Shared Room' },
+    { id: 0, name: 'Tất cả' },
+    { id: 1, name: 'Phòng Nữ' },
+    { id: 2, name: 'Phòng Nam' },
   ];
   rooms: Room[] = [];
   roomsTotal = 5;
@@ -42,7 +41,7 @@ export class RoomsComponent implements OnInit {
   searchText = '';
 
   quantityStudent = 0;
-  typeOfRoom = '';
+  typeOfRoomId = null;
   isClickBtnQuantityStudent = false;
   isClickBtnTypeRoom = false;
   isClickSearch = false;
@@ -123,8 +122,8 @@ export class RoomsComponent implements OnInit {
       ? `&quantityStudent=${this.quantityStudent}`
       : ``;
 
-    let paramTypeOfRoom = this.isClickBtnTypeRoom
-      ? `&typeRoom=${this.typeOfRoom}`
+    let paramTypeOfRoomId = this.isClickBtnTypeRoom
+      ? `&typeRoomId=${this.typeOfRoomId}`
       : ``;
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
@@ -139,7 +138,7 @@ export class RoomsComponent implements OnInit {
       '&take=' +
       this.pageSize +
       paramQuantityStudent +
-      paramTypeOfRoom;
+      paramTypeOfRoomId;
 
     this.httpClient.get(url, { headers }).subscribe(
       (data: any) => {
@@ -175,9 +174,9 @@ export class RoomsComponent implements OnInit {
     this.getAllRooms(this.campusIndex, this.campusType);
   }
 
-  resetPageByTypeOfRoom(typeOfRoom: string) {
+  resetPageByTypeOfRoom(typeOfRoomId: string) {
     this.isClickBtnTypeRoom = true;
-    this.typeOfRoom = typeOfRoom;
+    this.typeOfRoomId = typeOfRoomId;
     this.getAllRooms(this.campusIndex, this.campusType);
   }
 
