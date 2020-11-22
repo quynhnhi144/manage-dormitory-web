@@ -5,6 +5,11 @@
             <div style="float: left">
                 <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Students</div>
             </div>
+            <div class="create-student-btn" style="float: right;">
+                <button type="button" class="btn btn-round btn-new-student"
+                    (click)="createNewStudent(modalUpdateAStudent)">+ Create New
+                    Student</button>
+            </div>
             <div style="clear: both"></div>
             <!-- START TABS -->
             <div>
@@ -53,8 +58,8 @@
                                     <th>Room</th>
                                     <th>Room Payment</th>
                                     <th>Water Payment</th>
-                                    <th>Vehicle Payment</th>
                                     <th>Status</th>
+                                    <th></th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -87,16 +92,8 @@
                                         </div>
                                     </td>
 
-                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
-                                        <div *ngIf="student.isPayVehicleBill" class="pill pill-1">
-                                            COMPLETED
-                                        </div>
-                                        <div *ngIf="!student.isPayVehicleBill" class="pill pill-2">
-                                            NOT&nbsp;COMPLETED
-                                        </div>
-                                    </td>
-
-                                    <td (click)="openModalDeleteStudent(modalDeleteStudent, student)">
+                                    <td [style]="!student.active ? 'pointer-events:none': ''"
+                                        (click)="openModalDeleteStudent(modalDeleteStudent, student)">
                                         <div *ngIf="student.active" class="pill pill-1">
                                             ACTIVED
                                         </div>
@@ -106,8 +103,13 @@
                                     </td>
 
                                     <td>
-                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                        <i *ngIf="student.active" class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                             (click)="openModalUpdateAStudent(modalUpdateAStudent, student)"></i>
+                                    </td>
+
+                                    <td>
+                                        <i *ngIf="student.active"
+                                            class="icon-edit mdi mdi-24px mdi-file-move-outline"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="studentTotal == 0">
@@ -273,22 +275,16 @@
                         {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
                     </div>
 
-                    <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                    <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
                     <div class="col-xs-6 col-md-3"
-                        [ngStyle]=" {'color': modalStudent.isPayVehicleBill ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayVehicleBill ? "COMPLETED" : 'NOT COMPLETED' }}
+                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
+                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">WATER PAYMENT</div>
-                    <div class="col-xs-6 col-md-3"
-                        [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
-                    </div>
-
-                    <div class="col-xs-6 col-md-3 col-title">STATUS</div>
+                    <div class="col-xs-6 col-md-2 col-title">STATUS</div>
                     <div class="col-xs-6 col-md-3"
                         [ngStyle]=" {'color': modalStudent.active ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
                         {{modalStudent.active ? "ACTIVED" : 'UNACTIVED' }}
@@ -313,18 +309,25 @@
         <div class="modal-body">
             <div class="row create-room-section">
                 <div class="col-12">
-                    <div class="section-info">
+                    <div *ngIf="modalStudentUpdate.roomDto || isNewStudent" class="section-info">
 
-                        <form name="newRoomForm" class="newRoomForm">
+                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
                                     <label for="id">Student Id</label>
-                                    <input name="id" [(ngModel)]="modalStudentUpdate.id" class="disable-input"
-                                        readonly />
+                                    <input name="id" [(ngModel)]="modalStudentUpdate.id"
+                                        class="disable-input form-control" readonly />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
                                     <label for="email">Email</label>
-                                    <input name="email" [(ngModel)]="modalStudentUpdate.email" required />
+                                    <input ngModel #email="ngModel" name="email" [(ngModel)]="modalStudentUpdate.email"
+                                        class="form-control" required email
+                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                                    <p *ngIf="(!email.valid && email.touched) || email.errors?.pattern"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Email must be a
+                                        valid email address</p>
+
                                 </div>
                             </div>
 
@@ -347,14 +350,21 @@
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]=" modalStudentUpdate.birthday" required />
                                 </div>
-                                <div class="col-xs-12 col-md-6 col-right">
+
+                                <div *ngIf="!isNewStudent" class="col-xs-12 col-md-6 col-right">
+                                    <label for="roomName">Room Name</label>
+                                    <input name="roomName" [(ngModel)]="modalStudentUpdate.roomDto.name"
+                                        class="disable-input" readonly />
+                                </div>
+
+                                <div *ngIf="isNewStudent" class="col-xs-12 col-md-6 col-right">
                                     <label for="roomName">Room Name</label>
                                     <div class="section-search">
                                         <div class="section-search-multiselect">
                                             <ng-select name="roomName" class="people-select" [multiple]="true"
                                                 [items]="arrRooms" [(ngModel)]="selectedRoomIds" bindLabel="name"
                                                 bindValue="id" placeholder="Search student by name or email"
-                                                (search)="onSearchMultiSelect($event)">
+                                                (search)="onSearchMultiSelect($event)" (change)="showInfoMoney()">
                                                 <ng-template ng-label-tmp let-item="item">
                                                     <span class="ng-value-icon left" (click)="unselect(item)"
                                                         aria-hidden="true">×</span>
@@ -367,13 +377,30 @@
                                         </div>
                                     </div>
 
+                                    <div *ngIf="moneyRoomAndMoneyWater && selectedRoomIds.length != 0"
+                                        style="margin-top: 10px;">
+                                        <h4>Số tiền phòng sinh viên cần đóng là:
+                                            {{(moneyRoomAndMoneyWater.moneyOfRoomMustPay | number) + 'đ'}}</h4>
+                                        <h4>Số tiền nước sinh viên cần đóng là:
+                                            {{(moneyRoomAndMoneyWater.moneyOfWaterMustPay | number) + 'đ'}}</h4>
+                                    </div>
+
                                 </div>
+
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
                                     <label for="phone">Phone</label>
-                                    <input name="phone" [(ngModel)]="modalStudentUpdate.phone" required />
+                                    <input #phone="ngModel" ngModel name="phone" [(ngModel)]="modalStudentUpdate.phone"
+                                        required minlength=10 maxlength=11 pattern="[0-9]+" />
+                                    <p *ngIf="(!phone.valid && phone.touched) || phone.errors?.pattern"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại không phù hợp</p>
+
+                                    <p *ngIf="phone.errors?.minlength && phone.errors?.maxlength"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại phải từ 10-11 số</p>
                                 </div>
                             </div>
 
@@ -432,15 +459,17 @@
                     <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
                   </div>
                 </div> -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" [disabled]="!form.valid"
+                                    (click)="saveChange()">Submit</button>
+                                <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="saveChange()">Submit</button>
-            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
-        </div>
+
     </div>
 </ng-template>
 

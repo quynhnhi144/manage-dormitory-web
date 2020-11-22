@@ -1,5 +1,7 @@
 import { RoomDto } from '../rooms/room-dto.model';
-export class Student {
+import { WaterBill } from '../../shared/model/water-bill.model';
+import { RoomBill } from '../../shared/model/room-bill.model';
+export class StudentDto {
   id: number;
   name: string;
   birthday: Date;
@@ -8,13 +10,12 @@ export class Student {
   address: string;
   startingDateOfStay: Date;
   endingDateOfStay: Date;
-  roomDto: RoomDto;
-  isPayRoom: boolean;
-  isPayWaterBill: boolean;
-  active: boolean;
+  roomId: number;
   waterPriceId: number;
+  waterBill: WaterBill;
+  roomBill: RoomBill;
 
-  constructor(init?: Partial<Student>) {
+  constructor(init?: Partial<StudentDto>) {
     Object.assign(this, init);
   }
 }
