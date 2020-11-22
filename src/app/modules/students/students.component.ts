@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalConstants } from '../../common/global-constants';
@@ -6,9 +6,14 @@ import { StudentsService } from './students.service';
 import { Student } from './student.model';
 import { RoomService } from '../rooms/room.service';
 import { CampusService } from 'src/app/services/campus.service';
-import { getTestBed } from '@angular/core/testing';
 import { StudentLeft } from './student-left.model';
 import { NotificationService } from '../../services/notification.service';
+import { RoomWaterMoneyService } from '../../services/room-water-money.service';
+import { forkJoin } from 'rxjs';
+import { StudentNew } from './student-new.model';
+import { RoomBill } from '../../shared/model/room-bill.model';
+import { WaterBill } from '../../shared/model/water-bill.model';
+import { StudentDto } from './student-dto.model';
 
 @Component({
   selector: 'app-students',
@@ -40,13 +45,18 @@ export class StudentsComponent implements OnInit {
   selectedRoomIds = [];
 
   studentLeft = new StudentLeft();
+
+  isNewStudent = false;
+
+  moneyRoomAndMoneyWater = null;
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private studentService: StudentsService,
     private roomService: RoomService,
     private campusService: CampusService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private roomWaterMoneyService: RoomWaterMoneyService
   ) {}
 
   ngOnInit(): void {
@@ -148,6 +158,7 @@ export class StudentsComponent implements OnInit {
   // modal update student
   openModalUpdateAStudent(modalUpdateAStudent, student: any) {
     this.currentStudentId = student.id;
+    this.isNewStudent = false;
     this.getUpdateAStudent();
     this.openModal(modalUpdateAStudent);
   }
@@ -166,8 +177,6 @@ export class StudentsComponent implements OnInit {
           roomDto: data.roomDto,
           isPayRoom: data.isPayRoom,
           isPayWaterBill: data.isPayWaterBill,
-          isPayVehicleBill: data.isPayVehicleBill,
-          isPayPowerBill: data.isPayPowerBill,
           active: data.active,
         });
         if (data.endingDateOfStay) {
@@ -229,33 +238,92 @@ export class StudentsComponent implements OnInit {
       this.turnOffNotification();
       return;
     }
-    let studentUpdate = {
-      id: this.modalStudentUpdate.id,
-      name: this.modalStudentUpdate.name,
-      birthday: this.modalStudentUpdate.birthday,
-      phone: this.modalStudentUpdate.phone,
-      email: this.modalStudentUpdate.email,
-      address: this.modalStudentUpdate.address,
-      startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
-      endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
-      roomId: this.selectedRoomIds[0],
-    };
+    if (!this.isNewStudent) {
+      let studentUpdate = {
+        id: this.modalStudentUpdate.id,
+        name: this.modalStudentUpdate.name,
+        birthday: this.modalStudentUpdate.birthday,
+        phone: this.modalStudentUpdate.phone,
+        email: this.modalStudentUpdate.email,
+        address: this.modalStudentUpdate.address,
+        startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
+        endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
+        roomId: this.selectedRoomIds[0],
+      };
 
-    this.studentService
-      .updateStudent(this.currentStudentId, studentUpdate)
-      .subscribe(
-        (data: Student) => {
-          console.log('studentUpdated: ', data);
-          let index = this.students.findIndex(
-            (student) => student.id === this.currentStudentId
-          );
-          this.students[index] = data;
+      this.studentService
+        .updateStudent(this.currentStudentId, studentUpdate)
+        .subscribe(
+          (data: Student) => {
+            console.log('studentUpdated: ', data);
+            let index = this.students.findIndex(
+              (student) => student.id === this.currentStudentId
+            );
+            this.students[index] = data;
+            this.modalService.dismissAll();
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+    } else {
+      let studentNew = new StudentDto({
+        id: null,
+        name: this.modalStudentUpdate.name,
+        birthday: this.modalStudentUpdate.birthday,
+        phone: this.modalStudentUpdate.phone,
+        email: this.modalStudentUpdate.email,
+        address: this.modalStudentUpdate.address,
+        startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
+        endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
+        roomId: this.selectedRoomIds[0],
+        waterPriceId: this.moneyRoomAndMoneyWater.waterPriceId,
+      });
+
+      let roomBill = new RoomBill({
+        billId: null,
+        studentName: null,
+        studentId: null,
+        startDate: this.moneyRoomAndMoneyWater.roomStartDate,
+        endDate: this.moneyRoomAndMoneyWater.roomEndDate,
+        price: this.moneyRoomAndMoneyWater.moneyOfRoomMustPay,
+        roomId: null,
+        maxQuantity: null,
+      });
+
+      let waterBill = new WaterBill({
+        billId: null,
+        studentName: null,
+        studentId: null,
+        startDate: this.moneyRoomAndMoneyWater.waterStartDate,
+        endDate: this.moneyRoomAndMoneyWater.waterEndDate,
+        price: this.moneyRoomAndMoneyWater.moneyOfWaterMustPay,
+        roomId: null,
+      });
+
+      let studentNewDto = new StudentNew({
+        studentDto: studentNew,
+        waterBillDto: waterBill,
+        roomBillDto: roomBill,
+      });
+      this.studentService.addStudent(studentNewDto).subscribe(
+        (data) => {
+          console.log('data new: ' + data);
           this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã thêm sinh viên thành công !!!',
+            isSuccess: true,
+          });
         },
         (error) => {
           console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
         }
       );
+    }
   }
 
   turnOffNotification() {
@@ -347,6 +415,45 @@ export class StudentsComponent implements OnInit {
           message: 'Có lỗi xảy ra !!!',
           isSuccess: false,
         });
+      }
+    );
+  }
+
+  createNewStudent(modalUpdateAStudent) {
+    this.isNewStudent = true;
+    this.modalStudentUpdate = new Student({
+      id: null,
+      name: null,
+      birthday: null,
+      phone: null,
+      email: null,
+      address: null,
+      startingDateOfStay: new Date(),
+      roomDto: null,
+      isPayRoom: false,
+      isPayWaterBill: false,
+      active: true,
+    });
+    this.selectedRoomIds = [];
+    this.openModal(modalUpdateAStudent);
+  }
+
+  showInfoMoney() {
+    console.log('idRoom: ' + this.selectedRoomIds[0]);
+    // this.selectedRoomIds = this.arrRooms;
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url +=
+      '/api/students/' +
+      this.selectedRoomIds[0] +
+      '/money-room-and-money-water';
+    this.httpClient.get(url, { headers }).subscribe(
+      (data: any) => {
+        console.log('data: ' + data);
+        this.moneyRoomAndMoneyWater = data;
+      },
+      (error) => {
+        console.log(error);
       }
     );
   }

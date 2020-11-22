@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
 import { Student } from './student.model';
+import { StudentNew } from './student-new.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,12 @@ export class StudentsService {
   updateStudent(id: number, student: any) {
     let url = this.baseUrl + '/api/students/' + id;
     return this.http.put(url, student, { headers: this.headers });
+  }
+
+  addStudent(student: StudentNew) {
+    let url = this.baseUrl + '/api/students/' + 'addStudent';
+    console.log('aaaa: ');
+    return this.http.post<StudentNew>(url, student, { headers: this.headers });
   }
 
   deleteStudent(id: number) {
