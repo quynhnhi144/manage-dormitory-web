@@ -8,12 +8,13 @@ import { RoomService } from '../rooms/room.service';
 import { CampusService } from 'src/app/services/campus.service';
 import { StudentLeft } from './student-left.model';
 import { NotificationService } from '../../services/notification.service';
-import { RoomWaterMoneyService } from '../../services/room-water-money.service';
-import { forkJoin } from 'rxjs';
 import { StudentNew } from './student-new.model';
 import { RoomBill } from '../../shared/model/room-bill.model';
 import { WaterBill } from '../../shared/model/water-bill.model';
 import { StudentDto } from './student-dto.model';
+import { InforAboutMoneySwitchRoom } from 'src/app/shared/model/info-about-money-switch-room.model';
+import { VehicleBill } from '../../shared/model/vehicle-bill.model';
+import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
 
 @Component({
   selector: 'app-students',
@@ -49,14 +50,21 @@ export class StudentsComponent implements OnInit {
   isNewStudent = false;
 
   moneyRoomAndMoneyWater = null;
+
+  remainingRooms = [];
+
+  remaingRoomId: number = -1;
+
+  oldRoomId = 0;
+
+  infoAboutMoneySwitchRoom = new InforAboutMoneySwitchRoom();
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal,
     private studentService: StudentsService,
     private roomService: RoomService,
     private campusService: CampusService,
-    private notificationService: NotificationService,
-    private roomWaterMoneyService: RoomWaterMoneyService
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -454,6 +462,110 @@ export class StudentsComponent implements OnInit {
       },
       (error) => {
         console.log(error);
+      }
+    );
+  }
+
+  getAllRemaingRooms() {
+    this.roomService.getTotalRemainingRooms().subscribe((data: any) => {
+      this.remainingRooms = data;
+    });
+  }
+
+  switchRoom(modalSwitchRoom, student: any) {
+    this.currentStudentId = student.id;
+    this.getAllRemaingRooms();
+    this.getDetailAStudent();
+    this.openModal(modalSwitchRoom);
+  }
+
+  changeRoom() {
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url +=
+      '/api/students/' +
+      'duration_money_between_two_room?' +
+      '&oldRoomId=' +
+      this.modalStudent.roomDto.id +
+      '&newRoomId=' +
+      this.remaingRoomId;
+    this.httpClient.get(url, { headers }).subscribe(
+      (data: any) => {
+        console.log('duration: ' + data);
+        this.infoAboutMoneySwitchRoom = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  saveSwitchRoom() {
+    let roomBill = new RoomBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      startDate: this.infoAboutMoneySwitchRoom.roomStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.roomEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationRoomMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+      maxQuantity: null,
+    });
+
+    let waterBill = new WaterBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      startDate: this.infoAboutMoneySwitchRoom.waterStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.waterEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationWaterMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+    });
+
+    let vehicleBill = new VehicleBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      vehicleId: this.modalStudent.vehicleId,
+      startDate: this.infoAboutMoneySwitchRoom.waterStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.waterEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationWaterMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+    });
+
+    let studentSwitchRoom = new InfoSwitchRoom({
+      studentId: this.modalStudent.id,
+      studentName: this.modalStudent.name,
+      oldRoomId: this.modalStudent.roomDto.id,
+      oldRoomName: this.modalStudent.roomDto.name,
+      newRoomId: this.remaingRoomId,
+      newRoomName: this.remainingRooms[
+        this.remainingRooms.findIndex((x) => x.id === this.remaingRoomId)
+      ].name,
+      roomBill: roomBill,
+      waterBill: waterBill,
+      vehicleBill: vehicleBill,
+    });
+
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
+    let url = GlobalConstants.apiURL;
+    url += '/api/students/' + this.currentStudentId + '/switch-room';
+    this.httpClient.put(url, studentSwitchRoom, { headers }).subscribe(
+      (data: any) => {
+        console.log(data);
+        this.getAllStudents(this.campusIndex, this.campusType, this.page);
+        this.modalService.dismissAll();
+        this.notificationService.sendNotificationMessage({
+          message: 'Đã chuyển phòng cho sinh viên thành công !!!',
+          isSuccess: true,
+        });
+      },
+      (error) => {
+        console.log(error);
+        this.notificationService.sendNotificationMessage({
+          message: 'Có lỗi xảy ra !!!',
+          isSuccess: false,
+        });
       }
     );
   }

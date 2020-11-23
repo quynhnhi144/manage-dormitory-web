@@ -6,9 +6,10 @@ import { StudentsRoutingModule } from './students-routing.module';
 import { StudentsComponent } from './students.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { PositiveNumber } from '../../common/positive-number.pipe';
 
 @NgModule({
-  declarations: [StudentsComponent],
+  declarations: [StudentsComponent, PositiveNumber],
   imports: [
     CommonModule,
     StudentsRoutingModule,

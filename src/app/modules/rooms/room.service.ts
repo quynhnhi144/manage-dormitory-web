@@ -34,14 +34,4 @@ export class RoomService {
     let url = this.baseUrl + '/api/rooms/remaining-room';
     return this.http.get<Room[]>(url, { headers: this.headers });
   }
-
-  // getAStudent(id: number) {
-  //   let url = this.baseUrl + '/api/students/' + id;
-  //   return this.http.get<Student>(url, { headers: this.headers });
-  // }
-
-  // updateStudent(id: number, student: Student) {
-  //   let url = this.baseUrl + '/api/students/' + id;
-  //   return this.http.post(url, student, { headers: this.headers });
-  // }
 }
