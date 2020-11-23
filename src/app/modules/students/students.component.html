@@ -108,8 +108,8 @@
                                     </td>
 
                                     <td>
-                                        <i *ngIf="student.active"
-                                            class="icon-edit mdi mdi-24px mdi-file-move-outline"></i>
+                                        <i *ngIf="student.active" class="icon-edit mdi mdi-24px mdi-file-move-outline"
+                                            (click)="switchRoom(modalSwitchRoom, student)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="studentTotal == 0">
@@ -301,7 +301,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalUpdateAStudentLabel">UPDATE STUDENT</h3>
+            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewStudent ? 'NEW' : 'UPDATE'}}STUDENT</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -485,16 +485,91 @@
         <div class="modal-body" style="text-align: center; font-family: Roboto;">
             <h4>Bạn có chắc là muốn vô hiệu hóa sinh viên này không?</h4>
             <h5>Số tiền phòng mà sinh viên {{studentLeft.numberOfRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
-                {{(studentLeft.numberOfRoomMoney | number) + 'đ'}}</h5>
-            <h5>Số tiền nước mà sinh viên {{studentLeft.numberOfWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}} lại
-                là:
-                {{(studentLeft.numberOfWaterMoney | number) + 'đ'}}</h5>
-            <h5>Số tiền xe mà sinh viên {{studentLeft.numberOfVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}} lại
-                là:
-                {{(studentLeft.numberOfVehicleMoney | number) + 'đ'}}</h5>
+                {{studentLeft.numberOfRoomMoney | positiveNumber | number}} đ</h5>
+            <h5>Số tiền nước mà sinh viên {{studentLeft.numberOfWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
+                {{studentLeft.numberOfWaterMoney | positiveNumber | number}} đ</h5>
+            <h5>Số tiền xe mà sinh viên {{studentLeft.numberOfVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
+                {{studentLeft.numberOfVehicleMoney |positiveNumber | number}} đ</h5>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalSwitchRoom let-modal class="modal fade modal-a" id="modalSwitchRoom"
+    aria-labelledby="modalSwitchRoomLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalDelmodalSwitchRoomete">SWITCH ROOM FOR STUDENT</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" style="text-align: center; font-family: Roboto;">
+            <div class="row create-room-section" *ngIf="modalStudent.roomDto">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-left">
+                            <label for="id">Id sinh viên</label>
+                            <input name="id" [(ngModel)]="modalStudent.id" class="disable-input form-control"
+                                readonly />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-left">
+                            <label for="name">Tên sinh viên</label>
+                            <input name="name" [(ngModel)]="modalStudent.name" class="disable-input form-control"
+                                readonly />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-left">
+                            <label for="id">Phòng cũ</label>
+                            <input name="id" [(ngModel)]="modalStudent.roomDto.name" class="form-control" readonly />
+
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-right">
+                            <label for="id">Phòng mới</label>
+                            <ng-select name="remainingRoomsData" [items]="remainingRooms" [virtualScroll]="true"
+                                bindLabel="name" bindValue="id" [(ngModel)]="remaingRoomId" (change)="changeRoom()">
+                            </ng-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 col-left">
+                        </div>
+                        <div class="col-xs-12 col-md-6 col-right">
+                            <div *ngIf="remaingRoomId > 0 && infoAboutMoneySwitchRoom">
+                                <label for="id">Những khoản tiền mà sinh viên phải đóng hoặc được nhận lại:</label>
+                                <h5>Số tiền phòng mà sinh viên
+                                    {{infoAboutMoneySwitchRoom.durationRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                    là:
+                                    {{(infoAboutMoneySwitchRoom.durationRoomMoney |  positiveNumber | number) + 'đ'}}
+                                </h5>
+                                <h5>Số tiền nước mà sinh viên
+                                    {{infoAboutMoneySwitchRoom.durationWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                    là:
+                                    {{(infoAboutMoneySwitchRoom.durationWaterMoney |  positiveNumber | number | uppercase) + 'đ'}}
+                                </h5>
+                                <h5>Số tiền xe mà sinh viên
+                                    {{infoAboutMoneySwitchRoom.durationVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                    là:
+                                    {{(infoAboutMoneySwitchRoom.durationVehicleMoney |  positiveNumber | number) + 'đ'}}
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="saveSwitchRoom()">Submit</button>
             <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
         </div>
     </div>

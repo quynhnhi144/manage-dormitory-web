@@ -13,6 +13,7 @@ export class Student {
   isPayWaterBill: boolean;
   active: boolean;
   waterPriceId: number;
+  vehicleId: number;
 
   constructor(init?: Partial<Student>) {
     Object.assign(this, init);
