@@ -45,7 +45,7 @@
         <i class="mdi mdi-train-car mdi-24px menu-icon"></i>
       </a>
     </li>
-    <li class="nav-item" [ngClass]="{ 'active': users.isActive }">
+    <li *ngIf="isAuthenticated" class="nav-item" [ngClass]="{ 'active': users.isActive }">
       <a class="nav-link" routerLink="/users" routerLinkActive #users="routerLinkActive">
         <span class="menu-title">Users</span>
         <i class="mdi mdi-contacts mdi-24px menu-icon"></i>

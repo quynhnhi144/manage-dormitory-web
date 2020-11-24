@@ -6,11 +6,21 @@ import { User } from './user.model';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   baseUrl = GlobalConstants.apiURL;
-  headers = new HttpHeaders().set('Authorization', 'Bearer ');
   constructor(private htttp: HttpClient) {}
 
   getTotalUsers() {
-    let url = this.baseUrl + '/api/users/all';
-    return this.htttp.get<User[]>(url, { headers: this.headers });
+    let url = this.baseUrl + '/users/all';
+    return this.htttp.get<User[]>(url);
+  }
+
+  getAllUsers(skip: number, take: number, searchText: string) {
+    let url =
+      this.baseUrl + '/users?' + '&skip=' + skip + '&take=' + take + searchText;
+    return this.htttp.get(url);
+  }
+
+  getAUser(id: number) {
+    let url = this.baseUrl + '/users' + id;
+    return this.htttp.get(url);
   }
 }

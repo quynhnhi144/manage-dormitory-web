@@ -413,7 +413,7 @@
           </div>
 
           <div class="section-student-room">
-            <div class="section-search">
+            <!-- <div class="section-search">
               <div class="section-search-multiselect">
                 <ng-select class="people-select" [multiple]="true" [items]="arrStudent" [(ngModel)]="selectedStudentIds"
                   bindLabel="name" bindValue="id" placeholder="Search student by name or email"
@@ -432,9 +432,9 @@
                   Add Students</button>
               </div>
               <div class="section-people-result">
-                <!-- <p *ngIf="addPeopleErrorMsg" class="alert alert-danger">{{ addPeopleErrorMsg }}</p> -->
+                <p *ngIf="addPeopleErrorMsg" class="alert alert-danger">{{ addPeopleErrorMsg }}</p>
               </div>
-            </div>
+            </div> -->
             <div class="section-student" *ngFor="let student of newRoomForm.students; let i = index">
               <div class="section-result">
                 <div>

@@ -9,16 +9,6 @@
       (click)="toggleSidebar()">
       <span class="mdi mdi-menu"></span>
     </button>
-    <!-- <div class="search-field d-none d-md-block">
-      <form class="d-flex align-items-center h-100" action="#">
-        <div class="input-group">
-          <div class="input-group-prepend bg-transparent">
-            <i class="input-group-text border-0 mdi mdi-magnify"></i>
-          </div>
-          <input type="text" class="form-control bg-transparent border-0" placeholder="Search projects">
-        </div>
-      </form>
-    </div> -->
     <ul class="navbar-nav navbar-nav-right">
       <li class="nav-item nav-profile dropdown" ngbDropdown>
         <a class="nav-link dropdown-toggle" id="profileDropdown" ngbDropdownToggle>
@@ -36,7 +26,7 @@
             My Profile
           </a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="javascript:;">
+          <a class="dropdown-item" href="javascript:;" (click)="onLogout()">
             <i class="mdi mdi-logout mr-2 text-primary"></i>
             Signout
           </a>

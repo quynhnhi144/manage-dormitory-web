@@ -1,10 +1,8 @@
-import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { GlobalConstants } from 'src/app/common/global-constants';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserService } from '../users/user.service';
-import { CampusService } from '../../services/campus.service';
-import { forkJoin } from 'rxjs';
+import { CampusService } from '../../core/services/campus.service';
+import { forkJoin, Subscription } from 'rxjs';
 import { User } from '../users/user.model';
 import { RoomService } from '../rooms/room.service';
 import { Room } from '../rooms/room.model';
@@ -12,6 +10,8 @@ import { StudentsService } from '../students/students.service';
 import { VehicleService } from '../vehicles/vehicle.service';
 import { Student } from '../students/student.model';
 import { Vehicle } from '../vehicles/vehicle.model';
+import { DashboardService } from './dashboard.service';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,14 +35,17 @@ export class DashboardComponent implements OnInit {
 
   students: Student[] = [];
   vehicles: Vehicle[] = [];
+
+  subscription: Subscription;
   constructor(
-    private http: HttpClient,
     private modalService: NgbModal,
     private userService: UserService,
     private campusService: CampusService,
     private roomService: RoomService,
     private studentService: StudentsService,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private dashboardService: DashboardService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -50,18 +53,17 @@ export class DashboardComponent implements OnInit {
   }
 
   getDashBoard() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-
-    url += '/api/dashboard';
-
-    this.http.get(url, { headers }).subscribe(
+    this.subscription = this.dashboardService.getDashboard().subscribe(
       (data: any) => {
         console.log('dashboard: ', data);
         this.dashboard = data;
       },
       (error) => {
         console.log(error);
+        this.notificationService.sendNotificationMessage({
+          message: 'Có lỗi xảy ra !!!',
+          isSuccess: false,
+        });
       }
     );
   }
@@ -72,7 +74,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getAllUsersAndCampuses() {
-    forkJoin([
+    this.subscription = forkJoin([
       this.userService.getTotalUsers(),
       this.campusService.getAllCampuses(),
     ]).subscribe((data: any) => {
@@ -88,7 +90,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getAllRoomsAndRemainingRooms() {
-    forkJoin([
+    this.subscription = forkJoin([
       this.roomService.getTotalRooms(),
       this.roomService.getTotalRemainingRooms(),
     ]).subscribe((data: any) => {
@@ -103,7 +105,7 @@ export class DashboardComponent implements OnInit {
     this.getAllStudentsAndVehicles();
   }
   getAllStudentsAndVehicles() {
-    forkJoin([
+    this.subscription = forkJoin([
       this.studentService.getTotalStudents(),
       this.vehicleService.getTotalVehicles(),
     ]).subscribe((data: any) => {
@@ -111,5 +113,9 @@ export class DashboardComponent implements OnInit {
       this.students = data[0];
       this.vehicles = data[1];
     });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

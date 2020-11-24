@@ -46,7 +46,7 @@
                             (keydown.enter)="onSearch($event)" placeholder="Search by room name" />
                         <img class="btn-search btn-search-custom" (click)="onSearch($event)"
                             src="../../assets/images/search_icon.png" title="Search" width="20" />
-                        <button type="button" class="btn-icon btn-round btn-export ml-3"
+                        <button type="button" *ngIf="isAuthenticated" class="btn-icon btn-round btn-export ml-3"
                             (click)="openModalImportFile(modalImportFile)">
                             <img src="../../assets/images/import.png" width="15" />
                             Import
@@ -57,7 +57,7 @@
                             Export
                         </button>
 
-                        <button type="button" class="btn-icon btn-round btn-export ml-3"
+                        <button type="button" *ngIf="isAuthenticated" class="btn-icon btn-round btn-export ml-3"
                             (click)="sendMailForAllPowerBills()">
                             <img src="../../assets/images/mail-send.png" />
                             Send Mail

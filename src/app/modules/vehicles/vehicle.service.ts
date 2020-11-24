@@ -6,11 +6,34 @@ import { Vehicle } from './vehicle.model';
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
   baseUrl = GlobalConstants.apiURL;
-  headers = new HttpHeaders().set('Authorization', 'Bearer ');
   constructor(private http: HttpClient) {}
 
   getTotalVehicles() {
-    let url = this.baseUrl + '/api/vehicles/all';
-    return this.http.get<Vehicle[]>(url, { headers: this.headers });
+    let url = this.baseUrl + '/vehicles/all';
+    return this.http.get<Vehicle[]>(url);
+  }
+  getAllVehicle(
+    skip: number,
+    take: number,
+    choosedCampus: string,
+    searchText: string,
+    typeRoom: string
+  ) {
+    let url =
+      this.baseUrl +
+      '/vehicles?' +
+      choosedCampus +
+      '&skip=' +
+      skip +
+      '&take=' +
+      take +
+      typeRoom +
+      searchText;
+    return this.http.get(url);
+  }
+
+  getAVehicle(id: number) {
+    let url = this.baseUrl + '/vehicles' + '/' + id;
+    return this.http.get(url);
   }
 }

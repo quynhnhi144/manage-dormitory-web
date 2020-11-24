@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
-import { CampusService } from '../../services/campus.service';
+import { CampusService } from '../../core/services/campus.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { PowerBillsService } from './power-bills.service';
 import { PowerBill } from './power-bill.model';
-import { NotificationService } from '../../services/notification.service';
 import * as FileSaver from 'file-saver';
+import { NotificationService } from '../../core/services/notification.service';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-power-bills',
@@ -45,15 +47,34 @@ export class PowerBillsComponent implements OnInit {
 
   isNew = false;
 
+  subscription: Subscription;
+  isAuthenticated = false;
+
   constructor(
-    private httpClient: HttpClient,
     private campusService: CampusService,
     private modalService: NgbModal,
     private powerBillsService: PowerBillsService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.subscription = this.authService.userAuth.subscribe((user) => {
+      console.log(user);
+      if (
+        user &&
+        user.authorities.length == 1 &&
+        user.authorities.includes('ROLE_USER')
+      ) {
+        this.isAuthenticated = !user;
+      } else if (
+        user &&
+        user.authorities.length == 2 &&
+        user.authorities.includes('ROLE_ADMIN')
+      ) {
+        this.isAuthenticated = !!user;
+      }
+    });
     this.getAllCampuses();
     this.getAllPowerBills(0, 'all', 1);
   }
@@ -79,35 +100,28 @@ export class PowerBillsComponent implements OnInit {
     }
 
     this.page = page;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
-    url +=
-      '/api/powerBills?' +
-      choosedCampus +
-      '&skip=' +
-      this.skip +
-      '&take=' +
-      this.pageSize +
-      paramSearchText +
-      '&date=' +
-      this.formatDate(this.currentDate);
-
-    console.log('url: ', url);
-
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.rooms = data.data.data;
-        this.roomTotal = data.total;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.powerBillsService
+      .getAllPowerBills(
+        this.skip,
+        this.pageSize,
+        this.formatDate(this.currentDate),
+        choosedCampus,
+        paramSearchText
+      )
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.rooms = data.data.data;
+          this.roomTotal = data.total;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   formatDate(currentDate: Date) {
@@ -234,12 +248,8 @@ export class PowerBillsComponent implements OnInit {
       this.modalRoomPowerBillUpdate.numberOfPowerUsed =
         this.modalRoomPowerBillUpdate.numberOfPowerEnd -
         this.modalRoomPowerBillUpdate.numberOfPowerBegin;
-
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-      let url = GlobalConstants.apiURL;
-      url += '/api/powerBills/calculate-powerBill';
-      this.httpClient
-        .post(url, this.modalRoomPowerBillUpdate, { headers })
+      this.subscription = this.powerBillsService
+        .calculatePowerBill(this.modalRoomPowerBillUpdate)
         .subscribe((data: any) => {
           this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
         });
@@ -277,12 +287,9 @@ export class PowerBillsComponent implements OnInit {
       return;
     }
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/powerBills/' + this.currentRoomId;
     if (!this.isNew) {
-      this.httpClient
-        .put(url, this.modalRoomPowerBillUpdate, { headers })
+      this.subscription = this.powerBillsService
+        .updatePowerBill(this.currentRoomId, this.modalRoomPowerBillUpdate)
         .subscribe(
           (data: any) => {
             let index = this.rooms.findIndex(
@@ -296,8 +303,8 @@ export class PowerBillsComponent implements OnInit {
           }
         );
     } else {
-      this.httpClient
-        .post(url, this.modalRoomPowerBillUpdate, { headers })
+      this.subscription = this.powerBillsService
+        .newPowerBill(this.currentRoomId, this.modalRoomPowerBillUpdate)
         .subscribe(
           (data: any) => {
             console.log('new data: ', data);
@@ -328,51 +335,45 @@ export class PowerBillsComponent implements OnInit {
       numberOfMoneyMustPay: room.numberOfMoneyMustPay,
       pay: room.pay,
     };
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/powerBills/send-notification';
-
-    this.httpClient.post(url, roomSendRequest, { headers }).subscribe(
-      (data: any) => {
-        this.notificationService.sendNotificationMessage({
-          message: 'Mail is successful !!!',
-          isSuccess: true,
-        });
-        console.log('mail: ' + data.message);
-      },
-      (error) => {
-        this.notificationService.sendNotificationMessage({
-          message: 'Error! An error occurred. Please try again later!!!',
-          isSuccess: false,
-        });
-        console.log(error);
-      }
-    );
+    this.subscription = this.powerBillsService
+      .sendMail(roomSendRequest)
+      .subscribe(
+        (data: any) => {
+          this.notificationService.sendNotificationMessage({
+            message: 'Mail is successful !!!',
+            isSuccess: true,
+          });
+          console.log('mail: ' + data.message);
+        },
+        (error) => {
+          this.notificationService.sendNotificationMessage({
+            message: 'Error! An error occurred. Please try again later!!!',
+            isSuccess: false,
+          });
+          console.log(error);
+        }
+      );
   }
 
   sendMailForAllPowerBills() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url +=
-      '/api/powerBills/send-notification-for-powerBills?' +
-      '&date=' +
-      this.formatDate(this.currentDate);
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        this.notificationService.sendNotificationMessage({
-          message: 'Mail is successful !!!',
-          isSuccess: true,
-        });
-        console.log('mail: ' + data.message);
-      },
-      (error) => {
-        this.notificationService.sendNotificationMessage({
-          message: 'Error! An error occurred. Please try again later!!!',
-          isSuccess: false,
-        });
-        console.log(error);
-      }
-    );
+    this.subscription = this.powerBillsService
+      .sendMailForAllPowerBills(this.formatDate(this.currentDate))
+      .subscribe(
+        (data: any) => {
+          this.notificationService.sendNotificationMessage({
+            message: 'Mail is successful !!!',
+            isSuccess: true,
+          });
+          console.log('mail: ' + data.message);
+        },
+        (error) => {
+          this.notificationService.sendNotificationMessage({
+            message: 'Error! An error occurred. Please try again later!!!',
+            isSuccess: false,
+          });
+          console.log(error);
+        }
+      );
   }
 
   turnOffNotification() {
@@ -422,15 +423,8 @@ export class PowerBillsComponent implements OnInit {
     this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.selectedFile);
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url +=
-      '/api/powerBills/uploadFile?' +
-      '&date=' +
-      this.formatDate(this.currentDate);
-
-    this.httpClient
-      .post(url, formData, { headers, reportProgress: true, observe: 'events' })
+    this.subscription = this.powerBillsService
+      .importExcelFile(this.formatDate(this.currentDate), formData)
       .subscribe(
         async (event: any) => {
           switch (event.type) {
@@ -449,7 +443,9 @@ export class PowerBillsComponent implements OnInit {
                 .getAllPowerBills(
                   this.skip,
                   this.pageSize,
-                  this.formatDate(this.currentDate)
+                  this.formatDate(this.currentDate),
+                  '',
+                  ''
                 )
                 .toPromise();
               this.modalService.dismissAll();
@@ -473,23 +469,21 @@ export class PowerBillsComponent implements OnInit {
   }
 
   exportPowerBillExcel() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url +=
-      '/api/powerBills/export?' + '&date=' + this.formatDate(this.currentDate);
-    this.httpClient.get(url, { responseType: 'blob', headers }).subscribe(
-      (response: any) => {
-        this.downloadFile(
-          response,
-          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          'powerBills.xlsx'
-        );
-        console.log(response);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.powerBillsService
+      .exportExcelFile(this.formatDate(this.currentDate))
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'powerBills.xlsx'
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   downloadFile(data: any, type: string, fileName: string) {
