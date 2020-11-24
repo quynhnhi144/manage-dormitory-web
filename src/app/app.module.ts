@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToastrModule } from 'ngx-toastr';
-import { PositiveNumber } from './common/positive-number.pipe';
+import { CoreModule } from './core.module';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -30,6 +30,7 @@ import { PositiveNumber } from './common/positive-number.pipe';
       positionClass: 'toast-top-right',
       preventDuplicates: true,
     }),
+    CoreModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

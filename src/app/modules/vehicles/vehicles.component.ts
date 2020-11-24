@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalConstants } from '../../common/global-constants';
+import { CampusService } from '../../core/services/campus.service';
+import { Subscription } from 'rxjs';
+import { VehicleService } from './vehicle.service';
 
 @Component({
   selector: 'app-vehicles',
@@ -37,8 +40,14 @@ export class VehiclesComponent implements OnInit {
   };
   message = '';
   currentVehicleId = 0;
+  subscription: Subscription;
 
-  constructor(private httpClient: HttpClient, private modalService: NgbModal) {}
+  constructor(
+    private httpClient: HttpClient,
+    private modalService: NgbModal,
+    private campusService: CampusService,
+    private vehicleService: VehicleService
+  ) {}
 
   ngOnInit(): void {
     this.getAllCampuses();
@@ -46,10 +55,7 @@ export class VehiclesComponent implements OnInit {
   }
 
   getAllCampuses() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/campuses';
-    this.httpClient.get(url, { headers }).subscribe(
+    this.subscription = this.campusService.getAllCampuses().subscribe(
       (data: any) => {
         this.campuses = data;
       },
@@ -90,17 +96,25 @@ export class VehiclesComponent implements OnInit {
       paramTypeRoom +
       paramSearchText;
 
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.vehicles = data.data.data;
-        console.log('vehicles:', this.vehicles);
-        this.vehicleTotal = data.total;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.vehicleService
+      .getAllVehicle(
+        this.skip,
+        this.pageSize,
+        choosedCampus,
+        paramSearchText,
+        paramTypeRoom
+      )
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.vehicles = data.data.data;
+          console.log('vehicles:', this.vehicles);
+          this.vehicleTotal = data.total;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   onSearch(event) {
@@ -140,15 +154,17 @@ export class VehiclesComponent implements OnInit {
     const headers = new HttpHeaders().set('Authorization', 'Bearer ');
     console.log(this.currentVehicleId);
     let url = GlobalConstants.apiURL + '/api/vehicles/' + this.currentVehicleId;
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log('detailStudent: ', data);
-        this.modalVehicle = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.vehicleService
+      .getAVehicle(this.currentVehicleId)
+      .subscribe(
+        (data: any) => {
+          console.log('detailStudent: ', data);
+          this.modalVehicle = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   // modal update room

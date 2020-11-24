@@ -1,70 +1,6 @@
 import { Component } from '@angular/core';
-
-// //Metadata
-// export interface RouteInfo {
-//   path: string;
-//   title: string;
-//   type: string;
-//   collapse?: string;
-//   icontype: string;
-//   // icon: string;
-//   children?: ChildrenItems[];
-// }
-
-// export interface ChildrenItems {
-//   path: string;
-//   title: string;
-//   ab: string;
-//   type?: string;
-// }
-
-// //Menu Items
-// export const ROUTES: RouteInfo[] = [
-//   // dashboard
-//   {
-//     path: '/dashboard',
-//     title: 'Overview',
-//     type: 'link',
-//     icontype: 'fa fa-pie-chart',
-//   },
-//   {
-//     path: '/checkins',
-//     title: 'Check-Ins',
-//     type: 'link',
-//     icontype: 'fa fa-users',
-//   },
-//   {
-//     path: '/manage',
-//     title: 'Manage Application',
-//     type: 'link',
-//     icontype: 'fa fa-cog',
-//   },
-//   {
-//     path: '/notifications',
-//     title: 'Manage Notification',
-//     type: 'link',
-//     icontype: 'fa fa-exclamation-triangle',
-//   },
-//   {
-//     path: '/users',
-//     title: 'Manage Users',
-//     type: 'link',
-//     icontype: 'fa fa-user',
-//   },
-//   {
-//     path: '/admins',
-//     title: 'Admins',
-//     type: 'link',
-//     icontype: 'fa fa-address-card-o',
-//   },
-//   // {
-//   //   path: '/permissions',
-//   //   title: 'Admins',
-//   //   type: 'link',
-//   //   icontype: 'fa fa-address-card-o',
-//   // },
-// ];
-
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../auth/auth.service';
 @Component({
   selector: 'sidebar-cmp',
   templateUrl: './sidebar.component.html',
@@ -73,10 +9,28 @@ import { Component } from '@angular/core';
 export class SidebarComponent {
   public uiBasicCollapsed = false;
   public samplePagesCollapsed = false;
+  userSub: Subscription;
+  isAuthenticated = false;
 
-  constructor() {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
+    this.userSub = this.authService.userAuth.subscribe((user) => {
+      console.log(user);
+      if (
+        user &&
+        user.authorities.length == 1 &&
+        user.authorities.includes('ROLE_USER')
+      ) {
+        this.isAuthenticated = !user;
+      } else if (
+        user &&
+        user.authorities.length == 2 &&
+        user.authorities.includes('ROLE_ADMIN')
+      ) {
+        this.isAuthenticated = !!user;
+      }
+    });
     const body = document.querySelector('body');
 
     // add class 'hover-open' to sidebar navitem while hover in sidebar-icon-only menu
@@ -92,5 +46,10 @@ export class SidebarComponent {
         }
       });
     });
+  }
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.userSub.unsubscribe();
   }
 }

@@ -3,10 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { StudentsService } from '../students/students.service';
-import { TypeRoomService } from '../../services/typeroom.service';
 import { Room } from './room.model';
 import { Student } from '../students/student.model';
 import * as FileSaver from 'file-saver';
+import { TypeRoomService } from '../../core/services/typeroom.service';
+import { CampusService } from '../../core/services/campus.service';
+import { Subscription } from 'rxjs';
+import { RoomService } from './room.service';
+import { StudentLeft } from '../students/student-left.model';
 
 @Component({
   selector: 'app-rooms',
@@ -46,6 +50,7 @@ export class RoomsComponent implements OnInit {
   isClickBtnTypeRoom = false;
   isClickSearch = false;
   modalOption: NgbModalOptions = {};
+  studentLeft = new StudentLeft();
 
   //modal Detail Room
   modalRoom = new Room({
@@ -79,11 +84,13 @@ export class RoomsComponent implements OnInit {
   maxQuantityStudent: number;
   typeRoomError = null;
 
+  subscription: Subscription;
+
   constructor(
-    private httpClient: HttpClient,
     private modalService: NgbModal,
-    private studentService: StudentsService,
-    private typeRoomService: TypeRoomService
+    private typeRoomService: TypeRoomService,
+    private campusService: CampusService,
+    private roomService: RoomService
   ) {}
 
   ngOnInit(): void {
@@ -92,17 +99,11 @@ export class RoomsComponent implements OnInit {
   }
 
   getAllCampuses() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/campuses';
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
+    this.subscription = this.campusService
+      .getAllCampuses()
+      .subscribe((data: any) => {
         this.campuses = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+      });
   }
 
   getAllRooms(campusIndex, campusType, page = 1) {
@@ -113,10 +114,7 @@ export class RoomsComponent implements OnInit {
     if (campusType !== 'all') {
       choosedCampus = '&campusName=' + campusType;
     }
-
     this.page = page;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
     let paramQuantityStudent = this.isClickBtnQuantityStudent
       ? `&quantityStudent=${this.quantityStudent}`
@@ -128,29 +126,26 @@ export class RoomsComponent implements OnInit {
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
-
-    url +=
-      '/api/rooms?' +
-      choosedCampus +
-      paramSearchText +
-      '&skip=' +
-      this.skip +
-      '&take=' +
-      this.pageSize +
-      paramQuantityStudent +
-      paramTypeOfRoomId;
-
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.rooms = data.data.data;
-        console.log('rooms:', this.rooms);
-        this.roomsTotal = data.total;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.roomService
+      .getAllRoomsHaveParam(
+        this.skip,
+        this.pageSize,
+        paramSearchText,
+        paramQuantityStudent,
+        paramTypeOfRoomId,
+        choosedCampus
+      )
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.rooms = data.data.data;
+          console.log('rooms:', this.rooms);
+          this.roomsTotal = data.total;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   onSearch(event) {
@@ -195,26 +190,22 @@ export class RoomsComponent implements OnInit {
   }
 
   getDetailARoom() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    console.log(this.currentRoomId);
-    let url = GlobalConstants.apiURL + '/api/rooms/' + this.currentRoomId;
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log('detailRoom: ', data);
-        this.modalRoom = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.roomService
+      .getDetailRoom(this.currentRoomId)
+      .subscribe(
+        (data: any) => {
+          console.log('detailRoom: ', data);
+          this.modalRoom = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   // export excel file
   exportExcel() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/rooms/export';
-    this.httpClient.get(url, { responseType: 'blob', headers }).subscribe(
+    this.subscription = this.roomService.exportExcelFile().subscribe(
       (response: any) => {
         this.downloadFile(
           response,
@@ -242,11 +233,8 @@ export class RoomsComponent implements OnInit {
   }
 
   async getUpdateRoom() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    console.log(this.currentRoomId);
-    let url = GlobalConstants.apiURL + '/api/rooms/' + this.currentRoomId;
-    let data = await this.httpClient
-      .get<Room>(url, { headers })
+    let data = await this.roomService
+      .getUpdateRoom(this.currentRoomId)
       .toPromise();
     this.newRoomForm = data;
     if (!this.newRoomForm.typeRoom) {
@@ -257,60 +245,61 @@ export class RoomsComponent implements OnInit {
   }
 
   removeStudent(student: any) {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/rooms/' + this.currentRoomId + '/student';
-    let paramStudent = student;
-    this.httpClient.put(url, paramStudent, { headers }).subscribe(
-      async (response: any) => {
-        const index = this.newRoomForm.students.findIndex(
-          (x) => x.id === student.id
-        );
-        this.newRoomForm.students.splice(index, 1);
-        const indexRoom = this.rooms.findIndex(
-          (r) => r.id === this.currentRoomId
-        );
-        await this.getUpdateRoom();
-        this.rooms[indexRoom] = this.newRoomForm;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.roomService
+      .getStudentWanttoUnactive(student.id)
+      .subscribe(
+        (data: StudentLeft) => {
+          this.studentLeft = data;
+          this.roomService
+            .unactiveStudentInRoom(this.studentLeft)
+            .subscribe((data) => {
+              const index = this.newRoomForm.students.findIndex(
+                (x) => x.id === student.id
+              );
+              this.newRoomForm.students.splice(index, 1);
+              const indexRoom = this.rooms.findIndex(
+                (r) => r.id === this.currentRoomId
+              );
+            });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
-  onSearchMultiSelect(event) {
-    if (event && event.term) {
-      var keyword = event.term;
-      console.log('keyword: ', keyword);
-      let token = '';
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-      this.studentService
-        .getAllStudents(0, 50, keyword)
-        .subscribe((data: any) => {
-          this.arrStudent = [];
-          let studentList = data.data.data;
-          console.log('students:', studentList);
-          for (let i = 0; i < studentList.length; i++) {
-            let label = studentList[i].name;
-            let name =
-              studentList[i].name + ' <' + studentList[i].roomDto.name + '> ';
-            let item = {
-              id: studentList[i].id,
-              name: name,
-              label: label,
-            };
-            this.arrStudent = [...this.arrStudent, item];
-          }
-        });
-    }
-  }
+  // onSearchMultiSelect(event) {
+  //   if (event && event.term) {
+  //     var keyword = event.term;
+  //     console.log('keyword: ', keyword);
+  //     let token = '';
+  //     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
+  //     this.studentService
+  //       .getAllStudents(0, 50, keyword)
+  //       .subscribe((data: any) => {
+  //         this.arrStudent = [];
+  //         let studentList = data.data.data;
+  //         console.log('students:', studentList);
+  //         for (let i = 0; i < studentList.length; i++) {
+  //           let label = studentList[i].name;
+  //           let name =
+  //             studentList[i].name + ' <' + studentList[i].roomDto.name + '> ';
+  //           let item = {
+  //             id: studentList[i].id,
+  //             name: name,
+  //             label: label,
+  //           };
+  //           this.arrStudent = [...this.arrStudent, item];
+  //         }
+  //       });
+  //   }
+  // }
 
-  unselect(item) {
-    this.selectedStudentIds = this.selectedStudentIds.filter(
-      (sid) => sid !== item.id
-    );
-  }
+  // unselect(item) {
+  //   this.selectedStudentIds = this.selectedStudentIds.filter(
+  //     (sid) => sid !== item.id
+  //   );
+  // }
 
   checkQuantityStudent(typeRoomId: number) {
     if (typeRoomId == null) {
@@ -338,9 +327,7 @@ export class RoomsComponent implements OnInit {
     if (this.typeRoomError || this.typeRoomError === '') {
       return;
     }
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/rooms/' + this.currentRoomId;
+
     let indexTypeRoom = this.typeOfRoomList.findIndex(
       (x) => x.id === this.typeRoomId
     );
@@ -357,25 +344,30 @@ export class RoomsComponent implements OnInit {
       isPayWaterBill: this.newRoomForm.isPayWaterBill,
       isPayVehicleBill: this.newRoomForm.isPayVehicleBill,
     });
-
-    this.httpClient.put(url, roomUpdate, { headers }).subscribe(
-      (data: Room) => {
-        this.newRoomForm = data;
-        let indexRoom = this.rooms.findIndex(
-          (room) => room.id === this.newRoomForm.id
-        );
-        this.rooms[indexRoom] = data;
-        this.modalService.dismissAll();
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.roomService
+      .updateRoom(this.currentRoomId, roomUpdate)
+      .subscribe(
+        (data: Room) => {
+          this.newRoomForm = data;
+          let indexRoom = this.rooms.findIndex(
+            (room) => room.id === this.newRoomForm.id
+          );
+          this.rooms[indexRoom] = data;
+          this.modalService.dismissAll();
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   turnOffNotification() {
     setTimeout(() => {
       this.typeRoomError = '';
     }, 5000);
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

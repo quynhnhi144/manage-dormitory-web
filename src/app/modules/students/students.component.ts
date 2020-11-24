@@ -1,13 +1,11 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { GlobalConstants } from '../../common/global-constants';
 import { StudentsService } from './students.service';
 import { Student } from './student.model';
 import { RoomService } from '../rooms/room.service';
-import { CampusService } from 'src/app/services/campus.service';
+import { CampusService } from 'src/app/core/services/campus.service';
 import { StudentLeft } from './student-left.model';
-import { NotificationService } from '../../services/notification.service';
 import { StudentNew } from './student-new.model';
 import { RoomBill } from '../../shared/model/room-bill.model';
 import { WaterBill } from '../../shared/model/water-bill.model';
@@ -15,6 +13,8 @@ import { StudentDto } from './student-dto.model';
 import { InforAboutMoneySwitchRoom } from 'src/app/shared/model/info-about-money-switch-room.model';
 import { VehicleBill } from '../../shared/model/vehicle-bill.model';
 import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
+import { NotificationService } from '../../core/services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-students',
@@ -58,6 +58,9 @@ export class StudentsComponent implements OnInit {
   oldRoomId = 0;
 
   infoAboutMoneySwitchRoom = new InforAboutMoneySwitchRoom();
+
+  subscription: Subscription;
+
   constructor(
     private httpClient: HttpClient,
     private modalService: NgbModal,
@@ -93,33 +96,24 @@ export class StudentsComponent implements OnInit {
     }
 
     this.page = page;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
 
-    url +=
-      '/api/students?' +
-      choosedCampus +
-      '&skip=' +
-      this.skip +
-      '&take=' +
-      this.pageSize +
-      paramSearchText;
-
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.students = data.data.data;
-        console.log('students:', this.students);
-        this.studentTotal = data.total;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.studentService
+      .getAllStudents(this.skip, this.pageSize, paramSearchText, choosedCampus)
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.students = data.data.data;
+          console.log('students:', this.students);
+          this.studentTotal = data.total;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   onSearch(event) {
@@ -345,7 +339,6 @@ export class StudentsComponent implements OnInit {
       var keyword = event.term;
       console.log('keyword: ', keyword);
       let token = '';
-      const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
       this.roomService.getAllRooms(0, 100, keyword).subscribe((data: any) => {
         this.arrRooms = [];
         let roomList = data.data.data;
@@ -391,40 +384,43 @@ export class StudentsComponent implements OnInit {
   }
 
   getRoomBill() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/students/' + this.currentStudentId + '/studentLeft';
-    this.httpClient.get(url, { headers }).subscribe((data: any) => {
-      console.log('studentLeft: ' + data);
-      this.studentLeft = data;
-    });
+    this.subscription = this.roomService
+      .getStudentWanttoUnactive(this.currentStudentId)
+      .subscribe(
+        (data: any) => {
+          console.log('studentLeft: ' + data);
+          this.studentLeft = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   saveDelete() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/students' + '/studentLeft';
-    this.httpClient.post(url, this.studentLeft, { headers }).subscribe(
-      (data: any) => {
-        console.log('data:' + data);
-        let index = this.students.findIndex(
-          (student) => student.id === this.studentLeft.id
-        );
-        this.students[index].active = !this.students[index].active;
-        this.modalService.dismissAll();
-        this.notificationService.sendNotificationMessage({
-          message: 'Đã đổi trạng thái sinh viên thành công !!!',
-          isSuccess: true,
-        });
-      },
-      (error) => {
-        console.log(error);
-        this.notificationService.sendNotificationMessage({
-          message: 'Có lỗi xảy ra !!!',
-          isSuccess: false,
-        });
-      }
-    );
+    this.subscription = this.roomService
+      .unactiveStudentInRoom(this.studentLeft)
+      .subscribe(
+        (data: any) => {
+          console.log('data:' + data);
+          let index = this.students.findIndex(
+            (student) => student.id === this.studentLeft.id
+          );
+          this.students[index].active = !this.students[index].active;
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã đổi trạng thái sinh viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
+        }
+      );
   }
 
   createNewStudent(modalUpdateAStudent) {
@@ -447,23 +443,17 @@ export class StudentsComponent implements OnInit {
   }
 
   showInfoMoney() {
-    console.log('idRoom: ' + this.selectedRoomIds[0]);
-    // this.selectedRoomIds = this.arrRooms;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url +=
-      '/api/students/' +
-      this.selectedRoomIds[0] +
-      '/money-room-and-money-water';
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log('data: ' + data);
-        this.moneyRoomAndMoneyWater = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.studentService
+      .showInfoMoney(this.selectedRoomIds[0])
+      .subscribe(
+        (data: any) => {
+          console.log('data: ' + data);
+          this.moneyRoomAndMoneyWater = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   getAllRemaingRooms() {
@@ -480,24 +470,17 @@ export class StudentsComponent implements OnInit {
   }
 
   changeRoom() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url +=
-      '/api/students/' +
-      'duration_money_between_two_room?' +
-      '&oldRoomId=' +
-      this.modalStudent.roomDto.id +
-      '&newRoomId=' +
-      this.remaingRoomId;
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log('duration: ' + data);
-        this.infoAboutMoneySwitchRoom = data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.studentService
+      .changeRoom(this.modalStudent.roomDto.id, this.remaingRoomId)
+      .subscribe(
+        (data: any) => {
+          console.log('duration: ' + data);
+          this.infoAboutMoneySwitchRoom = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   saveSwitchRoom() {
@@ -547,26 +530,29 @@ export class StudentsComponent implements OnInit {
       vehicleBill: vehicleBill,
     });
 
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
-    url += '/api/students/' + this.currentStudentId + '/switch-room';
-    this.httpClient.put(url, studentSwitchRoom, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.getAllStudents(this.campusIndex, this.campusType, this.page);
-        this.modalService.dismissAll();
-        this.notificationService.sendNotificationMessage({
-          message: 'Đã chuyển phòng cho sinh viên thành công !!!',
-          isSuccess: true,
-        });
-      },
-      (error) => {
-        console.log(error);
-        this.notificationService.sendNotificationMessage({
-          message: 'Có lỗi xảy ra !!!',
-          isSuccess: false,
-        });
-      }
-    );
+    this.subscription = this.studentService
+      .switchRoom(this.currentStudentId, studentSwitchRoom)
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.getAllStudents(this.campusIndex, this.campusType, this.page);
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã chuyển phòng cho sinh viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }

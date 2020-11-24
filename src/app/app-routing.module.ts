@@ -3,9 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { AuthComponent } from './auth/auth.component';
 
 const appRoutes: Routes = [
   //{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+  },
   {
     path: '',
     component: AdminLayoutComponent,

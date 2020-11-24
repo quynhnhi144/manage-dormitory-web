@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbDropdownConfig } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'navbar-cmp',
@@ -11,7 +12,7 @@ export class NavbarComponent implements OnInit {
   public iconOnlyToggled = false;
   public sidebarToggled = false;
 
-  constructor(config: NgbDropdownConfig) {
+  constructor(config: NgbDropdownConfig, private authService: AuthService) {
     config.placement = 'bottom-right';
   }
 
@@ -48,5 +49,9 @@ export class NavbarComponent implements OnInit {
   // toggle right sidebar
   toggleRightSidebar() {
     document.querySelector('#right-sidebar').classList.toggle('open');
+  }
+
+  onLogout() {
+    this.authService.logout();
   }
 }

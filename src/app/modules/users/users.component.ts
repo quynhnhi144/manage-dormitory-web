@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { GlobalConstants } from '../../common/global-constants';
+import { Subscription } from 'rxjs';
+import { UserService } from './user.service';
 
 @Component({
   selector: 'app-users',
@@ -17,6 +19,9 @@ export class UsersComponent implements OnInit {
   searchText = '';
 
   isClickSearch = false;
+
+  subscription: Subscription;
+
   //modal
   modalUser = {
     id: 1,
@@ -38,7 +43,11 @@ export class UsersComponent implements OnInit {
   message = '';
   currentUserId = 0;
 
-  constructor(private httpClient: HttpClient, private modalService: NgbModal) {}
+  constructor(
+    private httpClient: HttpClient,
+    private modalService: NgbModal,
+    private userService: UserService
+  ) {}
 
   ngOnInit(): void {
     this.getAllUser(1);
@@ -46,31 +55,23 @@ export class UsersComponent implements OnInit {
 
   getAllUser(page = 1) {
     this.page = page;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
-    url +=
-      '/api/users?' +
-      '&skip=' +
-      this.skip +
-      '&take=' +
-      this.pageSize +
-      paramSearchText;
-
-    this.httpClient.get(url, { headers }).subscribe(
-      (data: any) => {
-        console.log(data);
-        this.users = data.data.data;
-        console.log('users:', this.users);
-        this.userTotal = data.total;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    this.subscription = this.userService
+      .getAllUsers(this.skip, this.pageSize, paramSearchText)
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          this.users = data.data.data;
+          console.log('users:', this.users);
+          this.userTotal = data.total;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   onSearch(event) {
@@ -101,10 +102,7 @@ export class UsersComponent implements OnInit {
   }
 
   getDetailAUser() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    console.log(this.currentUserId);
-    let url = GlobalConstants.apiURL + '/api/users/' + this.currentUserId;
-    this.httpClient.get(url, { headers }).subscribe(
+    this.subscription = this.userService.getAUser(this.currentUserId).subscribe(
       (data: any) => {
         console.log('detailUser: ', data);
         this.modalUser = data;
@@ -115,9 +113,15 @@ export class UsersComponent implements OnInit {
     );
   }
 
-  // // modal update room
+  /// modal update room
   openModalUpdateAUser(modalUpdateAUser, user: any) {
     this.currentUserId = user.id;
     this.openModal(modalUpdateAUser);
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.subscription.unsubscribe();
   }
 }
