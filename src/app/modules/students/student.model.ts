@@ -1,6 +1,7 @@
 import { RoomDto } from '../rooms/room-dto.model';
 export class Student {
   id: number;
+  idCard: string;
   name: string;
   birthday: Date;
   phone: string;

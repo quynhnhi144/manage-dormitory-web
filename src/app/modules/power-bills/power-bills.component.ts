@@ -198,7 +198,7 @@ export class PowerBillsComponent implements OnInit {
         (data: any) => {
           console.log('detail power bill: ', data);
           if (this.isNew) {
-            this.modalRoomPowerBillUpdate = new PowerBill({
+            this.modalNewPowerBill = new PowerBill({
               detailRoomDto: data.detailRoomDto,
               billId: null,
               startDate: new Date(data.endDate),
@@ -297,6 +297,10 @@ export class PowerBillsComponent implements OnInit {
             );
             this.rooms[index] = data;
             this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã tạo hóa đơn tiền điện thành công !!!',
+              isSuccess: true,
+            });
           },
           (error) => {
             console.log(error);
@@ -304,7 +308,7 @@ export class PowerBillsComponent implements OnInit {
         );
     } else {
       this.subscription = this.powerBillsService
-        .newPowerBill(this.currentRoomId, this.modalRoomPowerBillUpdate)
+        .newPowerBill(this.currentRoomId, this.modalNewPowerBill)
         .subscribe(
           (data: any) => {
             console.log('new data: ', data);
@@ -316,6 +320,10 @@ export class PowerBillsComponent implements OnInit {
           },
           (error) => {
             console.log(error);
+            this.notificationService.sendNotificationMessage({
+              message: 'Lỗi! Có lỗi đã xảy ra. Hãy kiểm tra lại!!!',
+              isSuccess: false,
+            });
           }
         );
     }
@@ -340,14 +348,14 @@ export class PowerBillsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.notificationService.sendNotificationMessage({
-            message: 'Mail is successful !!!',
+            message: 'Mail đã gửi thành công !!!',
             isSuccess: true,
           });
           console.log('mail: ' + data.message);
         },
         (error) => {
           this.notificationService.sendNotificationMessage({
-            message: 'Error! An error occurred. Please try again later!!!',
+            message: 'Lỗi! Có lỗi đã xảy ra. Hãy kiểm tra lại!!!',
             isSuccess: false,
           });
           console.log(error);
@@ -361,14 +369,14 @@ export class PowerBillsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           this.notificationService.sendNotificationMessage({
-            message: 'Mail is successful !!!',
+            message: 'Mail đã gửi thành công !!!',
             isSuccess: true,
           });
           console.log('mail: ' + data.message);
         },
         (error) => {
           this.notificationService.sendNotificationMessage({
-            message: 'Error! An error occurred. Please try again later!!!',
+            message: 'Lỗi! Có lỗi đã xảy ra. Hãy kiểm tra lại !!!',
             isSuccess: false,
           });
           console.log(error);

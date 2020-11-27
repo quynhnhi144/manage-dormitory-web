@@ -3,7 +3,7 @@
     <div class="col-12">
 
       <div style="float: left">
-        <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Rooms</div>
+        <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý phòng</div>
       </div>
       <div style="clear: both"></div>
       <!-- START TABS -->
@@ -11,7 +11,7 @@
         <div>
           <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
             (click)="getAllRooms(0, 'all')">
-            All
+            Tất cả
           </div>
 
           <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
@@ -39,7 +39,7 @@
               width="20" />
             <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcel()">
               <img src="../../assets/images/export.png" width="15" />
-              Export
+              Xuất file
             </button>
           </div>
           <div class="table-responsive table-rooms">
@@ -47,13 +47,13 @@
               <thead>
                 <tr>
                   <th>Id</th>
-                  <th>Name</th>
+                  <th>Tên phòng</th>
                   <th>
                     <div class="dropdown" ngbDropdown>
                       <button
                         class="btn btn-dropdown dropdown-toggle {{isClickBtnQuantityStudent ? 'btn-dropdown-active' : ''}}"
                         type="button" id="quantityStudentDropdown" ngbDropdownToggle>
-                        Quantity Student
+                        Số lượng sinh viên
                       </button>
                       <div class="dropdown-menu dropdown-quantity-student" ngbDropdownMenu
                         aria-labelledby="quantityStudentDropdown">
@@ -68,7 +68,7 @@
                       <button
                         class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeRoom ? 'btn-dropdown-active' : ''}}"
                         type="button" id="typeRoomDropdown" ngbDropdownToggle>
-                        Type Of Room
+                        Loại phòng
                       </button>
                       <div class="dropdown-menu dropdown-type-room" aria-labelledby="typeRoomDropdown" ngbDropdownMenu>
                         <a *ngFor="let item of typeOfRoomList" class="dropdown-item" href="javascript:void(0)"
@@ -76,11 +76,11 @@
                       </div>
                     </div>
                   </th>
-                  <th>Campus</th>
-                  <th>Campus Manager</th>
-                  <th>Room Payment</th>
-                  <th>Water Payment</th>
-                  <th>Vehicle Payment</th>
+                  <th>Khu nhà</th>
+                  <th>Quản lý nhà</th>
+                  <th>Tiền phòng</th>
+                  <th>Tiền nước</th>
+                  <th>Tiền xe</th>
                   <th></th>
                 </tr>
               </thead>
@@ -97,36 +97,36 @@
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.userManager}}</td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">
                     <div *ngIf="room.isPayRoom" class="pill pill-1">
-                      COMPLETED
+                      ĐÃ TRẢ
                     </div>
                     <div *ngIf="!room.isPayRoom && room.quantityStudent > 0" class="pill pill-2">
-                      NOT&nbsp;COMPLETED
+                      CHƯA&nbsp;TRẢ
                     </div>
                     <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
-                      NO&nbsp;DATA
+                      KHÔNG&nbsp;DỮ LIỆU
                     </div>
                   </td>
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">
                     <div *ngIf="room.isPayWaterBill" class="pill pill-1">
-                      COMPLETED
+                      ĐÃ TRẢ
                     </div>
                     <div *ngIf="!room.isPayWaterBill && room.quantityStudent > 0" class="pill pill-2">
-                      NOT&nbsp;COMPLETED
+                      CHƯA&nbsp;TRẢ
                     </div>
                     <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
-                      NO&nbsp;DATA
+                      KHÔNG&nbsp;DỮ LIỆU
                     </div>
                   </td>
 
                   <td (click)="openModalDetailARoom(modalDetailARoom,room)">
                     <div *ngIf="room.isPayVehicleBill" class="pill pill-1">
-                      COMPLETED
+                      ĐÃ TRẢ
                     </div>
                     <div *ngIf="!room.isPayVehicleBill && room.quantityStudent > 0" class="pill pill-2">
-                      NOT&nbsp;COMPLETED
+                      CHƯA&nbsp;TRẢ
                     </div>
                     <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
-                      NO&nbsp;DATA
+                      KHÔNG&nbsp;DỮ LIỆU
                     </div>
                   </td>
 
@@ -154,7 +154,7 @@
                     <option>50</option>
                   </select>
                   <div style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
-                    Results per page</div>
+                    Kết quả mỗi trang</div>
                 </div>
 
                 <div class="col-xs-12 col-md-6">
@@ -166,8 +166,8 @@
                       </ng-template>
                       <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right" aria-hidden="true"></i>
                       </ng-template>
-                      <ng-template ngbPaginationPrevious>Prev</ng-template>
-                      <ng-template ngbPaginationNext>Next</ng-template>
+                      <ng-template ngbPaginationPrevious>Trước</ng-template>
+                      <ng-template ngbPaginationNext>Sau</ng-template>
                       <ng-template ngbPaginationEllipsis>...</ng-template>
                     </ngb-pagination>
                   </div>
@@ -186,7 +186,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="exampleModalLabel-2">ROOM DETAIL</h3>
+      <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT PHÒNG</h3>
       <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -207,27 +207,27 @@
 
                 <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
                   <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">ROOM ID</div>
+                    <div class="col-xs-6 col-md-6 col-title">ID PHÒNG</div>
                     <div class="col-xs-6 col-md-6">
                       {{ modalRoom.id}}
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">ROOM NAME</div>
+                    <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
                     <div class="col-xs-6 col-md-6">
                       {{ modalRoom.name}}
                     </div>
                   </div>
 
                   <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">TYPE ROOM</div>
+                    <div class="col-xs-6 col-md-6 col-title">KIỂU PHÒNG</div>
                     <div class="col-xs-6 col-md-6">
                       {{modalRoom.typeRoom ? modalRoom.typeRoom.name: '--' }}
                     </div>
                   </div>
 
                   <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">QUANTITY STUDENT</div>
+                    <div class="col-xs-6 col-md-6 col-title">SỐ LƯỢNG SINH VIÊN</div>
                     <div class="col-xs-6 col-md-6">
                       {{modalRoom.quantityStudent}}
                     </div>
@@ -237,11 +237,11 @@
 
               <div class="row">
                 <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">CAMPUS NAME</div>
+                <div class="col-xs-6 col-md-2 col-title">TÊN KHU NHÀ</div>
                 <div class="col-xs-6 col-md-3">
                   {{modalRoom.campusName}}
                 </div>
-                <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+                <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
                 <div class="col-xs-6 col-md-3">
                   {{modalRoom.userManager}}
                 </div>
@@ -249,40 +249,40 @@
 
               <div class="row">
                 <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">PRICE ROOM</div>
+                <div class="col-xs-6 col-md-2 col-title">GIÁ PHÒNG</div>
                 <div class="col-xs-6 col-md-3">
                   {{(modalRoom.priceRoom |number) + "đ / room"}}
                 </div>
-                <div class="col-xs-6 col-md-3 col-title">ROOM PAYMENT</div>
+                <div class="col-xs-6 col-md-3 col-title">THANH TOÁN PHÒNG</div>
                 <div class="col-xs-6 col-md-3"
                   [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-                  {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                  {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">PRICE WATER</div>
+                <div class="col-xs-6 col-md-2 col-title">GIÁ NƯỚC</div>
                 <div class="col-xs-6 col-md-3">
                   {{(modalRoom.priceWater | number ) + "đ / person"}}
                 </div>
-                <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
+                <div class="col-xs-6 col-md-3 col-title">THANH TOÁN NƯỚC</div>
                 <div class="col-xs-6 col-md-3"
                   [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-                  {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                  {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">PRICE VEHICLE</div>
+                <div class="col-xs-6 col-md-2 col-title">GIÁ XE</div>
                 <div class="col-xs-6 col-md-3">
                   {{(modalRoom.priceVehicle | number ) + "đ / person"}}
                 </div>
-                <div class="col-xs-6 col-md-3 col-title">VEHICLE PAYMENT</div>
+                <div class="col-xs-6 col-md-3 col-title">THANH TOÁN XE</div>
                 <div class="col-xs-6 col-md-3"
                   [ngStyle]=" {'color': modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-                  {{modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? "COMPLETED" : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0? 'NOT COMPLETED' : 'NO DATA'}}
+                  {{modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayVehicleBill && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
                 </div>
               </div>
 
@@ -297,7 +297,7 @@
               <div class="section-result">
                 <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
                   <div class="row">
-                    <div class="col-xs-12 col-section-title">Student</div>
+                    <div class="col-xs-12 col-section-title">Sinh viên</div>
                   </div>
 
                   <div class="row">
@@ -316,7 +316,7 @@
                       </div>
 
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">NAME</div>
+                        <div class="col-xs-6 col-md-6 col-title">HỌ VÀ TÊN</div>
                         <div class="col-xs-6 col-md-6">
                           {{ student.name |uppercase}}
                         </div>
@@ -330,7 +330,7 @@
                       </div>
 
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">PHONE NUMBER</div>
+                        <div class="col-xs-6 col-md-6 col-title">SỐ ĐIỆN THOẠI</div>
                         <div class="col-xs-6 col-md-6">
                           {{ student.phone }}
                         </div>
@@ -341,10 +341,10 @@
 
                 <div class="section-student" *ngIf=" modalRoom.students.length === 0">
                   <div class="row">
-                    <div class="col-xs-12 col-section-title">Student</div>
+                    <div class="col-xs-12 col-section-title">Sinh viên</div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+                    <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào</div>
                   </div>
                 </div>
 
@@ -362,7 +362,7 @@
   <div class="modal-content">
     <div class="modal-header">
       <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="exampleModalLabel-3">UPDATE ROOM</h3>
+      <h3 class="modal-title" id="exampleModalLabel-3">CẬP NHẬT PHÒNG</h3>
       <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -375,29 +375,29 @@
             <form name="newRoomForm" class="newRoomForm">
               <div class="row">
                 <div class="col-xs-12 col-md-6 col-left">
-                  <label for="roomId">Room Id</label>
+                  <label for="roomId">Id Phòng</label>
                   <input name="roomId" [(ngModel)]="newRoomForm.id" class="disable-input" readonly />
                 </div>
                 <div class="col-xs-12 col-md-6 col-right">
-                  <label for="roomName">Room Name</label>
+                  <label for="roomName">Tên phòng</label>
                   <input name="roomName" [(ngModel)]="newRoomForm.name" class="disable-input" readonly />
                 </div>
               </div>
 
               <div class="row">
                 <div class="col-xs-12 col-md-6 col-left">
-                  <label for="userManager">User Manager</label>
+                  <label for="userManager">Quản lý nhà</label>
                   <input name="userManager" [(ngModel)]="newRoomForm.userManager" class="disable-input" readonly />
                 </div>
                 <div class="col-xs-12 col-md-6 col-right">
-                  <label for="campusName">Campus Name</label>
+                  <label for="campusName">Khu nhà</label>
                   <input name="campusName" [(ngModel)]="newRoomForm.campusName" class="disable-input" readonly />
                 </div>
               </div>
               <div class="row">
                 <div class="col-xs-12 col-md-6 col-left">
 
-                  <label for="typeRoom">Type Room</label>
+                  <label for="typeRoom">Loại phòng</label>
                   <ng-select name="typeRoom" [items]="typeOfRoomList" [virtualScroll]="true" bindLabel="name"
                     bindValue="id" [(ngModel)]="typeRoomId" (change)="checkQuantityStudent(typeRoomId)">
                   </ng-select>
@@ -439,7 +439,7 @@
               <div class="section-result">
                 <div>
                   <div class="row">
-                    <div class="col-xs-12 col-section-title">Student</div>
+                    <div class="col-xs-12 col-section-title">Sinh viên</div>
                   </div>
 
                   <div class="row">
@@ -458,11 +458,11 @@
                   </div>
 
                   <div class="row">
-                    <div class="col-xs-6 col-md-2 col-title">STUDENT NAME</div>
+                    <div class="col-xs-6 col-md-2 col-title">HỌ VÀ TÊN</div>
                     <div class="col-xs-6 col-md-3">
                       {{student.name| titlecase }}
                     </div>
-                    <div class="col-xs-6 col-md-3 col-title">PHONE</div>
+                    <div class="col-xs-6 col-md-3 col-title">SỐ ĐIỆN THOẠI</div>
                     <div class="col-xs-6 col-md-4">
                       {{student.phone}}
                     </div>
@@ -470,10 +470,10 @@
                 </div>
                 <div class="section-related-people" *ngIf="newRoomForm.students.length == 0">
                   <div class="row">
-                    <div class="col-xs-12 col-section-title">Student</div>
+                    <div class="col-xs-12 col-section-title">Sinh viên</div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-12 col-md-12 col-title">There is no any student associated yet.</div>
+                    <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào.</div>
                   </div>
                 </div>
               </div>
@@ -483,8 +483,8 @@
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="saveChange()">Submit</button>
-      <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+      <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
+      <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
     </div>
   </div>
 </ng-template>

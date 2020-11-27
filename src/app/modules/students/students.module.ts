@@ -6,10 +6,10 @@ import { StudentsRoutingModule } from './students-routing.module';
 import { StudentsComponent } from './students.component';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { PositiveNumber } from '../../common/positive-number.pipe';
+import { ShareModule } from '../../shared/share.module';
 
 @NgModule({
-  declarations: [StudentsComponent, PositiveNumber],
+  declarations: [StudentsComponent],
   imports: [
     CommonModule,
     StudentsRoutingModule,
@@ -17,6 +17,7 @@ import { PositiveNumber } from '../../common/positive-number.pipe';
     NgbModule,
     BsDatepickerModule.forRoot(),
     NgSelectModule,
+    ShareModule,
   ],
   exports: [BsDatepickerModule],
 })

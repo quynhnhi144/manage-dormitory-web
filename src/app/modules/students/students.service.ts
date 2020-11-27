@@ -86,4 +86,15 @@ export class StudentsService {
     let url = this.baseUrl + '/students' + '/' + idStudent + '/switch-room';
     return this.http.put(url, studentSwitchRoom);
   }
+
+  getStudentByIdCard(studentIdCard: string) {
+    let url =
+      this.baseUrl +
+      '/students' +
+      '/' +
+      'student?' +
+      '&studentIdCard=' +
+      studentIdCard;
+    return this.http.get<Student[]>(url);
+  }
 }

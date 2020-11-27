@@ -9,45 +9,45 @@
         </div>
         <div class="nav-profile-text">
           <span class="font-weight-bold mb-2">Nhi Le</span>
-          <span class="text-secondary text-small">Admin</span>
+          <span class="text-secondary text-small">Quản lý</span>
         </div>
         <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': dashboard.isActive }">
       <a class="nav-link" routerLink="/dashboard" routerLinkActive #dashboard="routerLinkActive">
-        <span class="menu-title">Dashboard</span>
+        <span class="menu-title">Thống kê</span>
         <i class="mdi mdi-home mdi-24px menu-icon"></i>
       </a>
     </li>
 
     <li class="nav-item" [ngClass]="{ 'active': rooms.isActive }">
       <a class="nav-link" routerLink="/rooms" routerLinkActive #rooms="routerLinkActive">
-        <span class="menu-title">Manage Rooms</span>
+        <span class="menu-title">Quản lý phòng</span>
         <i class="mdi mdi-warehouse mdi-24px menu-icon"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': students.isActive }">
       <a class="nav-link" routerLink="/students" routerLinkActive #students="routerLinkActive">
-        <span class="menu-title">Manage Students</span>
+        <span class="menu-title">Quản lý sinh viên</span>
         <i class="mdi mdi-account-group mdi-24px menu-icon"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': powerBills.isActive }">
       <a class="nav-link" routerLink="/power-bills" routerLinkActive #powerBills="routerLinkActive">
-        <span class="menu-title">Manage Power Bills</span>
+        <span class="menu-title">Quản lý tiền điện</span>
         <i class="mdi mdi-power-plug mdi-24px menu-icon"></i>
       </a>
     </li>
     <li class="nav-item" [ngClass]="{ 'active': vehicles.isActive }">
       <a class="nav-link" routerLink="/vehicles" routerLinkActive #vehicles="routerLinkActive">
-        <span class="menu-title">Manage Vehicles</span>
+        <span class="menu-title">Quản lý xe</span>
         <i class="mdi mdi-train-car mdi-24px menu-icon"></i>
       </a>
     </li>
     <li *ngIf="isAuthenticated" class="nav-item" [ngClass]="{ 'active': users.isActive }">
       <a class="nav-link" routerLink="/users" routerLinkActive #users="routerLinkActive">
-        <span class="menu-title">Users</span>
+        <span class="menu-title">Quản lý nhân viên</span>
         <i class="mdi mdi-contacts mdi-24px menu-icon"></i>
       </a>
     </li>

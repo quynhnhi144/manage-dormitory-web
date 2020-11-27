@@ -43,12 +43,12 @@ export class PowerBillsService {
   }
 
   updatePowerBill(idPowerBill: number, newPowerBill: PowerBill) {
-    let url = this.baseUrl + '/powerBills' + idPowerBill;
+    let url = this.baseUrl + '/powerBills' + '/' + idPowerBill;
     return this.http.put(url, newPowerBill);
   }
 
   newPowerBill(idPowerBill: number, newPowerBill: PowerBill) {
-    let url = this.baseUrl + '/powerBills' + idPowerBill;
+    let url = this.baseUrl + '/powerBills' + '/' + idPowerBill;
     return this.http.post(url, newPowerBill);
   }
 

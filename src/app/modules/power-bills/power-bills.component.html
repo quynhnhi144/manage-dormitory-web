@@ -3,7 +3,7 @@
         <div class="col-12">
 
             <div style="float: left">
-                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Power Bill</div>
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý tiền điện</div>
             </div>
 
             <div style="float: right">
@@ -19,7 +19,7 @@
                 <div>
                     <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
                         (click)="getAllPowerBills(0, 'all')">
-                        All
+                        Tất cả
                     </div>
 
                     <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
@@ -49,18 +49,18 @@
                         <button type="button" *ngIf="isAuthenticated" class="btn-icon btn-round btn-export ml-3"
                             (click)="openModalImportFile(modalImportFile)">
                             <img src="../../assets/images/import.png" width="15" />
-                            Import
+                            Tải file
                         </button>
                         <button type="button" class="btn-icon btn-round btn-export ml-3"
                             (click)="exportPowerBillExcel()">
                             <img src="../../assets/images/export.png" width="15" />
-                            Export
+                            Xuất file
                         </button>
 
                         <button type="button" *ngIf="isAuthenticated" class="btn-icon btn-round btn-export ml-3"
                             (click)="sendMailForAllPowerBills()">
                             <img src="../../assets/images/mail-send.png" />
-                            Send Mail
+                            Gửi mail
                         </button>
                     </div>
                     <div class="table-responsive table-rooms">
@@ -68,14 +68,14 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Room</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Number Of Power Begin</th>
-                                    <th>Number Of Power End</th>
-                                    <th>Number Of Power Used</th>
-                                    <th>Number Of Money Must Pay</th>
-                                    <th>Payment</th>
+                                    <th>Phòng</th>
+                                    <th>Ngày bắt đầu</th>
+                                    <th>Ngày kết thúc</th>
+                                    <th>Chỉ số đầu</th>
+                                    <th>Chỉ số cuối</th>
+                                    <th>Chỉ số đã sử dụng</th>
+                                    <th>Thành tiền</th>
+                                    <th>Trạng thái</th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -116,13 +116,13 @@
 
                                     <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
                                         <div *ngIf="room.pay" class="pill pill-1">
-                                            COMPLETED
+                                            ĐÃ TRẢ
                                         </div>
                                         <div *ngIf="room.billId && !room.pay" class="pill pill-2">
-                                            NOT&nbsp;COMPLETED
+                                            CHƯA&nbsp;TRẢ
                                         </div>
                                         <div *ngIf="!room.billId && !room.pay" class="pill pill-3">
-                                            NO&nbsp;DATA
+                                            KHÔNG&nbsp;DỮ LIỆU
                                         </div>
                                     </td>
 
@@ -149,8 +149,7 @@
                                     </td>
                                 </tr>
                                 <tr *ngIf="roomTotal == 0">
-                                    <td colspan="11" class="no-data">No data
-                                        found.</td>
+                                    <td colspan="11" class="no-data">Không tìm thấy dữ liệu.</td>
                                 </tr>
 
                             </tbody>
@@ -169,7 +168,7 @@
                                     </select>
                                     <div
                                         style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
-                                        Results per page</div>
+                                        Kết quả mỗi trang</div>
                                 </div>
 
                                 <div class="col-xs-12 col-md-6">
@@ -184,8 +183,8 @@
                                             <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
                                                     aria-hidden="true"></i>
                                             </ng-template>
-                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
-                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                            <ng-template ngbPaginationNext>Sau</ng-template>
                                             <ng-template ngbPaginationEllipsis>...</ng-template>
                                         </ngb-pagination>
                                     </div>
@@ -205,7 +204,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/electricity-bill.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalDetailPowerBill">POWER BILL DETAIL</h3>
+            <h3 class="modal-title" id="modalDetailPowerBill">CHI TIẾT HÓA ĐƠN ĐIỆN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -221,7 +220,7 @@
                     <div class="col-xs-6 col-md-2"></div>
                     <div class="col-xs-6 col-md-6">
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">ID ROOM
+                            <div class="col-xs-6 col-md-6 col-title">ID PHÒNG
                             </div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalRoomPowerBill.detailRoomDto.id}}
@@ -229,7 +228,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">ROOM NAME
+                            <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG
                             </div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalRoomPowerBill.detailRoomDto.name}}
@@ -237,7 +236,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">ID BILL
+                            <div class="col-xs-6 col-md-6 col-title">ID HÓA ĐƠN
                             </div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalRoomPowerBill.billId}}
@@ -245,7 +244,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">START DATE
+                            <div class="col-xs-6 col-md-6 col-title">NGÀY BẮT ĐẦU
                             </div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalRoomPowerBill.startDate | date: 'dd-MM-yyy'}}
@@ -253,7 +252,7 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">END DATE
+                            <div class="col-xs-6 col-md-6 col-title">NGÀY KẾT THÚC
                             </div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalRoomPowerBill.endDate| date: 'dd-MM-yyy'}}
@@ -265,11 +264,11 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1 "></div>
-                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER BEGIN</div>
+                    <div class="col-xs-6 col-md-3 col-title">CHỈ SỐ BẮT ĐẦU</div>
                     <div class="col-xs-6 col-md-2">
                         {{ modalRoomPowerBill.numberOfPowerBegin}}
                     </div>
-                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER USED</div>
+                    <div class="col-xs-6 col-md-3 col-title">CHỈ SỐ SỬ DỤNG</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalRoomPowerBill.numberOfPowerUsed}}
                     </div>
@@ -277,12 +276,12 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1 "></div>
-                    <div class="col-xs-6 col-md-3 col-title">NUMBER OF POWER END</div>
+                    <div class="col-xs-6 col-md-3 col-title">CHỈ SỐ CUỐI</div>
                     <div class="col-xs-6 col-md-2">
                         {{modalRoomPowerBill.numberOfPowerEnd}}
                     </div>
 
-                    <div class="col-xs-6 col-md-3 col-title">TOTAL MONEY MUST PAY</div>
+                    <div class="col-xs-6 col-md-3 col-title">THÀNH TIỀN</div>
                     <div class="col-xs-6 col-md-2">
                         {{(modalRoomPowerBill.numberOfMoneyMustPay |number) + 'đ' }}
                     </div>
@@ -290,19 +289,19 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1 "></div>
-                    <div class="col-xs-6 col-md-3 col-title">PAYMENT</div>
+                    <div class="col-xs-6 col-md-3 col-title">TRẠNG THÁI</div>
 
                     <div *ngIf="modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
                         [ngStyle]="{'color': ' #20a144','font-weight': 'bold'}">
-                        COMPLETED
+                        ĐÃ TRẢ
                     </div>
                     <div *ngIf="modalRoomPowerBill.billId && !modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
                         [ngStyle]="{'color': ' #f05c54','font-weight': 'bold'}">
-                        NOT&nbsp;COMPLETED
+                        CHƯA&nbsp;TRẢ
                     </div>
                     <div *ngIf="!modalRoomPowerBill.billId && !modalRoomPowerBill.pay" class="col-xs-6 col-md-2"
                         [ngStyle]="{'color': ' #eb9510','font-weight': 'bold'}">
-                        NO&nbsp;DATA
+                        KHÔNG&nbsp;DỮ LIỆU
                     </div>
                 </div>
 
@@ -317,7 +316,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/electricity-bill.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="exampleModalLabel-3">UPDATE POWER BILL</h3>
+            <h3 class="modal-title" id="exampleModalLabel-3">CẬP NHẬT HÓA ĐƠN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -330,12 +329,12 @@
                         <form name="newRoomForm" class="newRoomForm">
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="id">Room Id</label>
+                                    <label for="id">Id Phòng</label>
                                     <input name="id" [(ngModel)]="modalRoomPowerBillUpdate.detailRoomDto.id"
                                         class="disable-input" readonly />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="email">Room Name</label>
+                                    <label for="email">Tên phòng</label>
                                     <input name="email" [(ngModel)]="modalRoomPowerBillUpdate.detailRoomDto.name"
                                         class="disable-input" readonly />
                                 </div>
@@ -343,14 +342,14 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="startDate">Start Date</label>
+                                    <label for="startDate">Ngày bắt đầu</label>
                                     <input type="text" name="startDate" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]="modalRoomPowerBillUpdate.startDate" required />
                                 </div>
                                 <div *ngIf="!isNew" class="col-xs-12 col-md-6 col-right">
-                                    <label for="name">Bill Id</label>
+                                    <label for="name">Id Hóa đơn</label>
                                     <input name="name" [(ngModel)]="modalRoomPowerBillUpdate.billId"
                                         class="disable-input" readonly />
                                 </div>
@@ -358,14 +357,14 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left form-group">
-                                    <label for="endDate">End Date</label>
+                                    <label for="endDate">Ngày kết thúc</label>
                                     <input type="text" name="endDate" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]="modalRoomPowerBillUpdate.endDate" required />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="numberOfPowerBegin">Number Of Power Begin</label>
+                                    <label for="numberOfPowerBegin">Chỉ số đầu</label>
                                     <input type="number" name="numberOfPowerBegin"
                                         [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerBegin"
                                         (change)="changeNumberOfPowerUsed()" required />
@@ -375,13 +374,13 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="numberOfPowerEnd">Number Of Power End</label>
+                                    <label for="numberOfPowerEnd">Chỉ số cuối</label>
                                     <input type="number" name="numberOfPowerEnd"
                                         [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerEnd"
                                         (change)="changeNumberOfPowerUsed()" required />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="totalMonetMustPay">Total Money Must Pay</label>
+                                    <label for="totalMonetMustPay">Thành tiền</label>
                                     <input name="totalMonetMustPay" class="disable-input"
                                         [ngModel]="modalRoomPowerBillUpdate.numberOfMoneyMustPay ? (modalRoomPowerBillUpdate.numberOfMoneyMustPay | number) + 'đ' : null"
                                         (ngModelChange)="modalRoomPowerBillUpdate.numberOfMoneyMustPay" readonly />
@@ -390,16 +389,16 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="numberOfPowerUsed">Number Of Power Used</label>
+                                    <label for="numberOfPowerUsed">Chỉ số sử dụng</label>
                                     <input type="number" name="numberOfPowerUsed" class="disable-input"
                                         [(ngModel)]="modalRoomPowerBillUpdate.numberOfPowerUsed " readonly />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
-                                    <p for="payment">PayMent</p>
+                                    <p for="payment">Trạng thái</p>
                                     <p style="cursor: pointer;"
                                         [ngClass]=" modalRoomPowerBillUpdate.pay ?  'pill pill-1' : 'pill pill-2' "
                                         (click)="changeStatusPayment(modalRoomPowerBillUpdate)">
-                                        {{ modalRoomPowerBillUpdate.pay ? "Completed" : "Not Completed" }}</p>
+                                        {{ modalRoomPowerBillUpdate.pay ? "Đã trả" : "Chưa trả" }}</p>
                                 </div>
                             </div>
 
@@ -415,8 +414,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="saveUpdate()">Submit</button>
-            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+            <button type="button" class="btn btn-success" (click)="saveUpdate()">Lưu</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
         </div>
     </div>
 </ng-template>
@@ -424,7 +423,7 @@
 <ng-template #modalImportFile let-modal class="modal fade" id="modalImportFile" aria-labelledby="modalImportFileLabel">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalImportFileLabel">IMPORT FILE</h3>
+            <h3 class="modal-title" id="modalImportFileLabel">TẢI FILE</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -434,7 +433,7 @@
 
             <div style="margin-top: 20px;">
                 <span class="alert-danger" style="font-size: 16px; padding: 5px;" *ngIf="!isExtention">
-                    This is not a excel file!!!</span>
+                    Đây không phải là file excel!!!</span>
             </div>
 
             <div class="progress" *ngIf="progress" style="margin-top: 20px; height: 15px;">
@@ -444,8 +443,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="submit()">Submit</button>
-            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+            <button type="button" class="btn btn-success" (click)="submit()">Lưu</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
         </div>
     </div>
 </ng-template>

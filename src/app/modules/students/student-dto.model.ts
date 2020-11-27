@@ -3,6 +3,7 @@ import { WaterBill } from '../../shared/model/water-bill.model';
 import { RoomBill } from '../../shared/model/room-bill.model';
 export class StudentDto {
   id: number;
+  idCard: string;
   name: string;
   birthday: Date;
   phone: string;

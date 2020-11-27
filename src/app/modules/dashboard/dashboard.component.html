@@ -5,7 +5,7 @@
             <div class="card bg-gradient-danger card-img-holder text-white">
                 <div class="card-body" (click)="openModalUserCampus(modalUserCampus)">
                     <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TOTAL USERS AND CAMPUSES</h4>
+                    <h4 class="font-weight-normal mb-4">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h4>
                     <h5 class="mb-4">{{'Total Number Of Users: ' + dashboard.totalNumberUser}}</h5>
                     <h5 class="mb-4">{{'Total Number Of Campuses: ' + dashboard.totalNumberCampus}}</h5>
                 </div>
@@ -16,7 +16,7 @@
             aria-labelledby="modalUserCampusLabel">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="modalUserCampusLabel">TOTAL USERS AND CAMPUSES</h3>
+                    <h3 class="modal-title" id="modalUserCampusLabel">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h3>
                     <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -41,10 +41,10 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-3">
-                                                        FULLNAME
+                                                        HỌ VÀ TÊN
                                                     </div>
                                                     <div class="col-xs-6 col-md-6">
-                                                        CAMPUSES
+                                                        KHU NHÀ
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let user of users" class="row">
@@ -87,7 +87,7 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-11">
-                                                        NAME
+                                                        TÊN KHU NHÀ
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let campus of campuses" class="row">
@@ -115,7 +115,7 @@
             <div class="card bg-gradient-info card-img-holder text-white">
                 <div class="card-body" (click)="openModalRoomAndRemainingRoom(modalRoomRemainingRoom)">
                     <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TOTAL ROOMS AND REMAINING ROOMS</h4>
+                    <h4 class="font-weight-normal mb-4">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG</h4>
                     <h5 class="mb-4">{{'Total Number Of Rooms: ' + dashboard.totalNumberRoom}}</h5>
                     <h5 class="mb-4">{{'Total Number Of RemainingRooms: ' + dashboard.totalNumberRemainingRoom}}</h5>
                 </div>
@@ -126,7 +126,7 @@
             aria-labelledby="modalRoomRemainingRoomLabel">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="modalRoomRemainingRoomLabel">TOTAL ROOMS AND REMAINING ROOMS</h3>
+                    <h3 class="modal-title" id="modalRoomRemainingRoomLabel">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG</h3>
                     <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -151,14 +151,14 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-2">
-                                                        NAME
+                                                        TÊN PHÒNG
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-3">
-                                                        TOTAL STUDENTS
+                                                        TỔNG SỐ SINH VIÊN
                                                     </div>
                                                     <div class="col-xs-6 col-md-6">
-                                                        CAMPUSES
+                                                        KHU NHÀ
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let room of rooms" class="row">
@@ -202,19 +202,19 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-2">
-                                                        NAME
+                                                        TÊN PHÒNG
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-3">
-                                                        MAX QUANTITY STUDENT
+                                                        SỐ LƯỢNG SINH VIÊN TỐI ĐA
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-4">
-                                                        NUMBER OF REMAINING STUDENT
+                                                        SÔ LƯỢNG CHỖ CÒN TRỐNG
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-2">
-                                                        CAMPUSES
+                                                        KHU NHÀ
                                                     </div>
                                                 </div>
 
@@ -253,7 +253,7 @@
             <div class="card bg-gradient-success card-img-holder text-white">
                 <div class="card-body" (click)="openModalStudentVehicle(modalStudentVehicle)">
                     <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TOTAL STUDENTS AND VEHICLES</h4>
+                    <h4 class="font-weight-normal mb-4">TỔNG SỐ SINH VIÊN VÀ XE</h4>
                     <h5 class="mb-4">{{'Total Number Of Students: ' + dashboard.totalNumberStudent}}</h5>
                     <h5 class="mb-4">{{'Total Number Of Vehicle: ' + dashboard.totalNumberVehicle}}</h5>
                 </div>
@@ -264,7 +264,7 @@
             aria-labelledby="modalStudentVehicleLabel">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="modalStudentVehicleLabel">TOTAL STUDENTS AND VEHICLES</h3>
+                    <h3 class="modal-title" id="modalStudentVehicleLabel">TỔNG SỐ SINH VIÊN VÀ XE</h3>
                     <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -290,10 +290,10 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-6">
-                                                        NAME
+                                                        HỌ VÀ TÊN
                                                     </div>
                                                     <div class="col-xs-6 col-md-3">
-                                                        ROOM NAME
+                                                        TÊN PHÒNG
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let student of students" class="row">
@@ -336,11 +336,11 @@
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-6">
-                                                        LICENSE PLATES
+                                                        BIỂN SỐ XE
                                                     </div>
 
                                                     <div class="col-xs-6 col-md-3">
-                                                        ROOM NAME
+                                                        TÊN PHÒNG
                                                     </div>
                                                 </div>
                                                 <div *ngFor="let vehicle of vehicles" class="row">

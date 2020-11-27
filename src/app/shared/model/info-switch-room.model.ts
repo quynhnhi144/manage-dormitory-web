@@ -3,6 +3,7 @@ import { WaterBill } from './water-bill.model';
 import { VehicleBill } from './vehicle-bill.model';
 export class InfoSwitchRoom {
   studentId: number;
+  studentIdCard: string;
   studentName: string;
   oldRoomId: number;
   oldRoomName: string;
