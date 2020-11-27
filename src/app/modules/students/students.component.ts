@@ -62,7 +62,6 @@ export class StudentsComponent implements OnInit {
   subscription: Subscription;
 
   constructor(
-    private httpClient: HttpClient,
     private modalService: NgbModal,
     private studentService: StudentsService,
     private roomService: RoomService,
@@ -170,6 +169,7 @@ export class StudentsComponent implements OnInit {
       (data: any) => {
         this.modalStudentUpdate = new Student({
           id: data.id,
+          idCard: data.idCard,
           name: data.name,
           birthday: new Date(data.birthday),
           phone: data.phone,
@@ -243,6 +243,7 @@ export class StudentsComponent implements OnInit {
     if (!this.isNewStudent) {
       let studentUpdate = {
         id: this.modalStudentUpdate.id,
+        idCard: this.modalStudentUpdate.idCard,
         name: this.modalStudentUpdate.name,
         birthday: this.modalStudentUpdate.birthday,
         phone: this.modalStudentUpdate.phone,
@@ -253,7 +254,7 @@ export class StudentsComponent implements OnInit {
         roomId: this.selectedRoomIds[0],
       };
 
-      this.studentService
+      this.subscription = this.studentService
         .updateStudent(this.currentStudentId, studentUpdate)
         .subscribe(
           (data: Student) => {
@@ -263,14 +264,24 @@ export class StudentsComponent implements OnInit {
             );
             this.students[index] = data;
             this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã cập nhật thông tin sinh viên thành công !!!',
+              isSuccess: true,
+            });
           },
           (error) => {
             console.log(error);
+            this.notificationService.sendNotificationMessage({
+              message:
+                'Mã số sinh viên hoặc email đã bị trùng. Hãy kiểm tra lại !!!',
+              isSuccess: false,
+            });
           }
         );
     } else {
       let studentNew = new StudentDto({
         id: null,
+        idCard: this.modalStudentUpdate.idCard,
         name: this.modalStudentUpdate.name,
         birthday: this.modalStudentUpdate.birthday,
         phone: this.modalStudentUpdate.phone,
@@ -279,7 +290,7 @@ export class StudentsComponent implements OnInit {
         startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
         endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
         roomId: this.selectedRoomIds[0],
-        waterPriceId: this.moneyRoomAndMoneyWater.waterPriceId,
+        waterPriceId: 2,
       });
 
       let roomBill = new RoomBill({
@@ -320,7 +331,8 @@ export class StudentsComponent implements OnInit {
         (error) => {
           console.log(error);
           this.notificationService.sendNotificationMessage({
-            message: 'Có lỗi xảy ra !!!',
+            message:
+              'Mã số sinh viên hoặc email đã bị trùng. Hãy kiểm tra lại !!!',
             isSuccess: false,
           });
         }
@@ -338,7 +350,6 @@ export class StudentsComponent implements OnInit {
     if (event && event.term) {
       var keyword = event.term;
       console.log('keyword: ', keyword);
-      let token = '';
       this.roomService.getAllRooms(0, 100, keyword).subscribe((data: any) => {
         this.arrRooms = [];
         let roomList = data.data.data;
@@ -427,6 +438,7 @@ export class StudentsComponent implements OnInit {
     this.isNewStudent = true;
     this.modalStudentUpdate = new Student({
       id: null,
+      idCard: null,
       name: null,
       birthday: null,
       phone: null,
@@ -518,6 +530,7 @@ export class StudentsComponent implements OnInit {
 
     let studentSwitchRoom = new InfoSwitchRoom({
       studentId: this.modalStudent.id,
+      studentIdCard: this.modalStudent.idCard,
       studentName: this.modalStudent.name,
       oldRoomId: this.modalStudent.roomDto.id,
       oldRoomName: this.modalStudent.roomDto.name,

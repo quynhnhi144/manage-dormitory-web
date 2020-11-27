@@ -3,12 +3,11 @@
         <div class="col-12">
 
             <div style="float: left">
-                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Manage Students</div>
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý sinh viên</div>
             </div>
             <div class="create-student-btn" style="float: right;">
                 <button type="button" class="btn btn-round btn-new-student"
-                    (click)="createNewStudent(modalUpdateAStudent)">+ Create New
-                    Student</button>
+                    (click)="createNewStudent(modalUpdateAStudent)">+ Tạo sinh viên</button>
             </div>
             <div style="clear: both"></div>
             <!-- START TABS -->
@@ -16,7 +15,7 @@
                 <div>
                     <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
                         (click)="getAllStudents(0, 'all')">
-                        All
+                        Tất cả
                     </div>
 
                     <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
@@ -45,7 +44,7 @@
                             title="Search" width="20" />
                         <button type="button" class="btn-icon btn-round btn-export ml-3">
                             <img src="../../assets/images/export.png" width="15" />
-                            Export
+                            Xuất file
                         </button>
                     </div>
                     <div class="table-responsive table-rooms">
@@ -53,12 +52,13 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Phone</th>
-                                    <th>Room</th>
-                                    <th>Room Payment</th>
-                                    <th>Water Payment</th>
-                                    <th>Status</th>
+                                    <th>Mã số sinh viên</th>
+                                    <th>Họ và tên</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Tên phòng</th>
+                                    <th>Thoanh toán phòng</th>
+                                    <th>Thanh toán nước</th>
+                                    <th>Trạng thái</th>
                                     <th></th>
                                     <th></th>
                                 </tr>
@@ -67,6 +67,9 @@
                                 <tr *ngFor="let student of students">
                                     <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         {{student.id}}
+                                    </td>
+                                    <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
+                                        {{student.idCard}}
                                     </td>
                                     <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">{{student.name}}
                                     </td>
@@ -77,28 +80,28 @@
                                     </td>
                                     <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayRoom" class="pill pill-1">
-                                            COMPLETED
+                                            ĐÃ TRẢ
                                         </div>
                                         <div *ngIf="!student.isPayRoom" class="pill pill-2">
-                                            NOT&nbsp;COMPLETED
+                                            CHƯA&nbsp;TRẢ
                                         </div>
                                     </td>
                                     <td (click)="openModalDetailAStudent(modalDetailAStudent,student)">
                                         <div *ngIf="student.isPayWaterBill" class="pill pill-1">
-                                            COMPLETED
+                                            ĐÃ TRẢ
                                         </div>
                                         <div *ngIf="!student.isPayWaterBill" class="pill pill-2">
-                                            NOT&nbsp;COMPLETED
+                                            CHƯA&nbsp;TRẢ
                                         </div>
                                     </td>
 
                                     <td [style]="!student.active ? 'pointer-events:none': ''"
                                         (click)="openModalDeleteStudent(modalDeleteStudent, student)">
                                         <div *ngIf="student.active" class="pill pill-1">
-                                            ACTIVED
+                                            HOẠT ĐỘNG
                                         </div>
                                         <div *ngIf="!student.active" class="pill pill-2">
-                                            UNACTIVED
+                                            DỪNG
                                         </div>
                                     </td>
 
@@ -113,8 +116,7 @@
                                     </td>
                                 </tr>
                                 <tr *ngIf="studentTotal == 0">
-                                    <td colspan="8" class="no-data">No data
-                                        found.</td>
+                                    <td colspan="8" class="no-data">Không có dữ liệu.</td>
                                 </tr>
 
                             </tbody>
@@ -133,7 +135,7 @@
                                     </select>
                                     <div
                                         style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
-                                        Results per page</div>
+                                        Kết quả mỗi trang</div>
                                 </div>
 
                                 <div class="col-xs-12 col-md-6">
@@ -148,8 +150,8 @@
                                             <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
                                                     aria-hidden="true"></i>
                                             </ng-template>
-                                            <ng-template ngbPaginationPrevious>Prev</ng-template>
-                                            <ng-template ngbPaginationNext>Next</ng-template>
+                                            <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                            <ng-template ngbPaginationNext>Sau</ng-template>
                                             <ng-template ngbPaginationEllipsis>...</ng-template>
                                         </ngb-pagination>
                                     </div>
@@ -169,7 +171,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalDetailAStudentLabel">STUDENT DETAIL</h3>
+            <h3 class="modal-title" id="modalDetailAStudentLabel">CHI TIẾT SINH VIÊN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -194,6 +196,13 @@
                         </div>
 
                         <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">Mã số sinh viên</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalStudent.idCard}}
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-xs-6 col-md-6 col-title">EMAIL</div>
                             <div class="col-xs-6 col-md-6">
                                 {{modalStudent.email}}
@@ -201,14 +210,14 @@
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">NAME</div>
+                            <div class="col-xs-6 col-md-6 col-title">HỌ VÀ TÊN</div>
                             <div class="col-xs-6 col-md-6">
                                 {{ modalStudent.name}}
                             </div>
                         </div>
 
                         <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">ADDRESS</div>
+                            <div class="col-xs-6 col-md-6 col-title">ĐỊA CHỈ</div>
                             <div class="col-xs-6 col-md-6">
                                 {{modalStudent.address}}
                             </div>
@@ -220,11 +229,11 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">BIRTHDAY</div>
+                    <div class="col-xs-6 col-md-2 col-title">SINH NHẬT</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.birthday}}
                     </div>
-                    <div class="col-xs-6 col-md-3 col-title">ROOM NAME</div>
+                    <div class="col-xs-6 col-md-3 col-title">TÊN PHÒNG</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.roomDto ? modalStudent.roomDto.name : '--'}}
                     </div>
@@ -232,12 +241,12 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">PHONE</div>
+                    <div class="col-xs-6 col-md-2 col-title">SỐ ĐIỆN THOẠI</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.phone}}
                     </div>
 
-                    <div class="col-xs-6 col-md-3 col-title">TYPE ROOM</div>
+                    <div class="col-xs-6 col-md-3 col-title">LOẠI PHÒNG</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.roomDto ? modalStudent.roomDto.typeRoomName : '--'}}
                     </div>
@@ -245,11 +254,11 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">START DATE</div>
+                    <div class="col-xs-6 col-md-2 col-title">NGÀY BẮT ĐẦU</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.startingDateOfStay}}
                     </div>
-                    <div class="col-xs-6 col-md-3 col-title">CAMPUS NAME</div>
+                    <div class="col-xs-6 col-md-3 col-title">KHU NHÀ</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.roomDto ? modalStudent.roomDto.campusName : '--'}}
                     </div>
@@ -257,11 +266,11 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">END DATE</div>
+                    <div class="col-xs-6 col-md-2 col-title">NGÀY KẾT THÚC</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.endingDateOfStay ? modalStudent.endingDateOfStay : 'N/A'}}
                     </div>
-                    <div class="col-xs-6 col-md-3 col-title">USER MANAGER</div>
+                    <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.roomDto ? modalStudent.roomDto.userManager :'--'}}
                     </div>
@@ -269,25 +278,25 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">ROOM PAYMENT</div>
+                    <div class="col-xs-6 col-md-2 col-title">THANH TOÁN PHÒNG</div>
                     <div class="col-xs-6 col-md-3"
                         [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayRoom ? "COMPLETED" :  'NOT COMPLETED'}}
+                        {{modalStudent.isPayRoom ? "ĐÃ TRẢ" :  'CHƯA TRẢ'}}
                     </div>
 
                     <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
                     <div class="col-xs-6 col-md-3"
                         [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.isPayWaterBill  ? "COMPLETED" : 'NOT COMPLETED'}}
+                        {{modalStudent.isPayWaterBill  ? "ĐÃ TRẢ" : 'CHƯA TRẢ'}}
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">STATUS</div>
+                    <div class="col-xs-6 col-md-2 col-title">TRẠNG THÁI</div>
                     <div class="col-xs-6 col-md-3"
                         [ngStyle]=" {'color': modalStudent.active ? ' #20a144' : '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalStudent.active ? "ACTIVED" : 'UNACTIVED' }}
+                        {{modalStudent.active ? "HOẠT ĐỘNG" : 'DỪNG' }}
                     </div>
                 </div>
             </div>
@@ -301,7 +310,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewStudent ? 'NEW' : 'UPDATE'}}STUDENT</h3>
+            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewStudent ? 'TẠO' : 'CẬP NHẬT'}}SINH VIÊN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -314,9 +323,21 @@
                         <form name="newRoomForm" class="newRoomForm" #form="ngForm">
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="id">Student Id</label>
+                                    <label for="id">Id Sinh viên</label>
                                     <input name="id" [(ngModel)]="modalStudentUpdate.id"
                                         class="disable-input form-control" readonly />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="idCard">Mã số sinh viên</label>
+                                    <input name="idCard" [(ngModel)]="modalStudentUpdate.idCard" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Tên sinh viên</label>
+                                    <input name="name" [(ngModel)]="modalStudentUpdate.name" required />
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
                                     <label for="email">Email</label>
@@ -325,40 +346,48 @@
                                         pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
                                     <p *ngIf="(!email.valid && email.touched) || email.errors?.pattern"
                                         class="alert alert-danger" style="margin-top: 10px;">
-                                        Email must be a
-                                        valid email address</p>
+                                        Email phải là một giá trị email hợp lệ</p>
 
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="name">Student Name</label>
-                                    <input name="name" [(ngModel)]="modalStudentUpdate.name" required />
-                                </div>
-                                <div class="col-xs-12 col-md-6 col-right">
-                                    <label for="address">Address</label>
-                                    <input name="address" [(ngModel)]="modalStudentUpdate.address" required />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left form-group">
-                                    <label for="birthday">Birthday</label>
+                                    <label for="birthday">Sinh nhật</label>
                                     <input type="text" name="birthday" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
                                         [(ngModel)]=" modalStudentUpdate.birthday" required />
                                 </div>
 
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="address">Địa chỉ</label>
+                                    <input name="address" [(ngModel)]="modalStudentUpdate.address" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="phone">Phone</label>
+                                    <input #phone="ngModel" ngModel name="phone" [(ngModel)]="modalStudentUpdate.phone"
+                                        required minlength=10 maxlength=11 pattern="[0-9]+" />
+                                    <p *ngIf="(!phone.valid && phone.touched) || phone.errors?.pattern"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại không phù hợp</p>
+
+                                    <p *ngIf="phone.errors?.minlength && phone.errors?.maxlength"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại phải từ 10-11 số</p>
+                                </div>
+
                                 <div *ngIf="!isNewStudent" class="col-xs-12 col-md-6 col-right">
-                                    <label for="roomName">Room Name</label>
+                                    <label for="roomName">Tên phòng</label>
                                     <input name="roomName" [(ngModel)]="modalStudentUpdate.roomDto.name"
                                         class="disable-input" readonly />
                                 </div>
 
                                 <div *ngIf="isNewStudent" class="col-xs-12 col-md-6 col-right">
-                                    <label for="roomName">Room Name</label>
+                                    <label for="roomName">Tên phòng</label>
                                     <div class="section-search">
                                         <div class="section-search-multiselect">
                                             <ng-select name="roomName" class="people-select" [multiple]="true"
@@ -379,34 +408,48 @@
 
                                     <div *ngIf="moneyRoomAndMoneyWater && selectedRoomIds.length != 0"
                                         style="margin-top: 10px;">
-                                        <h4>Số tiền phòng sinh viên cần đóng là:
-                                            {{(moneyRoomAndMoneyWater.moneyOfRoomMustPay | number) + 'đ'}}</h4>
-                                        <h4>Số tiền nước sinh viên cần đóng là:
-                                            {{(moneyRoomAndMoneyWater.moneyOfWaterMustPay | number) + 'đ'}}</h4>
+                                        <!-- Student Detail in a Room -->
+                                        <div class="section-student-wrapper">
+                                            <div class="section-result">
+                                                <div class="row">
+                                                    <div class="col-xs-12 col-section-title">Sinh viên</div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-xs-6 col-md-12">
+
+                                                        <div class="row">
+                                                            <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH
+                                                                VIÊN PHẢI TRẢ
+                                                            </div>
+                                                            <div class="col-xs-6 col-md-5">
+                                                                {{moneyRoomAndMoneyWater.moneyOfRoomMustPay | positiveNumber | number}}
+                                                                đ
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
+                                                                PHẢI TRẢ
+                                                            </div>
+                                                            <div class="col-xs-6 col-md-5">
+                                                                {{moneyRoomAndMoneyWater.moneyOfWaterMustPay | positiveNumber | number}}
+                                                                đ
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                 </div>
-
                             </div>
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="phone">Phone</label>
-                                    <input #phone="ngModel" ngModel name="phone" [(ngModel)]="modalStudentUpdate.phone"
-                                        required minlength=10 maxlength=11 pattern="[0-9]+" />
-                                    <p *ngIf="(!phone.valid && phone.touched) || phone.errors?.pattern"
-                                        class="alert alert-danger" style="margin-top: 10px;">
-                                        Số điện thoại không phù hợp</p>
-
-                                    <p *ngIf="phone.errors?.minlength && phone.errors?.maxlength"
-                                        class="alert alert-danger" style="margin-top: 10px;">
-                                        Số điện thoại phải từ 10-11 số</p>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="startDate">Start Date</label>
+                                    <label for="startDate">Ngày bắt đầu</label>
                                     <input type="text" name="startDate" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
                                         [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
@@ -415,7 +458,7 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="endDate">End Date</label>
+                                    <label for="endDate">Ngày kết thúc</label>
                                     <input type="text" name="endDate" placeholder="Datepicker"
                                         class="form-control input-date" bsDatepicker
                                         [(ngModel)]="modalStudentUpdate.endingDateOfStay" />
@@ -461,8 +504,8 @@
                 </div> -->
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-success" [disabled]="!form.valid"
-                                    (click)="saveChange()">Submit</button>
-                                <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+                                    (click)="saveChange()">Lưu</button>
+                                <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
                             </div>
                         </form>
                     </div>
@@ -473,23 +516,85 @@
     </div>
 </ng-template>
 
+<!-- Modal Delete Student -->
 <ng-template #modalDeleteStudent let-modal class="modal fade modal-a" id="modalDelete"
     aria-labelledby="modalDeleteStudentLabel">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalDelete">CHANGE STUDENT STATUS</h3>
+            <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalDetailAStudentLabel">ĐỔI TRẠNG THÁI SINH VIÊN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body" style="text-align: center; font-family: Roboto;">
-            <h4>Bạn có chắc là muốn vô hiệu hóa sinh viên này không?</h4>
-            <h5>Số tiền phòng mà sinh viên {{studentLeft.numberOfRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
-                {{studentLeft.numberOfRoomMoney | positiveNumber | number}} đ</h5>
-            <h5>Số tiền nước mà sinh viên {{studentLeft.numberOfWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
-                {{studentLeft.numberOfWaterMoney | positiveNumber | number}} đ</h5>
-            <h5>Số tiền xe mà sinh viên {{studentLeft.numberOfVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}} là:
-                {{studentLeft.numberOfVehicleMoney |positiveNumber | number}} đ</h5>
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-12">
+                        <!-- Student Detail in a Room -->
+                        <div class="section-student-wrapper">
+                            <div class="section-result">
+                                <div class="row">
+                                    <div class="col-xs-12 col-section-title">Sinh viên</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-6 col-md-1"></div>
+                                    <div class="col-xs-6 col-md-2">
+                                        <img class="icon-middle" src="../../assets/images/student.svg" />
+                                    </div>
+                                    <div class="col-xs-6 col-md-1"></div>
+
+                                    <div class="col-xs-6 col-md-7 text-left">
+                                        <div class="row">
+                                            <div class="col-xs-6 col-md-7 col-title ">ID</div>
+                                            <div class="col-xs-6 col-md-5">
+                                                {{ studentLeft.id }}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-6 col-md-7 col-title">HỌ VÀ TÊN</div>
+                                            <div class="col-xs-6 col-md-5">
+                                                {{ studentLeft.name |uppercase}}
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
+                                                {{studentLeft.numberOfRoomMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                                            </div>
+                                            <div class="col-xs-6 col-md-5">
+                                                {{studentLeft.numberOfRoomMoney | positiveNumber | number}} đ
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
+                                                {{studentLeft.numberOfWaterMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                                            </div>
+                                            <div class="col-xs-6 col-md-5">
+                                                {{studentLeft.numberOfWaterMoney | positiveNumber | number}} đ
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
+                                                {{studentLeft.numberOfVehicleMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                                            </div>
+                                            <div class="col-xs-6 col-md-5">
+                                                {{studentLeft.numberOfVehicleMoney | positiveNumber | number}} đ
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
@@ -498,11 +603,12 @@
     </div>
 </ng-template>
 
+<!-- Modal Switch Room -->
 <ng-template #modalSwitchRoom let-modal class="modal fade modal-a" id="modalSwitchRoom"
     aria-labelledby="modalSwitchRoomLabel">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 class="modal-title" id="modalDelmodalSwitchRoomete">SWITCH ROOM FOR STUDENT</h3>
+            <h3 class="modal-title" id="modalDelmodalSwitchRoomete">CHUYỂN PHÒNG CHO SINH VIÊN</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -569,8 +675,8 @@
 
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="saveSwitchRoom()">Submit</button>
-            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+            <button type="button" class="btn btn-success" (click)="saveSwitchRoom()">Lưu</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
         </div>
     </div>
 </ng-template>

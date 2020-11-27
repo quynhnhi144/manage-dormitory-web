@@ -5,6 +5,15 @@ import { GlobalConstants } from '../../common/global-constants';
 import { CampusService } from '../../core/services/campus.service';
 import { Subscription } from 'rxjs';
 import { VehicleService } from './vehicle.service';
+import { Vehicle } from './vehicle.model';
+import { Student } from '../students/student.model';
+import { NotificationService } from '../../core/services/notification.service';
+import { VehicleLeft } from './vehicle-left.model';
+import { StudentDto } from '../students/student-dto.model';
+import { StudentsService } from '../students/students.service';
+import { VehicleBill } from '../../shared/model/vehicle-bill.model';
+import { endOf } from 'ngx-bootstrap/chronos';
+import { VehicleNew } from './vehicle-new.model';
 
 @Component({
   selector: 'app-vehicles',
@@ -24,29 +33,40 @@ export class VehiclesComponent implements OnInit {
 
   isClickSearch = false;
   isClickBtnTypeVehicle = false;
-  typeOfVehicleList = ['All', 'MotorBike', 'Bicycle'];
   typeOfVehicle = '';
   //modal
-  modalVehicle = {
-    id: 1,
-    licensePlates: 'BK-1',
-    typeVehicle: 'Bicycle',
-    studentId: 5,
-    studentName: 'Nguyễn Như Yến',
-    roomName: 'A103',
-    campusName: 'Campus A',
-    userManager: 'Nguyễn Văn A',
-    isPayVehicleBill: true,
-  };
+  modalVehicle = new Vehicle();
   message = '';
   currentVehicleId = 0;
+
+  typeOfVehicleList = [
+    { id: 1, name: 'Xe máy' },
+    { id: 2, name: 'Xe đạp' },
+  ];
+
+  typeVehicleId: number;
+
+  modalVehicleUpdate = new Vehicle();
   subscription: Subscription;
 
+  isNewVehicle = false;
+
+  vehicleUpdateError = null;
+
+  vehicleLeft = new VehicleLeft();
+
+  studentList: Student[] = [];
+
+  studentId: number;
+
+  responseVehicleInfo = new VehicleBill();
+
   constructor(
-    private httpClient: HttpClient,
     private modalService: NgbModal,
     private campusService: CampusService,
-    private vehicleService: VehicleService
+    private vehicleService: VehicleService,
+    private notificationService: NotificationService,
+    private studentService: StudentsService
   ) {}
 
   ngOnInit(): void {
@@ -75,8 +95,6 @@ export class VehiclesComponent implements OnInit {
     }
 
     this.page = page;
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    let url = GlobalConstants.apiURL;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
@@ -85,16 +103,6 @@ export class VehiclesComponent implements OnInit {
     let paramTypeRoom = this.isClickBtnTypeVehicle
       ? `&typeVehicle=${this.typeOfVehicle}`
       : ``;
-
-    url +=
-      '/api/vehicles?' +
-      choosedCampus +
-      '&skip=' +
-      this.skip +
-      '&take=' +
-      this.pageSize +
-      paramTypeRoom +
-      paramSearchText;
 
     this.subscription = this.vehicleService
       .getAllVehicle(
@@ -151,9 +159,6 @@ export class VehiclesComponent implements OnInit {
   }
 
   getDetailAVehicle() {
-    const headers = new HttpHeaders().set('Authorization', 'Bearer ');
-    console.log(this.currentVehicleId);
-    let url = GlobalConstants.apiURL + '/api/vehicles/' + this.currentVehicleId;
     this.subscription = this.vehicleService
       .getAVehicle(this.currentVehicleId)
       .subscribe(
@@ -168,8 +173,214 @@ export class VehiclesComponent implements OnInit {
   }
 
   // modal update room
-  openModalUpdateARoom(modalUpdateAStudent, vehicle: any) {
+  openModalUpdateARoom(modalUpdateAVehicle, vehicle: any) {
     this.currentVehicleId = vehicle.id;
-    this.openModal(modalUpdateAStudent);
+    this.getUpdateVehicle();
+    this.openModal(modalUpdateAVehicle);
+  }
+
+  getUpdateVehicle() {
+    this.subscription = this.vehicleService
+      .getAVehicle(this.currentVehicleId)
+      .subscribe(
+        (data: any) => {
+          console.log('detailStudent: ', data);
+          this.modalVehicleUpdate = data;
+          this.typeVehicleId = this.modalVehicleUpdate.typeVehicle.id;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  saveChange() {
+    if (!this.modalVehicleUpdate.licensePlates) {
+      this.vehicleUpdateError = 'License Plates is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (!this.typeVehicleId) {
+      this.vehicleUpdateError = 'Type vehicle is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (!this.isNewVehicle) {
+      let indexTypeVehicle = this.typeOfVehicleList.findIndex(
+        (x) => x.id === this.typeVehicleId
+      );
+      let typeVehicle = this.typeOfVehicleList[indexTypeVehicle];
+      let vehicleUpdate = {
+        id: this.modalVehicleUpdate.id,
+        licensePlates: this.modalVehicleUpdate.licensePlates,
+        typeVehicle: typeVehicle,
+        studentDto: this.modalVehicleUpdate.studentDto,
+        roomName: this.modalVehicleUpdate.roomName,
+        campusName: this.modalVehicleUpdate.campusName,
+        userManager: this.modalVehicleUpdate.userManager,
+        startDate: this.modalVehicleUpdate.startDate,
+        endDate: this.modalVehicleUpdate.endDate,
+        isPayVehicleBill: this.modalVehicleUpdate.isPayVehicleBill,
+        active: this.modalVehicleUpdate.active,
+      };
+
+      this.subscription = this.vehicleService
+        .updateVehicle(this.currentVehicleId, vehicleUpdate)
+        .subscribe(
+          (data: Vehicle) => {
+            console.log('vehicle update: ' + data);
+            let index = this.vehicles.findIndex(
+              (vehicle) => vehicle.id === this.currentVehicleId
+            );
+            this.vehicles[index] = data;
+            this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã cập nhật thông tin xe thành công !!!',
+              isSuccess: true,
+            });
+          },
+          (error) => {
+            console.log(error);
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã xảy ra lỗi !!!',
+              isSuccess: false,
+            });
+          }
+        );
+    } else {
+      let vehicleBill = new VehicleBill({
+        billId: null,
+        studentName: null,
+        studentId: this.studentId,
+        vehicleId: null,
+        startDate: this.responseVehicleInfo.startDate,
+        endDate: this.responseVehicleInfo.endDate,
+        price: this.responseVehicleInfo.price,
+        roomId: null,
+      });
+      let vehicleNew = new VehicleNew({
+        licensePlates: this.modalVehicleUpdate.licensePlates,
+        typeVehicleId: this.typeVehicleId,
+        vehiclePriceId: 3,
+        vehicleBillDto: vehicleBill,
+      });
+
+      this.subscription = this.vehicleService.addVehicle(vehicleNew).subscribe(
+        (data: any) => {
+          console.log('new vehicle: ' + data);
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã thêm xe thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xảy ra lỗi !!!',
+            isSuccess: false,
+          });
+        }
+      );
+    }
+  }
+
+  turnOffNotification() {
+    setTimeout(() => {
+      this.vehicleUpdateError = '';
+    }, 5000);
+  }
+
+  openModalDeleteVehicle(modalDeleteVehicle, vehicle: any) {
+    this.currentVehicleId = vehicle.id;
+    this.getVehicleBill();
+    this.openModal(modalDeleteVehicle);
+  }
+
+  getVehicleBill() {
+    this.subscription = this.vehicleService
+      .getVehicleWanttoUnactive(this.currentVehicleId)
+      .subscribe(
+        (data: any) => {
+          console.log('vehicleLeft: ' + data);
+          this.vehicleLeft = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  saveDelete() {
+    this.subscription = this.vehicleService
+      .unActiveVehicle(this.vehicleLeft)
+      .subscribe(
+        (data: any) => {
+          console.log('data: ' + data);
+          let index = this.vehicles.findIndex(
+            (vehicle) => vehicle.id === this.vehicleLeft.id
+          );
+
+          this.vehicles[index].active = !this.vehicles[index].active;
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã đổi trạng thái sinh viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
+
+  createNewVehicle(modalUpdateAVehicle) {
+    this.isNewVehicle = true;
+    this.modalVehicleUpdate = new Vehicle({
+      id: null,
+      licensePlates: null,
+      typeVehicle: null,
+      studentDto: new StudentDto(),
+      roomName: null,
+      campusName: null,
+      userManager: null,
+      startDate: new Date(),
+      endDate: new Date(),
+      isPayVehicleBill: false,
+      active: true,
+    });
+    this.subscription = this.studentService.getTotalStudents().subscribe(
+      (data: any) => {
+        this.studentList = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+    this.openModal(modalUpdateAVehicle);
+  }
+
+  showPaymentVehicle() {
+    this.subscription = this.vehicleService
+      .getPaymentVehicle(this.studentId)
+      .subscribe(
+        (data: any) => {
+          console.log('paymentVehicle: ' + data);
+          this.responseVehicleInfo = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

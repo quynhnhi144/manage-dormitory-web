@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { SpinnerComponent } from './spinner/spinner.component';
 import { ModalComponent } from './modal/modal.component';
+import { PositiveNumber } from '../common/positive-number.pipe';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { ModalComponent } from './modal/modal.component';
     NavbarComponent,
     SpinnerComponent,
     ModalComponent,
+    PositiveNumber,
   ],
   imports: [CommonModule, NgbModule, RouterModule],
   exports: [
@@ -20,6 +22,7 @@ import { ModalComponent } from './modal/modal.component';
     NavbarComponent,
     SpinnerComponent,
     ModalComponent,
+    PositiveNumber,
   ],
 })
 export class ShareModule {}

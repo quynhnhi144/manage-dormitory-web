@@ -20,7 +20,7 @@ export class UserService {
   }
 
   getAUser(id: number) {
-    let url = this.baseUrl + '/users' + id;
+    let url = this.baseUrl + '/users' + '/' + id;
     return this.htttp.get(url);
   }
 }

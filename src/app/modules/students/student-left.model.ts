@@ -1,5 +1,6 @@
 export class StudentLeft {
   id: number;
+  name: string;
   leavingDate: Date;
   numberOfRoomMoney: number;
   numberOfWaterMoney: number;
