@@ -1,0 +1,341 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-12">
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý nhân viên</div>
+            </div>
+            <div class="create-user-btn" style="float: right;">
+                <button type="button" class="btn btn-round btn-new-user" (click)="openNewUser(modalUpdateAUser)">+ Tạo
+                    mới nhân viên</button>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)" placeholder="Search by full name" />
+                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                            title="Search" width="20" />
+                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                            <img src="../../assets/images/export.png" width="15" />
+                            Xuất file
+                        </button>
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên người dùng</th>
+                                    <th>Họ và tên</th>
+                                    <th>Sinh nhật</th>
+                                    <th>Email</th>
+                                    <th>Địa chỉ</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Khu nhà</th>
+                                    <th></th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let user of users">
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.id}}
+                                    </td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.username}}
+                                    </td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.fullName}}</td>
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.birthday | date: 'dd-MM-yyyy'}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.email}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.address}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        {{user.phone}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAUser,user)">
+                                        <span *ngFor="let campus of user.campuses">{{campus.name}} </span>
+                                    </td>
+
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdateAUser(modalUpdateAUser, user)"></i>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="userTotal == 0">
+                                    <td colspan="7" class="no-data">Không có dữ liệu.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="userTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Kết quả mỗi trang</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="userTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                            <ng-template ngbPaginationNext>Sau</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- START ROOM DETAIL MODAL -->
+<ng-template #modalDetailAUser let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/manager.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT NHÂN VIÊN</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+
+                    <div class="col-xs-6 col-md-3">
+                        <img class="icon-bill" src="../../assets/images/manager.svg" style="margin-bottom: 15px;" />
+                    </div>
+                    <div class="col-xs-6 col-md-2"></div>
+
+                    <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ID NHÂN VIÊN</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalUser.id}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TÊN NGƯỜI DÙNG</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalUser.username}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">HỌ VÀ TÊN</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{modalUser.fullName}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">EMAIL</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{modalUser.email}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div class="col-xs-6 col-md-2 col-title">SINH NHẬT</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.birthday | date: 'dd-MM-yyyy'}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">ĐỊA CHỈ</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.address}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div class="col-xs-6 col-md-2 col-title">SỐ ĐIỆN THOẠI</div>
+                    <div class="col-xs-6 col-md-3">
+                        {{modalUser.phone}}
+                    </div>
+                    <div class="col-xs-6 col-md-3 col-title">KHU NHÀ</div>
+                    <div class="col-xs-6 col-md-3">
+                        <span *ngFor="let campus of modalUser.campuses">{{campus.name}} </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalUpdateAUser let-modal class="modal fade" id="modalUpdateAUser"
+    aria-labelledby="modalUpdateAUserLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/manager.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalUpdateAUserLabel">{{isNewUser ? 'TẠO ' : 'CẬP NHẬT '}}NHÂN VIÊN</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div *ngIf="modalUserUpdate || isNewUser" class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Id Nhân viên</label>
+                                    <input name="id" [(ngModel)]="modalUserUpdate.id" class="disable-input form-control"
+                                        readonly />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="email">Email</label>
+                                    <input ngModel #email="ngModel" name="email" [(ngModel)]="modalUserUpdate.email"
+                                        class="form-control" required email
+                                        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" />
+                                    <p *ngIf="(!email.valid && email.touched) || email.errors?.pattern"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Email phải là một giá trị email hợp lệ</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Tên nhân viên</label>
+                                    <input name="name" [(ngModel)]="modalUserUpdate.fullName" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="address">Địa chỉ</label>
+                                    <input name="address" [(ngModel)]="modalUserUpdate.address" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="birthday">Sinh nhật</label>
+                                    <input type="text" name="birthday" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]=" modalUserUpdate.birthday" required />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="campusName">Tên khu nhà</label>
+                                    <div class="section-search">
+                                        <div class="section-search-multiselect">
+                                            <ng-select name="campusName" class="people-select" [multiple]="true"
+                                                [items]="arrCampuses" [(ngModel)]="selectedCampusIds" bindLabel="name"
+                                                bindValue="id" placeholder="Search student by name or email"
+                                                (search)="onSearchMultiSelect($event)">
+                                                <ng-template ng-label-tmp let-item="item">
+                                                    <span class="ng-value-icon left" (click)="unselect(item)"
+                                                        aria-hidden="true">×</span>
+                                                    <span class="ng-value-label">{{ item.label }}</span>
+                                                </ng-template>
+                                                <ng-template ng-option-tmp let-item="item">
+                                                    <div>{{ item.name }}</div>
+                                                </ng-template>
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="phone">Số điện thoại</label>
+                                    <input #phone="ngModel" ngModel name="phone" [(ngModel)]="modalUserUpdate.phone"
+                                        required minlength=10 maxlength=11 pattern="[0-9]+" />
+                                    <p *ngIf="(!phone.valid && phone.touched) || phone.errors?.pattern"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại không phù hợp</p>
+
+                                    <p *ngIf="phone.errors?.minlength && phone.errors?.maxlength"
+                                        class="alert alert-danger" style="margin-top: 10px;">
+                                        Số điện thoại phải từ 10-11 số</p>
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="password">Mật khẩu</label>
+                                    <input name="password" type="password" [(ngModel)]="newPassword" />
+                                </div>
+
+                                <div *ngIf="!isChangePassword" class="col-xs-12 col-md-6 col-right col-title">
+                                    <a (click)="showOrNot()"> Đổi mật khẩu</a></div>
+
+                                <div *ngIf="isChangePassword && !isNewUser" class="col-xs-12 col-md-6 col-right">
+                                    <label for="oldPassword">Mật khẩu cũ</label>
+                                    <input name="oldPassword" type="password" [(ngModel)]="oldPassword" />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="username">Tên người dùng</label>
+                                    <input name="username" [(ngModel)]="modalUserUpdate.username" />
+                                </div>
+
+                                <div *ngIf="isChangePassword && !isNewUser" class="col-xs-12 col-md-6 col-right">
+                                    <label for="newPassword">Mật khẩu mới</label>
+                                    <input name="newPassword" type="password" [(ngModel)]="newPassword" />
+                                </div>
+                            </div>
+
+                            <div *ngIf="userError" class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger">{{userError}}</p>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
+                                <button type="button" class="btn btn-light" (click)="cancel()">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

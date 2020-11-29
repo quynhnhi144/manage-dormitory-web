@@ -14,14 +14,7 @@ export class RoomService {
 
   getAllRooms(skip: number, take: number, searchText: string) {
     let url =
-      this.baseUrl +
-      '/rooms?' +
-      '&skip=' +
-      skip +
-      '&take=' +
-      take +
-      '&searchText=' +
-      searchText;
+      this.baseUrl + '/rooms?' + '&skip=' + skip + '&take=' + take + searchText;
     return this.http.get<Room[]>(url);
   }
 

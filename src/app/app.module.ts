@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { ToastrModule } from 'ngx-toastr';
 import { CoreModule } from './core.module';
+import { HomePageModule } from './layout/home-page/home-page.module';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -21,6 +22,7 @@ import { CoreModule } from './core.module';
     ShareModule,
     NgbModule,
     AdminLayoutModule,
+    HomePageModule,
     IconsModule,
     HttpClientModule,
     FormsModule,

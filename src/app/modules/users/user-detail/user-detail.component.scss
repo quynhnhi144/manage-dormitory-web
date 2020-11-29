@@ -1,0 +1,35 @@
+@import "../../../../styles.scss";
+.profile {
+  background-color: white;
+  box-shadow: 0px 3px 21px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  .row {
+    margin-bottom: 25px;
+    .col-title {
+      font-family: $font-family;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 21px;
+      color: #8a9099;
+    }
+    input {
+      height: 37px;
+      font-size: 16px;
+    }
+    .col-content {
+      font-size: 18px;
+    }
+  }
+}
+
+.update-profile {
+  .col-title {
+    font-family: $font-family;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 17px !important;
+    line-height: 21px;
+    color: #8a9099;
+  }
+}

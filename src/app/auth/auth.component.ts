@@ -19,7 +19,7 @@ export class AuthComponent implements OnInit {
     const password = form.value.password;
     this.authService.login(username, password).subscribe(
       (resData: any) => {
-        this.route.navigate(['/dashboard']);
+        this.route.navigate(['/manage/dashboard']);
         console.log(resData);
       },
       (errorMessage) => {

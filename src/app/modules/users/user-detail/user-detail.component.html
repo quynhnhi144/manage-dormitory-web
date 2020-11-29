@@ -1,0 +1,183 @@
+<div class="main-content">
+    <div *ngIf="user.id" class="row">
+        <div class="col-12">
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Cá nhân</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row justify-content-center" style="margin-top: 50px;">
+
+                <!-- Modal Detail -->
+                <div *ngIf="user.id && !isEdit" class="col-md-7 profile">
+                    <div class="row" style="margin: 30px 0;">
+                        <div class="col-xs-12 col-sm-12 col-md-1"></div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-3" style="display: flex; align-items: center;">
+                            <img class="icon-bill" src="../../assets/images/manager.svg" style="margin-bottom: 15px;" />
+                        </div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-1"></div>
+
+                        <div class="col-xs-12 col-sm-12 col-md-7" style="margin-top: 40px;">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">ID NHÂN VIÊN</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{ user.id}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">TÊN NGƯỜI DÙNG</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{ user.username}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">HỌ VÀ TÊN</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{user.fullName}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">EMAIL</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{user.email}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">SINH NHẬT</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{user.birthday | date: 'dd-MM-yyyy'}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">ĐỊA CHỈ</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{user.address}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">SỐ ĐIỆN THOẠI</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    {{user.phone}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-5 col-title">KHU NHÀ</div>
+                                <div class="col-xs-6 col-md-7 col-content">
+                                    <span *ngFor="let campus of user.campuses">{{campus.name ? campus.name : '--'}}
+                                    </span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <i class="icon-edit mdi mdi-36px mdi-account-edit-outline"
+                            style="color: #bba8bff5; cursor: pointer;" (click)="onUpdateProfile()"></i>
+                    </div>
+                </div>
+
+                <!-- Modal Edit -->
+                <div *ngIf="isEdit" class="col-md-7 profile update-profile" style="padding: 30px 30px;">
+                    <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="username" class="col-title">Tên người dùng</label>
+                                <input name="username" [(ngModel)]="modalUpdateUser.username"
+                                    class="disable-input form-control" required />
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="fullName" class="col-title">Họ và Tên</label>
+                                <input name="fullName" [(ngModel)]="modalUpdateUser.fullName" class="form-control"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="email" class="col-title">Email</label>
+                                <input name="email" [(ngModel)]="modalUpdateUser.email" class="form-control" required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="birthday" class="col-title">Sinh nhật</label>
+                                <input type="text" name="birthday" placeholder="Datepicker"
+                                    class="form-control input-date" bsDatepicker
+                                    [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}" [(ngModel)]=" modalUpdateUser.birthday"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="address" class="col-title">Địa chỉ</label>
+                                <input name="address" [(ngModel)]="modalUpdateUser.address" class="form-control"
+                                    required />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="phone" class="col-title">Số điện thoại</label>
+                                <input #phone="ngModel" ngModel name="phone" [(ngModel)]="modalUpdateUser.phone"
+                                    class="form-control" />
+                                <p *ngIf="(!phone.valid && phone.touched) || phone.errors?.pattern"
+                                    class="alert alert-danger" style="margin-top: 10px;">
+                                    Số điện thoại không phù hợp</p>
+
+                                <p *ngIf="phone.errors?.minlength && phone.errors?.maxlength" class="alert alert-danger"
+                                    style="margin-top: 10px;">
+                                    Số điện thoại phải từ 10-11 số</p>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!isChangePassword" class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <a (click)="showOrNot()" class="col-title" style="cursor: pointer;"> Đổi mật khẩu</a>
+                            </div>
+                        </div>
+
+                        <div *ngIf="isChangePassword" class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="oldPassword" class="col-title">Mật khẩu cũ</label>
+                                <input name="oldPassword" [(ngModel)]="oldPassword" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div *ngIf="isChangePassword" class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <label for="newPassword" class="col-title">Mật khẩu mới</label>
+                                <input name="newPassword" [(ngModel)]="newPassword" class="form-control" />
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12 d-flex justify-content-end">
+                                <button type="button" class="btn btn-success" [disabled]="form.invalid"
+                                    (click)="saveChange()" style="margin-right: 15px;">Lưu</button>
+                                <button type="button" class="btn btn-light" (click)="cancel()">Hủy</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

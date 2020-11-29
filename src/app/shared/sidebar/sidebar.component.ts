@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/auth.service';
+import { UserAuth } from '../../auth/user-auth.model';
 @Component({
   selector: 'sidebar-cmp',
   templateUrl: './sidebar.component.html',
@@ -11,12 +12,15 @@ export class SidebarComponent {
   public samplePagesCollapsed = false;
   userSub: Subscription;
   isAuthenticated = false;
+  loginedUser: UserAuth;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
     this.userSub = this.authService.userAuth.subscribe((user) => {
       console.log(user);
+      this.loginedUser = user;
+
       if (
         user &&
         user.authorities.length == 1 &&
