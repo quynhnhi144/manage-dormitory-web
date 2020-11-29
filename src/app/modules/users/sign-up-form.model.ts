@@ -1,14 +1,15 @@
-export class User {
-  id: number;
+export class SignUpForm {
   username: string;
+  password: string;
   fullName: string;
-  birthday: Date;
+  birthday: string;
   email: string;
   address: string;
   phone: string;
   campuses: any;
+  role: string[];
 
-  constructor(init?: Partial<User>) {
+  constructor(init?: Partial<SignUpForm>) {
     Object.assign(this, init);
   }
 }

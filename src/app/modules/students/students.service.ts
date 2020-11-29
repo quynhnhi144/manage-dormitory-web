@@ -27,7 +27,6 @@ export class StudentsService {
       skip +
       '&take=' +
       take +
-      '&searchText=' +
       searchText;
     return this.http.get<Student[]>(url);
   }

@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { UserService } from './user.service';
-import { User } from './user.model';
-import { CampusService } from '../../core/services/campus.service';
-import { UserUpdate } from './user-update.model';
-import { NotificationService } from '../../core/services/notification.service';
-import { SignUpForm } from './sign-up-form.model';
+import { NgbModalOptions, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { User } from '../user.model';
+import { UserService } from '../user.service';
+import { CampusService } from 'src/app/core/services/campus.service';
+import { NotificationService } from '../../../core/services/notification.service';
+import { UserUpdate } from '../user-update.model';
+import { SignUpForm } from '../sign-up-form.model';
 
 @Component({
-  selector: 'app-users',
-  templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss'],
+  selector: 'app-user-list',
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
 })
-export class UsersComponent implements OnInit {
+export class UserListComponent implements OnInit {
   users;
   userTotal = 5;
   page: number = 1;
@@ -77,7 +77,6 @@ export class UsersComponent implements OnInit {
         (data: any) => {
           console.log(data);
           this.users = data.data.data;
-          console.log('users:', this.users);
           this.userTotal = data.total;
         },
         (error) => {
@@ -118,13 +117,20 @@ export class UsersComponent implements OnInit {
   getDetailAUser() {
     this.subscription = this.userService.getAUser(this.currentUserId).subscribe(
       (data: any) => {
-        console.log('detailUser: ', data);
         this.modalUser = data;
-        this.modalUserUpdate = data;
+        this.modalUserUpdate = new User({
+          id: data.id,
+          username: data.username,
+          fullName: data.fullName,
+          birthday: new Date(data.birthday),
+          email: data.email,
+          address: data.address,
+          phone: data.phone,
+          campuses: data.campuses,
+        });
         this.campuses = data.campuses;
         this.selectedCampusIds = this.campuses.map((campus) => campus.id);
         for (let i = 0; i < this.campuses.length; i++) {
-          console.log('bb: ', this.campuses[i]);
           this.setUpRoomInSearchMultipleSelect(
             this.campuses[i],
             this.campuses[i].name,

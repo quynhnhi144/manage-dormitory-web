@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { GlobalConstants } from 'src/app/common/global-constants';
 import { User } from './user.model';
+import { UserUpdate } from './user-update.model';
+import { SignUpForm } from './sign-up-form.model';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -22,5 +24,20 @@ export class UserService {
   getAUser(id: number) {
     let url = this.baseUrl + '/users' + '/' + id;
     return this.htttp.get(url);
+  }
+
+  getProfile(username: string) {
+    let url = this.baseUrl + '/users' + '/profile' + '/' + username;
+    return this.htttp.get(url);
+  }
+
+  updateUser(id: number, userUpdate: UserUpdate) {
+    let url = this.baseUrl + '/users' + '/' + id;
+    return this.htttp.patch(url, userUpdate);
+  }
+
+  newUser(newUser: SignUpForm) {
+    let url = this.baseUrl + '/auth' + '/signup';
+    return this.htttp.post(url, newUser);
   }
 }

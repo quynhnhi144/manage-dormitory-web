@@ -17,11 +17,11 @@
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
-            <p class="mb-1 text-black">Nhi Le</p>
+            <p class="mb-1 text-black">{{loginedUser.username | uppercase}}</p>
           </div>
         </a>
         <div class="dropdown-menu navbar-dropdown" ngbDropdownMenu aria-labelledby="profileDropdown">
-          <a class="dropdown-item" href="javascript:;">
+          <a class="dropdown-item" (click)="onGetProfile()">
             <i class="mdi mdi-cached mr-2 text-success"></i>
             Cá nhân
           </a>

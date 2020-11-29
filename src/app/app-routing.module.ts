@@ -2,18 +2,45 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { AuthComponent } from './auth/auth.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { HomePageComponent } from './layout/home-page/home-page.component';
 
 const appRoutes: Routes = [
   //{ path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   {
-    path: 'auth',
-    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
+    path: '',
+    component: HomePageComponent,
+    children: [
+      { path: '', redirectTo: '/news', pathMatch: 'full' },
+      {
+        path: 'news',
+        loadChildren: () =>
+          import('./news/new.module').then((m) => m.NewsModule),
+      },
+
+      {
+        path: 'notification',
+        loadChildren: () =>
+          import('./notification/notification.module').then(
+            (m) => m.NotificationModule
+          ),
+      },
+
+      {
+        path: 'find-room',
+        loadChildren: () =>
+          import('./find-room/find-room.module').then((m) => m.FindRoomModule),
+      },
+
+      {
+        path: 'auth',
+        loadChildren: () =>
+          import('./auth/auth.module').then((m) => m.AuthModule),
+      },
+    ],
   },
   {
-    path: '',
+    path: 'manage',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard],
     children: [
