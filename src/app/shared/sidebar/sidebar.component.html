@@ -36,7 +36,7 @@
     </li>
     <li class="nav-item" [ngClass]="{ 'active': powerBills.isActive }">
       <a class="nav-link" routerLink="/manage/power-bills" routerLinkActive #powerBills="routerLinkActive">
-        <span class="menu-title">Quản lý tiền điện</span>
+        <span class="menu-title">Quản lý điện</span>
         <i class="mdi mdi-power-plug mdi-24px menu-icon"></i>
       </a>
     </li>
@@ -46,6 +46,14 @@
         <i class="mdi mdi-train-car mdi-24px menu-icon"></i>
       </a>
     </li>
+
+    <li class="nav-item" [ngClass]="{ 'active': remainingRooms.isActive }">
+      <a class="nav-link" routerLink="/manage/remaining-rooms" routerLinkActive #remainingRooms="routerLinkActive">
+        <span class="menu-title">Quản lý đăng ký phòng</span>
+        <i class="mdi mdi-train-car mdi-24px menu-icon"></i>
+      </a>
+    </li>
+
     <li *ngIf="isAuthenticated" class="nav-item" [ngClass]="{ 'active': users.isActive }">
       <a class="nav-link" routerLink="/manage/users" routerLinkActive #users="routerLinkActive">
         <span class="menu-title">Quản lý nhân viên</span>

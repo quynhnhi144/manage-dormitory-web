@@ -52,8 +52,8 @@ export class RoomService {
     return this.http.get<Room[]>(url);
   }
 
-  getTotalRemainingRooms() {
-    let url = this.baseUrl + '/rooms/remaining-room';
+  getTotalRemainingRooms(searchText: string) {
+    let url = this.baseUrl + '/rooms/remaining-room' + searchText;
     return this.http.get<Room[]>(url);
   }
 

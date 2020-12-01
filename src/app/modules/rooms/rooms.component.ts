@@ -126,7 +126,7 @@ export class RoomsComponent implements OnInit {
     let paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
-    this.roomService
+    this.subscription = this.roomService
       .getAllRoomsHaveParam(
         this.skip,
         this.pageSize,

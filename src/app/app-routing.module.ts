@@ -82,6 +82,13 @@ const appRoutes: Routes = [
         loadChildren: () =>
           import('./modules/users/users.module').then((m) => m.UsersModule),
       },
+      {
+        path: 'remaining-rooms',
+        loadChildren: () =>
+          import('./modules/remaining-rooms/remaining-rooms.module').then(
+            (m) => m.RemainingRoomsModule
+          ),
+      },
     ],
   },
   { path: '**', redirectTo: '' },

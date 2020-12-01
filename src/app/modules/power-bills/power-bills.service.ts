@@ -34,7 +34,7 @@ export class PowerBillsService {
 
   getAPowerBill(roomId: number, dateString: string) {
     let url = this.baseUrl + '/powerBills/' + roomId + '?&date=' + dateString;
-    return this.http.get(url, { headers: this.headers });
+    return this.http.get<PowerBill>(url, { headers: this.headers });
   }
 
   calculatePowerBill(powerBill: PowerBill) {

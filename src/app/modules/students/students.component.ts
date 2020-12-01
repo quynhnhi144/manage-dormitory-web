@@ -468,7 +468,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getAllRemaingRooms() {
-    this.roomService.getTotalRemainingRooms().subscribe((data: any) => {
+    this.roomService.getTotalRemainingRooms('').subscribe((data: any) => {
       this.remainingRooms = data;
     });
   }
