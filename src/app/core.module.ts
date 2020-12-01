@@ -10,6 +10,7 @@ import { StudentsService } from './modules/students/students.service';
 import { PowerBillsService } from './modules/power-bills/power-bills.service';
 import { VehicleService } from './modules/vehicles/vehicle.service';
 import { UserService } from './modules/users/user.service';
+import { RemainingRoomService } from './modules/remaining-rooms/remaining-room.service';
 @NgModule({
   providers: [
     DashboardService,
@@ -18,6 +19,7 @@ import { UserService } from './modules/users/user.service';
     PowerBillsService,
     VehicleService,
     UserService,
+    RemainingRoomService,
     CampusService,
     TypeRoomService,
     RoomWaterMoneyService,

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders, HttpClient, HttpEventType } from '@angular/common/http';
-import { GlobalConstants } from '../../common/global-constants';
+import { HttpEventType } from '@angular/common/http';
 import { CampusService } from '../../core/services/campus.service';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { PowerBillsService } from './power-bills.service';
@@ -29,7 +28,8 @@ export class PowerBillsComponent implements OnInit {
   currentRoomId = 0;
 
   modalRoomPowerBill = new PowerBill();
-  modalRoomPowerBillUpdate = new PowerBill();
+  modalRoomPowerBillUpdate: PowerBill = null;
+  modalNewPowerBill = new PowerBill();
 
   modalOption: NgbModalOptions = {};
 
@@ -43,11 +43,10 @@ export class PowerBillsComponent implements OnInit {
   isExtention = true;
   isSubmit = true;
 
-  modalNewPowerBill = new PowerBill();
-
   isNew = false;
 
   subscription: Subscription;
+
   isAuthenticated = false;
 
   constructor(
@@ -177,11 +176,11 @@ export class PowerBillsComponent implements OnInit {
   }
 
   //modal new power bill
-  openModalNewPowerBill(modalUpdateAPowerBill, room: any) {
+  openModalNewPowerBill(modalPowerBillNew, room: any) {
     this.currentRoomId = room.detailRoomDto.id;
     this.isNew = true;
     this.getPowerBillUpdate();
-    this.openModal(modalUpdateAPowerBill);
+    this.openModal(modalPowerBillNew);
   }
 
   // modal power bill update
@@ -195,8 +194,7 @@ export class PowerBillsComponent implements OnInit {
     this.powerBillsService
       .getAPowerBill(this.currentRoomId, this.formatDate(this.currentDate))
       .subscribe(
-        (data: any) => {
-          console.log('detail power bill: ', data);
+        (data: PowerBill) => {
           if (this.isNew) {
             this.modalNewPowerBill = new PowerBill({
               detailRoomDto: data.detailRoomDto,
@@ -235,6 +233,10 @@ export class PowerBillsComponent implements OnInit {
     modalRoomPowerBillUpdate.pay = !modalRoomPowerBillUpdate.pay;
   }
 
+  changeStatusPaymentNew(modalNewPowerBill) {
+    modalNewPowerBill.pay = !modalNewPowerBill.pay;
+  }
+
   changeNumberOfPowerUsed() {
     if (
       this.modalRoomPowerBillUpdate.numberOfPowerBegin >
@@ -252,6 +254,27 @@ export class PowerBillsComponent implements OnInit {
         .calculatePowerBill(this.modalRoomPowerBillUpdate)
         .subscribe((data: any) => {
           this.modalRoomPowerBillUpdate.numberOfMoneyMustPay = data;
+        });
+    }
+  }
+
+  changeNumberOfPowerUsedNew() {
+    if (
+      this.modalNewPowerBill.numberOfPowerBegin >
+      this.modalNewPowerBill.numberOfPowerEnd
+    ) {
+      this.modalUpdatePowerBillError =
+        'Number of Power Begin cannot bigger than End';
+      this.turnOffNotification();
+      return;
+    } else {
+      this.modalNewPowerBill.numberOfPowerUsed =
+        this.modalNewPowerBill.numberOfPowerEnd -
+        this.modalNewPowerBill.numberOfPowerBegin;
+      this.subscription = this.powerBillsService
+        .calculatePowerBill(this.modalNewPowerBill)
+        .subscribe((data: any) => {
+          this.modalNewPowerBill.numberOfMoneyMustPay = data;
         });
     }
   }

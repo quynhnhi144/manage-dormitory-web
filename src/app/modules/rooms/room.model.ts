@@ -14,6 +14,7 @@ export class Room {
   isPayRoom: boolean;
   isPayWaterBill: boolean;
   isPayVehicleBill: boolean;
+
   constructor(init?: Partial<Room>) {
     Object.assign(this, init);
   }

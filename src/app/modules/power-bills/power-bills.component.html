@@ -3,7 +3,7 @@
         <div class="col-12">
 
             <div style="float: left">
-                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý tiền điện</div>
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý điện</div>
             </div>
 
             <div style="float: right">
@@ -145,7 +145,7 @@
                                     </td>
                                     <td>
                                         <i class="icon-edit mdi mdi-24px mdi-plus"
-                                            (click)="openModalNewPowerBill(modalUpdateAPowerBill,room)"></i>
+                                            (click)="openModalNewPowerBill(modalPowerBillNew,room)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="roomTotal == 0">
@@ -321,7 +321,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body" *ngIf="modalRoomPowerBillUpdate.detailRoomDto">
+        <div class="modal-body" *ngIf="modalRoomPowerBillUpdate">
             <div class="row create-room-section">
                 <div class="col-12">
                     <div class="section-info">
@@ -399,6 +399,115 @@
                                         [ngClass]=" modalRoomPowerBillUpdate.pay ?  'pill pill-1' : 'pill pill-2' "
                                         (click)="changeStatusPayment(modalRoomPowerBillUpdate)">
                                         {{ modalRoomPowerBillUpdate.pay ? "Đã trả" : "Chưa trả" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="row" *ngIf="modalUpdatePowerBillError">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger" style="margin-bottom: 0;">
+                                        {{modalUpdatePowerBillError}}</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="saveUpdate()">Lưu</button>
+            <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<ng-template #modalPowerBillNew let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-3">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/electricity-bill.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="exampleModalLabel-3">THÊM MỚI HÓA ĐƠN</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" *ngIf="modalNewPowerBill">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Id Phòng</label>
+                                    <input name="id" [(ngModel)]="modalNewPowerBill.detailRoomDto.id"
+                                        class="disable-input" readonly />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="email">Tên phòng</label>
+                                    <input name="email" [(ngModel)]="modalNewPowerBill.detailRoomDto.name"
+                                        class="disable-input" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="startDate">Ngày bắt đầu</label>
+                                    <input type="text" name="startDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]="modalNewPowerBill.startDate" required />
+                                </div>
+                                <div *ngIf="!isNew" class="col-xs-12 col-md-6 col-right">
+                                    <label for="name">Id Hóa đơn</label>
+                                    <input name="name" [(ngModel)]="modalNewPowerBill.billId" class="disable-input"
+                                        readonly />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left form-group">
+                                    <label for="endDate">Ngày kết thúc</label>
+                                    <input type="text" name="endDate" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]="modalNewPowerBill.endDate" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="numberOfPowerBegin">Chỉ số đầu</label>
+                                    <input type="number" name="numberOfPowerBegin"
+                                        [(ngModel)]="modalNewPowerBill.numberOfPowerBegin"
+                                        (change)="changeNumberOfPowerUsedNew()" required />
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="numberOfPowerEnd">Chỉ số cuối</label>
+                                    <input type="number" name="numberOfPowerEnd"
+                                        [(ngModel)]="modalNewPowerBill.numberOfPowerEnd"
+                                        (change)="changeNumberOfPowerUsedNew()" required />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="totalMonetMustPay">Thành tiền</label>
+                                    <input name="totalMonetMustPay" class="disable-input"
+                                        [ngModel]="modalNewPowerBill.numberOfMoneyMustPay ? (modalNewPowerBill.numberOfMoneyMustPay | number) + 'đ' : null"
+                                        (ngModelChange)="modalNewPowerBill.numberOfMoneyMustPay" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="numberOfPowerUsed">Chỉ số sử dụng</label>
+                                    <input type="number" name="numberOfPowerUsed" class="disable-input"
+                                        [(ngModel)]="modalNewPowerBill.numberOfPowerUsed " readonly />
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <p for="payment">Trạng thái</p>
+                                    <p style="cursor: pointer;"
+                                        [ngClass]=" modalNewPowerBill.pay ?  'pill pill-1' : 'pill pill-2' "
+                                        (click)="changeStatusPaymentNew(modalNewPowerBill)">
+                                        {{ modalNewPowerBill.pay ? "Đã trả" : "Chưa trả" }}</p>
                                 </div>
                             </div>
 

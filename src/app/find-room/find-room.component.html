@@ -1,1 +1,204 @@
-<p>find-room works!</p>
+<div class="container">
+
+    <div class="main-content">
+        <div class="row">
+            <div class="input-group">
+                <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                    (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm bởi tên phòng hoặc loại phòng" />
+                <img class="btn-search-find-room" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                    title="Search" width="20" />
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div style="float: left">
+            <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Những phòng còn trống</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-6 col-md-12 d-flex justify-content-center">
+            <div class="grid-container">
+                <div *ngFor="let remainingRoom of remainingRooms" class="grid-item">
+                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
+                        <div class="col-xs-6 col-md-12">
+                            <img class="icon-bill-middle" src="../../assets/images/room.svg" />
+                        </div>
+                    </div>
+
+                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
+                        <div class="col-xs-6 col-md-12">
+                            <span>{{remainingRoom.name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
+                        <div class="col-xs-6 col-md-12">
+                            <span>{{remainingRoom.typeRoom.name}}</span>
+                        </div>
+                    </div>
+
+                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
+                        <div class="col-xs-6 col-md-12">
+                            <span>{{remainingRoom.quantityStudent}}/{{remainingRoom.typeRoom.maxQuantity}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detail -->
+<ng-template #modalDetailARemainingRoom let-modal class="modal fade" id="modalDetailARemainingRoom"
+    aria-labelledby="modalDetailARemainingRoomLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalDetailARemainingRoomLabel">CHI TIẾT PHÒNG</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div class="col-xs-6 col-md-3">
+                        <img class="icon-bill" src="../../assets/images/room.svg" style="margin-bottom: 15px;" />
+                    </div>
+                    <div class="col-xs-6 col-md-2"></div>
+                    <div *ngIf="modalRemainingRoom.id" class="col-xs-6 col-md-6">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ID PHÒNG
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.id}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.name}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">LOẠI PHÒNG
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.typeRoom.name}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TIỀN PHÒNG
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.priceRoom}} / phòng
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TIỀN NƯỚC
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.priceWater}} / người
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TIỀN XE
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.priceVehicle}} / người
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">SỐ CHỖ TRỐNG
+                            </div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalRemainingRoom.typeRoom.maxQuantity - modalRemainingRoom.quantityStudent}} /
+                                người
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div *ngIf="!isRegisterRoom" class="col-xs-6 col-md-11">
+                        <a (click)="showOrNot()" class="col-title" style="cursor: pointer;">Đăng
+                            ký phòng</a>
+                    </div>
+
+                    <div *ngIf="isRegisterRoom" class="col-xs-6 col-md-11">
+                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="idCard">Mã số sinh viên</label>
+                                    <input name="idCard" [(ngModel)]="modalRemainingRoomNew.idCard" class="form-control"
+                                        required />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="studentName">Tên sinh viên</label>
+                                    <input name="studentName" [(ngModel)]="modalRemainingRoomNew.studentName"
+                                        class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="birthday">Sinh nhật</label>
+                                    <input type="text" name="birthday" placeholder="Datepicker"
+                                        class="form-control input-date" bsDatepicker
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}"
+                                        [(ngModel)]=" modalRemainingRoomNew.birthday" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="address">Địa chỉ</label>
+                                    <input name="address" [(ngModel)]="modalRemainingRoomNew.address"
+                                        class="form-control" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="phone">Số điện thoại</label>
+                                    <input name="phone" [(ngModel)]="modalRemainingRoomNew.phone" class="form-control"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11">
+                                    <label for="email">Email</label>
+                                    <input name="email" [(ngModel)]="modalRemainingRoomNew.email" class="form-control"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-11 d-flex justify-content-end">
+                                    <button type="button" class="btn btn-success" [disabled]="!form.valid"
+                                        (click)="save()">Lưu</button>
+                                    <button type="button" class="btn btn-light" (click)="cancel()">Hủy</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

@@ -35,6 +35,7 @@ export class DashboardComponent implements OnInit {
 
   students: Student[] = [];
   vehicles: Vehicle[] = [];
+  searchText: string = '';
 
   subscription: Subscription;
   constructor(
@@ -92,7 +93,7 @@ export class DashboardComponent implements OnInit {
   getAllRoomsAndRemainingRooms() {
     this.subscription = forkJoin([
       this.roomService.getTotalRooms(),
-      this.roomService.getTotalRemainingRooms(),
+      this.roomService.getTotalRemainingRooms(this.searchText),
     ]).subscribe((data: any) => {
       console.log('rooms and remaining rooms: ', data);
       this.rooms = data[0];

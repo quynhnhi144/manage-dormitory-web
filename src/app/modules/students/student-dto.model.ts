@@ -1,4 +1,3 @@
-import { RoomDto } from '../rooms/room-dto.model';
 import { WaterBill } from '../../shared/model/water-bill.model';
 import { RoomBill } from '../../shared/model/room-bill.model';
 export class StudentDto {
