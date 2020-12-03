@@ -11,6 +11,12 @@ import { CampusService } from '../../core/services/campus.service';
 import { Subscription } from 'rxjs';
 import { RoomService } from './room.service';
 import { StudentLeft } from '../students/student-left.model';
+import { NotificationService } from '../../core/services/notification.service';
+import { InforAboutMoneySwitchRoom } from '../../shared/model/info-about-money-switch-room.model';
+import { RoomBill } from '../../shared/model/room-bill.model';
+import { WaterBill } from '../../shared/model/water-bill.model';
+import { VehicleBill } from '../../shared/model/vehicle-bill.model';
+import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
 
 @Component({
   selector: 'app-rooms',
@@ -51,6 +57,14 @@ export class RoomsComponent implements OnInit {
   isClickSearch = false;
   modalOption: NgbModalOptions = {};
   studentLeft = new StudentLeft();
+  currentStudentId = 0;
+
+  remainingRooms = [];
+  modalStudent = new Student();
+  remaingRoomId: number = -1;
+  infoAboutMoneySwitchRoom = new InforAboutMoneySwitchRoom();
+
+  studentsInRoom = [];
 
   //modal Detail Room
   modalRoom = new Room({
@@ -90,7 +104,9 @@ export class RoomsComponent implements OnInit {
     private modalService: NgbModal,
     private typeRoomService: TypeRoomService,
     private campusService: CampusService,
-    private roomService: RoomService
+    private roomService: RoomService,
+    private studentService: StudentsService,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -244,23 +260,19 @@ export class RoomsComponent implements OnInit {
     }
   }
 
-  removeStudent(student: any) {
+  openModalDeleteStudent(modalDeleteStudent, student: any) {
+    this.currentStudentId = student.id;
+    this.getRoomBill();
+    this.openModal(modalDeleteStudent);
+  }
+
+  getRoomBill() {
     this.subscription = this.roomService
-      .getStudentWanttoUnactive(student.id)
+      .getStudentWanttoUnactive(this.currentStudentId)
       .subscribe(
-        (data: StudentLeft) => {
+        (data: any) => {
+          console.log('studentLeft: ' + data);
           this.studentLeft = data;
-          this.roomService
-            .unactiveStudentInRoom(this.studentLeft)
-            .subscribe((data) => {
-              const index = this.newRoomForm.students.findIndex(
-                (x) => x.id === student.id
-              );
-              this.newRoomForm.students.splice(index, 1);
-              const indexRoom = this.rooms.findIndex(
-                (r) => r.id === this.currentRoomId
-              );
-            });
         },
         (error) => {
           console.log(error);
@@ -268,38 +280,32 @@ export class RoomsComponent implements OnInit {
       );
   }
 
-  // onSearchMultiSelect(event) {
-  //   if (event && event.term) {
-  //     var keyword = event.term;
-  //     console.log('keyword: ', keyword);
-  //     let token = '';
-  //     const headers = new HttpHeaders().set('Authorization', 'Bearer ' + token);
-  //     this.studentService
-  //       .getAllStudents(0, 50, keyword)
-  //       .subscribe((data: any) => {
-  //         this.arrStudent = [];
-  //         let studentList = data.data.data;
-  //         console.log('students:', studentList);
-  //         for (let i = 0; i < studentList.length; i++) {
-  //           let label = studentList[i].name;
-  //           let name =
-  //             studentList[i].name + ' <' + studentList[i].roomDto.name + '> ';
-  //           let item = {
-  //             id: studentList[i].id,
-  //             name: name,
-  //             label: label,
-  //           };
-  //           this.arrStudent = [...this.arrStudent, item];
-  //         }
-  //       });
-  //   }
-  // }
-
-  // unselect(item) {
-  //   this.selectedStudentIds = this.selectedStudentIds.filter(
-  //     (sid) => sid !== item.id
-  //   );
-  // }
+  saveDelete() {
+    this.subscription = this.roomService
+      .unactiveStudentInRoom(this.studentLeft)
+      .subscribe(
+        (data: any) => {
+          console.log('data:' + data);
+          let index = this.newRoomForm.students.findIndex(
+            (student) => student.id === this.studentLeft.id
+          );
+          this.newRoomForm.students.splice(index, 1);
+          this.getAllRooms(this.campusIndex, this.campusType);
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xóa sinh viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
 
   checkQuantityStudent(typeRoomId: number) {
     if (typeRoomId == null) {
@@ -354,12 +360,156 @@ export class RoomsComponent implements OnInit {
           );
           this.rooms[indexRoom] = data;
           this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã cập nhật thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xảy ra lỗi. Hãy thử lại !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
+
+  // switch student
+  getAllRemaingRooms() {
+    this.roomService.getTotalRemainingRooms('').subscribe((data: any) => {
+      this.remainingRooms = data;
+    });
+  }
+
+  getDetailAStudent() {
+    this.studentService.getAStudent(this.currentStudentId).subscribe(
+      (data: any) => {
+        console.log('detailStudent: ', data);
+        this.modalStudent = data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  switchRoom(modalSwitchRoom, student: any) {
+    this.currentStudentId = student.id;
+    this.getAllRemaingRooms();
+    this.getDetailAStudent();
+    this.openModal(modalSwitchRoom);
+  }
+
+  changeRoom() {
+    this.subscription = this.studentService
+      .changeRoom(this.modalStudent.roomDto.id, this.remaingRoomId)
+      .subscribe(
+        (data: any) => {
+          console.log('duration: ' + data);
+          this.infoAboutMoneySwitchRoom = data;
         },
         (error) => {
           console.log(error);
         }
       );
   }
+
+  saveSwitchRoom() {
+    let roomBill = new RoomBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      startDate: this.infoAboutMoneySwitchRoom.roomStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.roomEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationRoomMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+      maxQuantity: null,
+    });
+
+    let waterBill = new WaterBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      startDate: this.infoAboutMoneySwitchRoom.waterStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.waterEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationWaterMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+    });
+
+    let vehicleBill = new VehicleBill({
+      billId: null,
+      studentName: this.modalStudent.name,
+      studentId: this.modalStudent.id,
+      vehicleId: this.modalStudent.vehicleId,
+      startDate: this.infoAboutMoneySwitchRoom.waterStartDate,
+      endDate: this.infoAboutMoneySwitchRoom.waterEndDate,
+      price: this.infoAboutMoneySwitchRoom.durationWaterMoney,
+      roomId: this.infoAboutMoneySwitchRoom.newRoomId,
+    });
+
+    let studentSwitchRoom = new InfoSwitchRoom({
+      studentId: this.modalStudent.id,
+      studentIdCard: this.modalStudent.idCard,
+      studentName: this.modalStudent.name,
+      oldRoomId: this.modalStudent.roomDto.id,
+      oldRoomName: this.modalStudent.roomDto.name,
+      newRoomId: this.remaingRoomId,
+      newRoomName: this.remainingRooms[
+        this.remainingRooms.findIndex((x) => x.id === this.remaingRoomId)
+      ].name,
+      roomBill: roomBill,
+      waterBill: waterBill,
+      vehicleBill: vehicleBill,
+    });
+
+    this.subscription = this.studentService
+      .switchRoom(this.currentStudentId, studentSwitchRoom)
+      .subscribe(
+        (data: any) => {
+          console.log(data);
+          let index = this.newRoomForm.students.findIndex(
+            (student) => student.id === this.studentLeft.id
+          );
+          this.newRoomForm.students.splice(index, 1);
+          this.getAllRooms(this.campusIndex, this.campusType);
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã chuyển phòng cho sinh viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Có lỗi xảy ra !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
+
+  getRoomBillOfAllStudents() {
+    this.subscription = this.roomService
+      .getBillOfAllStudents(this.currentRoomId)
+      .subscribe(
+        (data: any) => {
+          console.log('create payment: ', data);
+          this.studentsInRoom = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+  // create payment for room
+  openCreatePayment(modalCreatePaymetRoom, room: any) {
+    this.currentRoomId = room.id;
+    this.getRoomBillOfAllStudents();
+    this.openModal(modalCreatePaymetRoom);
+  }
+
+  saveCreatePayment() {}
 
   turnOffNotification() {
     setTimeout(() => {

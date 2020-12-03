@@ -41,7 +41,7 @@
                             (keydown.enter)="onSearch($event)" placeholder="Search by license plates" />
                         <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
                             title="Search" width="20" />
-                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                        <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcelFile()">
                             <img src="../../assets/images/export.png" width="15" />
                             Xuất file
                         </button>

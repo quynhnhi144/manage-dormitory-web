@@ -14,6 +14,7 @@ import { StudentsService } from '../students/students.service';
 import { VehicleBill } from '../../shared/model/vehicle-bill.model';
 import { endOf } from 'ngx-bootstrap/chronos';
 import { VehicleNew } from './vehicle-new.model';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-vehicles',
@@ -378,6 +379,27 @@ export class VehiclesComponent implements OnInit {
           console.log(error);
         }
       );
+  }
+
+  exportExcelFile() {
+    this.subscription = this.vehicleService.exportExcelFile().subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'vehicles.xlsx'
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  downloadFile(data: any, type: string, fileName: string) {
+    let blob = new Blob([data], { type: type });
+    FileSaver.saveAs(blob, fileName);
   }
 
   ngOnDestroy(): void {

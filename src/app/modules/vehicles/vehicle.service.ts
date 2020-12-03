@@ -63,4 +63,9 @@ export class VehicleService {
     let url = this.baseUrl + '/vehicles' + '/vehicle';
     return this.http.post(url, vehicleNew);
   }
+
+  exportExcelFile() {
+    let url = this.baseUrl + '/vehicles' + '/exportExcel';
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

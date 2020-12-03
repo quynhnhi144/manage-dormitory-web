@@ -14,6 +14,7 @@ import { VehicleBill } from '../../shared/model/vehicle-bill.model';
 import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
 import { NotificationService } from '../../core/services/notification.service';
 import { Subscription } from 'rxjs';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-students',
@@ -326,6 +327,8 @@ export class StudentsComponent implements OnInit {
             message: 'Đã thêm sinh viên thành công !!!',
             isSuccess: true,
           });
+
+          this.exportPDF(studentNewDto);
         },
         (error) => {
           console.log(error);
@@ -339,6 +342,43 @@ export class StudentsComponent implements OnInit {
     }
   }
 
+  exportPDF(studentNew: StudentNew) {
+    this.subscription = this.studentService.exportPDF(studentNew).subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/pdf',
+          `${studentNew.studentDto.idCard} + ${new Date()} + .pdf`
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  exportExcelFile() {
+    this.subscription = this.studentService.exportExcelFile().subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'students.xlsx'
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  downloadFile(data: any, type: string, fileName: string) {
+    let blob = new Blob([data], { type: type });
+    FileSaver.saveAs(blob, fileName);
+  }
+
   turnOffNotification() {
     setTimeout(() => {
       this.studentUpdateError = '';
@@ -349,17 +389,20 @@ export class StudentsComponent implements OnInit {
     if (event && event.term) {
       var keyword = event.term;
       console.log('keyword: ', keyword);
-      this.roomService.getAllRooms(0, 100, keyword).subscribe((data: any) => {
-        this.arrRooms = [];
-        let roomList = data.data.data;
-        console.log('rooms: ', roomList);
-        for (let i = 0; i < roomList.length; i++) {
-          let room = roomList[i];
-          let label = room.name;
-          let name = null;
-          this.setUpRoomInSearchMultipleSelect(room, label, name);
-        }
-      });
+      let paramSearchText = '&searchText=' + keyword;
+      this.roomService
+        .getAllRooms(0, 100, paramSearchText)
+        .subscribe((data: any) => {
+          this.arrRooms = [];
+          let roomList = data.data.data;
+          console.log('rooms: ', roomList);
+          for (let i = 0; i < roomList.length; i++) {
+            let room = roomList[i];
+            let label = room.name;
+            let name = null;
+            this.setUpRoomInSearchMultipleSelect(room, label, name);
+          }
+        });
     }
   }
 

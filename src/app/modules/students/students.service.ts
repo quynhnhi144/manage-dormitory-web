@@ -96,4 +96,14 @@ export class StudentsService {
       studentIdCard;
     return this.http.get<Student[]>(url);
   }
+
+  exportPDF(studentNew: StudentNew) {
+    let url = this.baseUrl + '/students' + '/exportPDF';
+    return this.http.post(url, studentNew, { responseType: 'blob' });
+  }
+
+  exportExcelFile() {
+    let url = this.baseUrl + '/students' + '/exportExcel';
+    return this.http.get(url, { responseType: 'blob' });
+  }
 }

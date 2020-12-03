@@ -50,7 +50,21 @@
     <li class="nav-item" [ngClass]="{ 'active': remainingRooms.isActive }">
       <a class="nav-link" routerLink="/manage/remaining-rooms" routerLinkActive #remainingRooms="routerLinkActive">
         <span class="menu-title">Quản lý đăng ký phòng</span>
-        <i class="mdi mdi-train-car mdi-24px menu-icon"></i>
+        <i class="mdi mdi-book-check mdi-24px menu-icon"></i>
+      </a>
+    </li>
+
+    <li class="nav-item" [ngClass]="{ 'active': news.isActive }">
+      <a class="nav-link" routerLink="/manage/remaining-rooms" routerLinkActive #news="routerLinkActive">
+        <span class="menu-title">Quản lý tin tức</span>
+        <i class="mdi mdi-newspaper-variant mdi-24px menu-icon"></i>
+      </a>
+    </li>
+
+    <li *ngIf="isAuthenticated" class="nav-item" [ngClass]="{ 'active': priceList.isActive }">
+      <a class="nav-link" routerLink="/manage/price-list" routerLinkActive #priceList="routerLinkActive">
+        <span class="menu-title">Quản lý tiền thuê</span>
+        <i class="mdi mdi-cash-usd mdi-24px menu-icon"></i>
       </a>
     </li>
 

@@ -253,7 +253,6 @@ export class UserListComponent implements OnInit {
           },
           (error) => {
             console.log(error);
-            this.modalService.dismissAll();
             this.notificationService.sendNotificationMessage({
               message: 'Đã xảy ra lỗi. Hãy thử lại !!!',
               isSuccess: false,
@@ -287,7 +286,6 @@ export class UserListComponent implements OnInit {
         },
         (error) => {
           console.log(error);
-          this.modalService.dismissAll();
           this.notificationService.sendNotificationMessage({
             message: 'Đã xảy ra lỗi. Hãy kiểm tra lại !!!',
             isSuccess: false,
@@ -302,6 +300,29 @@ export class UserListComponent implements OnInit {
     this.modalUserUpdate = new User();
     this.selectedCampusIds = [];
     this.openModal(modalUpdateAUser);
+  }
+
+  deleteUser(user: any) {
+    this.currentUserId = user.id;
+    this.subscription = this.userService
+      .deleteUser(this.currentUserId)
+      .subscribe(
+        (data: any) => {
+          console.log('deleteUser: ', data);
+          this.getAllUser();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xóa nhân viên thành công !!!',
+            isSuccess: true,
+          });
+        },
+        (error) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xảy ra lỗi. Hãy kiểm tra lại !!!',
+            isSuccess: false,
+          });
+        }
+      );
   }
 
   cancel() {
@@ -328,8 +349,6 @@ export class UserListComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.subscription.unsubscribe();
   }
 }

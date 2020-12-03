@@ -127,7 +127,8 @@
                                     </td>
 
                                     <td>
-                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                        <i [style]="!room.billId && !room.pay ? 'pointer-events:none': ''"
+                                            class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                             (click)="openModalUpdatePowerBill(modalUpdateAPowerBill,room)"></i>
                                     </td>
                                     <td>
@@ -321,7 +322,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body" *ngIf="modalRoomPowerBillUpdate">
+        <div class="modal-body" *ngIf="modalRoomPowerBillUpdate.detailRoomDto">
             <div class="row create-room-section">
                 <div class="col-12">
                     <div class="section-info">
@@ -395,10 +396,13 @@
                                 </div>
                                 <div class="col-xs-12 col-md-6 col-right">
                                     <p for="payment">Trạng thái</p>
-                                    <p style="cursor: pointer;"
-                                        [ngClass]=" modalRoomPowerBillUpdate.pay ?  'pill pill-1' : 'pill pill-2' "
-                                        (click)="changeStatusPayment(modalRoomPowerBillUpdate)">
-                                        {{ modalRoomPowerBillUpdate.pay ? "Đã trả" : "Chưa trả" }}</p>
+                                    <p *ngIf="modalRoomPowerBillUpdate.pay" style="cursor: pointer;" class="pill pill-1"
+                                        (click)="changeStatusPayment(modalRoomPowerBillUpdate)">Đã trả</p>
+
+                                    <p *ngIf="modalRoomPowerBillUpdate.billId && !modalRoomPowerBillUpdate.pay"
+                                        style="cursor: pointer;" class="pill pill-2"
+                                        (click)="changeStatusPayment(modalRoomPowerBillUpdate)">Chưa trả</p>
+
                                 </div>
                             </div>
 
@@ -430,7 +434,7 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body" *ngIf="modalNewPowerBill">
+        <div class="modal-body" *ngIf="modalNewPowerBill.detailRoomDto">
             <div class="row create-room-section">
                 <div class="col-12">
                     <div class="section-info">
