@@ -11,6 +11,7 @@ import { PowerBillsService } from './modules/power-bills/power-bills.service';
 import { VehicleService } from './modules/vehicles/vehicle.service';
 import { UserService } from './modules/users/user.service';
 import { RemainingRoomService } from './modules/remaining-rooms/remaining-room.service';
+import { PriceListService } from './modules/price-list/price-list.service';
 @NgModule({
   providers: [
     DashboardService,
@@ -19,6 +20,7 @@ import { RemainingRoomService } from './modules/remaining-rooms/remaining-room.s
     PowerBillsService,
     VehicleService,
     UserService,
+    PriceListService,
     RemainingRoomService,
     CampusService,
     TypeRoomService,

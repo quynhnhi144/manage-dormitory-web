@@ -81,4 +81,9 @@ export class RoomService {
     let url = this.baseUrl + '/students' + '/' + 'studentLeft';
     return this.http.post(url, studentLeft);
   }
+
+  getBillOfAllStudents(id: number) {
+    let url = this.baseUrl + '/rooms' + '/all-bill' + '/' + id;
+    return this.http.get(url);
+  }
 }

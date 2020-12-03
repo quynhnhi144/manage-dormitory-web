@@ -2,11 +2,12 @@
   .section-student-room {
     padding: 0px 24px;
     .section-result {
-      .btn-remove {
+      .btn-remove,
+      .btn-switch-room {
         position: absolute;
         right: 10px;
         top: -56px;
-        width: 102px;
+        width: 114px;
         height: 45px;
         background: #ffffff;
         color: #3f434a;
@@ -24,6 +25,10 @@
         img {
           margin-right: 10px;
         }
+      }
+
+      .btn-switch-room {
+        top: 14px;
       }
     }
     .section-search {

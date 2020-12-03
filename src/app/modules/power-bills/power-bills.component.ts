@@ -28,7 +28,7 @@ export class PowerBillsComponent implements OnInit {
   currentRoomId = 0;
 
   modalRoomPowerBill = new PowerBill();
-  modalRoomPowerBillUpdate: PowerBill = null;
+  modalRoomPowerBillUpdate: PowerBill = new PowerBill();
   modalNewPowerBill = new PowerBill();
 
   modalOption: NgbModalOptions = {};
@@ -221,6 +221,8 @@ export class PowerBillsComponent implements OnInit {
               numberOfMoneyMustPay: data.numberOfMoneyMustPay,
               pay: data.pay,
             });
+
+            console.log('updatePowerBill: ', this.modalRoomPowerBillUpdate);
           }
         },
         (error) => {
@@ -327,6 +329,10 @@ export class PowerBillsComponent implements OnInit {
           },
           (error) => {
             console.log(error);
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã xảy ra lỗi. Hãy thử lại !!!',
+              isSuccess: false,
+            });
           }
         );
     } else {
@@ -340,6 +346,10 @@ export class PowerBillsComponent implements OnInit {
             );
             this.rooms[index] = data;
             this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã thêm hóa đơn điện thành công',
+              isSuccess: true,
+            });
           },
           (error) => {
             console.log(error);
@@ -494,7 +504,6 @@ export class PowerBillsComponent implements OnInit {
             isSuccess: false,
           });
           this.progress = null;
-          this.modalService.dismissAll();
         }
       );
   }

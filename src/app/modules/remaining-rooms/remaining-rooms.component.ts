@@ -42,7 +42,6 @@ export class RemainingRoomsComponent implements OnInit {
     private campusService: CampusService,
     private remainingRoomService: RemainingRoomService,
     private modalService: NgbModal,
-    private studentService: StudentsService,
     private notificationService: NotificationService
   ) {}
 
@@ -206,8 +205,6 @@ export class RemainingRoomsComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.subscription.unsubscribe();
   }
 }

@@ -42,7 +42,7 @@
                             placeholder="Search by student name or user manager or room name" />
                         <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
                             title="Search" width="20" />
-                        <button type="button" class="btn-icon btn-round btn-export ml-3">
+                        <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcelFile()">
                             <img src="../../assets/images/export.png" width="15" />
                             Xuất file
                         </button>
@@ -451,8 +451,8 @@
                                 <div class="col-xs-12 col-md-6 col-left">
                                     <label for="startDate">Ngày bắt đầu</label>
                                     <input type="text" name="startDate" placeholder="Datepicker"
-                                        class="form-control input-date" bsDatepicker
-                                        [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
+                                        [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}" class="form-control input-date"
+                                        bsDatepicker [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
                                 </div>
                             </div>
 
@@ -613,62 +613,69 @@
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
-        <div class="modal-body" style="text-align: center; font-family: Roboto;">
+        <div class="modal-body">
             <div class="row create-room-section" *ngIf="modalStudent.roomDto">
                 <div class="col-12">
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6 col-left">
-                            <label for="id">Id sinh viên</label>
-                            <input name="id" [(ngModel)]="modalStudent.id" class="disable-input form-control"
-                                readonly />
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6 col-left">
-                            <label for="name">Tên sinh viên</label>
-                            <input name="name" [(ngModel)]="modalStudent.name" class="disable-input form-control"
-                                readonly />
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6 col-left">
-                            <label for="id">Phòng cũ</label>
-                            <input name="id" [(ngModel)]="modalStudent.roomDto.name" class="form-control" readonly />
-
-                        </div>
-                        <div class="col-xs-12 col-md-6 col-right">
-                            <label for="id">Phòng mới</label>
-                            <ng-select name="remainingRoomsData" [items]="remainingRooms" [virtualScroll]="true"
-                                bindLabel="name" bindValue="id" [(ngModel)]="remaingRoomId" (change)="changeRoom()">
-                            </ng-select>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-xs-12 col-md-6 col-left">
-                        </div>
-                        <div class="col-xs-12 col-md-6 col-right">
-                            <div *ngIf="remaingRoomId > 0 && infoAboutMoneySwitchRoom">
-                                <label for="id">Những khoản tiền mà sinh viên phải đóng hoặc được nhận lại:</label>
-                                <h5>Số tiền phòng mà sinh viên
-                                    {{infoAboutMoneySwitchRoom.durationRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}}
-                                    là:
-                                    {{(infoAboutMoneySwitchRoom.durationRoomMoney |  positiveNumber | number) + 'đ'}}
-                                </h5>
-                                <h5>Số tiền nước mà sinh viên
-                                    {{infoAboutMoneySwitchRoom.durationWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}}
-                                    là:
-                                    {{(infoAboutMoneySwitchRoom.durationWaterMoney |  positiveNumber | number | uppercase) + 'đ'}}
-                                </h5>
-                                <h5>Số tiền xe mà sinh viên
-                                    {{infoAboutMoneySwitchRoom.durationVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}}
-                                    là:
-                                    {{(infoAboutMoneySwitchRoom.durationVehicleMoney |  positiveNumber | number) + 'đ'}}
-                                </h5>
+                    <div class="section-info">
+                        <form name="newRoomForm" class="newRoomForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Id sinh viên</label>
+                                    <input name="id" [(ngModel)]="modalStudent.id" class="disable-input form-control"
+                                        readonly />
+                                </div>
                             </div>
-                        </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Tên sinh viên</label>
+                                    <input name="name" [(ngModel)]="modalStudent.name"
+                                        class="disable-input form-control" readonly />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Phòng cũ</label>
+                                    <input name="id" [(ngModel)]="modalStudent.roomDto.name" class="form-control"
+                                        readonly />
+
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="id">Phòng mới</label>
+                                    <ng-select name="remainingRoomsData" [items]="remainingRooms" [virtualScroll]="true"
+                                        bindLabel="name" bindValue="id" [(ngModel)]="remaingRoomId"
+                                        (change)="changeRoom()">
+                                    </ng-select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <div *ngIf="remaingRoomId > 0 && infoAboutMoneySwitchRoom">
+                                        <label for="id">Những khoản tiền mà sinh viên phải đóng hoặc được nhận
+                                            lại:</label>
+                                        <h5>Số tiền phòng mà sinh viên
+                                            {{infoAboutMoneySwitchRoom.durationRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            là:
+                                            {{(infoAboutMoneySwitchRoom.durationRoomMoney |  positiveNumber | number) + 'đ'}}
+                                        </h5>
+                                        <h5>Số tiền nước mà sinh viên
+                                            {{infoAboutMoneySwitchRoom.durationWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            là:
+                                            {{(infoAboutMoneySwitchRoom.durationWaterMoney |  positiveNumber | number | uppercase) + 'đ'}}
+                                        </h5>
+                                        <h5>Số tiền xe mà sinh viên
+                                            {{infoAboutMoneySwitchRoom.durationVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            là:
+                                            {{(infoAboutMoneySwitchRoom.durationVehicleMoney |  positiveNumber | number) + 'đ'}}
+                                        </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

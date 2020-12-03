@@ -40,4 +40,9 @@ export class UserService {
     let url = this.baseUrl + '/auth' + '/signup';
     return this.htttp.post(url, newUser);
   }
+
+  deleteUser(id: number) {
+    let url = this.baseUrl + '/users' + '/' + id;
+    return this.htttp.delete(url);
+  }
 }

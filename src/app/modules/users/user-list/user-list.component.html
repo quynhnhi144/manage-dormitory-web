@@ -39,6 +39,7 @@
                                     <th>Số điện thoại</th>
                                     <th>Khu nhà</th>
                                     <th></th>
+                                    <th></th>
 
                                 </tr>
                             </thead>
@@ -75,6 +76,11 @@
                                     <td>
                                         <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                             (click)="openModalUpdateAUser(modalUpdateAUser, user)"></i>
+                                    </td>
+
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-delete-outline"
+                                            (click)="deleteUser(user)"></i>
                                     </td>
                                 </tr>
                                 <tr *ngIf="userTotal == 0">

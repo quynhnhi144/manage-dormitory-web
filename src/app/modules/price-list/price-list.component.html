@@ -1,0 +1,259 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col-12">
+
+            <div style="float: left">
+                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý tiền thuê</div>
+            </div>
+            <div class="create-student-btn" style="float: right;">
+                <button type="button" class="btn btn-round btn-new-student"
+                    (click)="createPriceList(modalCreatePriceList)">+ Tạo tiền thuê</button>
+            </div>
+            <div style="clear: both"></div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="input-group">
+                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                            (keydown.enter)="onSearch($event)" placeholder="Search by room name" />
+                        <img class="btn-search btn-search-price-list" (click)="onSearch($event)"
+                            src="../../assets/images/search_icon.png" title="Search" width="20" />
+
+                    </div>
+                    <div class="table-responsive table-rooms">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tên khoản tiền</th>
+                                    <th>Giá tiền</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let price of priceList">
+                                    <td (click)="openModalDetailUser(modalDetailAPriceList,price)">
+                                        {{price.id}}
+                                    </td>
+                                    <td (click)="openModalDetailUser(modalDetailAPriceList,price)">
+                                        {{price.name}}
+                                    </td>
+
+                                    <td (click)="openModalDetailUser(modalDetailAPriceList,price)">
+                                        {{price.price | number}} đ
+                                    </td>
+
+                                    <td>
+                                        <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                            (click)="openModalUpdatePriceList(modalUpdateAPriceList,price)"></i>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="priceListTotal == 0">
+                                    <td colspan="11" class="no-data">Không tìm thấy dữ liệu.</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                        <div class="tbl-checkins-paging">
+                            <div *ngIf="priceListTotal != 0" class="row">
+                                <div class="col-xs-12 col-md-6">
+                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                                        <option>10</option>
+                                        <option>25</option>
+                                        <option>50</option>
+                                    </select>
+                                    <div
+                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                        Kết quả mỗi trang</div>
+                                </div>
+
+                                <div class="col-xs-12 col-md-6">
+
+                                    <div class="custom-paging-wrapper">
+                                        <ngb-pagination id="page" [collectionSize]="priceListTotal" [(page)]="page"
+                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                            [boundaryLinks]="true">
+                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                    aria-hidden="true"></i>
+                                            </ng-template>
+                                            <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                            <ng-template ngbPaginationNext>Sau</ng-template>
+                                            <ng-template ngbPaginationEllipsis>...</ng-template>
+                                        </ngb-pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #modalDetailAPriceList let-modal class="modal fade" id="emodalDetailAPriceList"
+    aria-labelledby="modalDetailAPriceListLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/money.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalDetailAPriceListLabel">CHI TIẾT GIÁ TIỀN</h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="section-info">
+                <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+
+                    <div class="col-xs-6 col-md-3">
+                        <img class="icon-bill" src="../../assets/images/money.svg" style="margin-bottom: 15px;" />
+                    </div>
+                    <div class="col-xs-6 col-md-2"></div>
+
+                    <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">ID GIÁ TIỀN</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalPriceList.id}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">TÊN GIÁ TIỀN</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{ modalPriceList.name}}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-xs-6 col-md-6 col-title">GIÁ</div>
+                            <div class="col-xs-6 col-md-6">
+                                {{modalPriceList.price | number}} đ
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #modalUpdateAPriceList let-modal class="modal fade" id="modalUpdatePriceList"
+    aria-labelledby="modalUpdatePriceListLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/money.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalUpdatePriceListLabel">{{isNewPriceList ? 'TẠO ' : 'CẬP NHẬT '}}GIÁ TIỀN
+            </h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div *ngIf="modalUpdatePriceList || isNewPriceList" class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="id">Id Giá tiền</label>
+                                    <input name="id" [(ngModel)]="modalUpdatePriceList.id"
+                                        class="disable-input form-control" readonly />
+                                </div>
+
+                                <div class="col-xs-12 col-md-6 col-right">
+                                    <label for="name">Tên giá tiền</label>
+                                    <input name="name" [(ngModel)]="modalUpdatePriceList.name" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="price">Giá tiền</label>
+                                    <input type="number" name="price" [(ngModel)]="modalUpdatePriceList.price"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div *ngIf="priceListError" class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger">{{priceListError}}</p>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
+                                <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
+
+<ng-template #modalCreatePriceList let-modal class="modal fade" id="modalCreatePriceList"
+    aria-labelledby="modalCreatePriceListLabel">
+    <div class="modal-content">
+        <div class="modal-header">
+            <img class="icon-bill-small" src="../../assets/images/manager.svg" style="margin-right: 20px;" />
+            <h3 class="modal-title" id="modalCreatePriceListLabel">{{isNewPriceList ? 'TẠO ' : 'CẬP NHẬT '}}GIÁ TIỀN
+            </h3>
+            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="row create-room-section">
+                <div class="col-12">
+                    <div *ngIf="modalUpdatePriceList || isNewPriceList" class="section-info">
+
+                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="name">Tên giá tiền</label>
+                                    <input name="name" [(ngModel)]="modalUpdatePriceList.name" required />
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <label for="price">Giá tiền</label>
+                                    <input type="number" name="price" [(ngModel)]="modalUpdatePriceList.price"
+                                        required />
+                                </div>
+                            </div>
+
+                            <div *ngIf="priceListError" class="row">
+                                <div class="col-xs-12 col-md-6 col-left">
+                                    <p class="alert alert-danger">{{priceListError}}</p>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" (click)="saveCreate()">Lưu</button>
+                                <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</ng-template>
