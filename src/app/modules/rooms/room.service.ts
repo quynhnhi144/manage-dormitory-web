@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GlobalConstants } from '../../common/global-constants';
 import { Room } from './room.model';
 import { StudentLeft } from '../students/student-left.model';
+import { StudentBill } from '../students/student-bill.model';
 
 @Injectable({
   providedIn: 'root',
@@ -57,6 +58,11 @@ export class RoomService {
     return this.http.get<Room[]>(url);
   }
 
+  getEnoughConditionSwitchRooms() {
+    let url = this.baseUrl + '/rooms' + '/enough-condition-switch-room';
+    return this.http.get<Room[]>(url);
+  }
+
   exportExcelFile() {
     let url = this.baseUrl + '/rooms/export';
     return this.http.get(url, { responseType: 'blob' });
@@ -85,5 +91,10 @@ export class RoomService {
   getBillOfAllStudents(id: number) {
     let url = this.baseUrl + '/rooms' + '/all-bill' + '/' + id;
     return this.http.get(url);
+  }
+
+  saveCreatePayment(student: StudentBill) {
+    let url = this.baseUrl + '/students' + '/create-payment';
+    return this.http.post(url, student);
   }
 }

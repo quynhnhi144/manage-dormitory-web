@@ -488,7 +488,11 @@ export class PowerBillsComponent implements OnInit {
                   '',
                   ''
                 )
-                .toPromise();
+                .toPromise()
+                .then((data: any) => {
+                  this.rooms = data.data.data;
+                  this.roomTotal = data.total;
+                });
               this.modalService.dismissAll();
               this.notificationService.sendNotificationMessage({
                 message: 'Đã thực hiện thành công!!!',

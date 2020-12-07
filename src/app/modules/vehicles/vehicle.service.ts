@@ -68,4 +68,14 @@ export class VehicleService {
     let url = this.baseUrl + '/vehicles' + '/exportExcel';
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  exportPDFNewVehicle(vehicleNew: VehicleNew) {
+    let url = this.baseUrl + '/vehicles' + '/exportPDFNewVehicle';
+    return this.http.post(url, vehicleNew, { responseType: 'blob' });
+  }
+
+  exportPDFRemoveVehicle(vehicleLeft: VehicleLeft) {
+    let url = this.baseUrl + '/vehicles' + '/exportPDFRemoveVehicle';
+    return this.http.post(url, vehicleLeft, { responseType: 'blob' });
+  }
 }

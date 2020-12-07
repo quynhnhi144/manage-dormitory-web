@@ -38,7 +38,7 @@
                 <div class="card-body">
                     <div class="input-group">
                         <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-                            (keydown.enter)="onSearch($event)" placeholder="Search by license plates" />
+                            (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm theo biển số xe" />
                         <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
                             title="Search" width="20" />
                         <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcelFile()">
@@ -68,7 +68,7 @@
                                         </div>
 
                                     </th>
-                                    <th>Id Sinh viên</th>
+                                    <th>Mã sinh viên</th>
                                     <th>Tên sinh viên</th>
                                     <th>Thanh toán</th>
                                     <th>Trạng thái</th>
@@ -86,7 +86,7 @@
                                     <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
                                         {{vehicle.typeVehicle.name}}</td>
                                     <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.studentDto.id}}
+                                        {{vehicle.studentDto.idCard}}
                                     </td>
 
                                     <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
@@ -262,7 +262,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <img class="icon-bill-small" src="../../assets/images/motorbike.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewVehicle ? 'TẠO' : 'CẬP NHẬT'}}XE</h3>
+            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewVehicle ? 'TẠO ' : 'CẬP NHẬT '}}XE</h3>
             <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -288,8 +288,8 @@
                                 </div>
 
                                 <div *ngIf="isNewVehicle" class="col-xs-12 col-md-6 col-right">
-                                    <label for="studentName">Mã số sinh viên</label>
-                                    <ng-select name="studentName" [items]="studentList" [virtualScroll]="true"
+                                    <label for="studentIdCard">Mã số sinh viên</label>
+                                    <ng-select name="studentIdCard" [items]="studentList" [virtualScroll]="true"
                                         bindLabel="idCard" bindValue="id" [(ngModel)]="studentId"
                                         (change)="showPaymentVehicle()">
                                     </ng-select>
@@ -298,7 +298,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="email">Biển số xe</label>
+                                    <label for="licensePlates">Biển số xe</label>
                                     <input ngModel #licensePlates="ngModel" name="licensePlates"
                                         [(ngModel)]="modalVehicleUpdate.licensePlates" class="form-control" required
                                         pattern="[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2,3}$" />
@@ -315,7 +315,7 @@
 
                             <div class="row">
                                 <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="name">Loại xe</label>
+                                    <label for="typeRoom">Loại xe</label>
                                     <ng-select name="typeRoom" [items]="typeOfVehicleList" [virtualScroll]="true"
                                         bindLabel="name" bindValue="id" [(ngModel)]="typeVehicleId">
                                     </ng-select>

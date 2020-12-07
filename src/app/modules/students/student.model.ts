@@ -8,7 +8,6 @@ export class Student {
   email: string;
   address: string;
   startingDateOfStay: Date;
-  endingDateOfStay: Date;
   roomDto: RoomDto;
   isPayRoom: boolean;
   isPayWaterBill: boolean;

@@ -13,12 +13,6 @@ const appRoutes: Routes = [
     children: [
       { path: '', redirectTo: '/news', pathMatch: 'full' },
       {
-        path: 'news',
-        loadChildren: () =>
-          import('./news/new.module').then((m) => m.NewsModule),
-      },
-
-      {
         path: 'notification',
         loadChildren: () =>
           import('./notification/notification.module').then(
