@@ -163,6 +163,7 @@ export class PriceListComponent implements OnInit {
           console.log('create PriceList: ', data);
           this.getAllPriceList();
           this.modalService.dismissAll();
+          this.modalUpdatePriceList = new PriceList();
           this.notificationService.sendNotificationMessage({
             message: 'Đã thêm khoản tiền thành công !!!',
             isSuccess: true,

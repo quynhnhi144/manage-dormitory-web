@@ -195,6 +195,24 @@ export class VehiclesComponent implements OnInit {
       );
   }
 
+  exportPDFNewVehicle(vehicleNew: VehicleNew) {
+    this.subscription = this.vehicleService
+      .exportPDFNewVehicle(vehicleNew)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${vehicleNew.licensePlates} + ${new Date()} + .pdf`
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
   saveChange() {
     if (!this.modalVehicleUpdate.licensePlates) {
       this.vehicleUpdateError = 'License Plates is required';
@@ -253,8 +271,9 @@ export class VehiclesComponent implements OnInit {
     } else {
       let vehicleBill = new VehicleBill({
         billId: null,
-        studentName: null,
+        studentName: this.studentList[0].name,
         studentId: this.studentId,
+        studentIdCard: this.studentList[0].idCard,
         vehicleId: null,
         startDate: this.responseVehicleInfo.startDate,
         endDate: this.responseVehicleInfo.endDate,
@@ -276,6 +295,7 @@ export class VehiclesComponent implements OnInit {
             message: 'Đã thêm xe thành công !!!',
             isSuccess: true,
           });
+          this.exportPDFNewVehicle(vehicleNew);
         },
         (error) => {
           console.log(error);
@@ -314,6 +334,24 @@ export class VehiclesComponent implements OnInit {
       );
   }
 
+  exportPDFVehileRemove(vehicleLeft: VehicleLeft) {
+    this.subscription = this.vehicleService
+      .exportPDFRemoveVehicle(vehicleLeft)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${vehicleLeft.licensePlates}_${new Date()}.pdf`
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
   saveDelete() {
     this.subscription = this.vehicleService
       .unActiveVehicle(this.vehicleLeft)
@@ -330,6 +368,7 @@ export class VehiclesComponent implements OnInit {
             message: 'Đã đổi trạng thái sinh viên thành công !!!',
             isSuccess: true,
           });
+          this.exportPDFVehileRemove(this.vehicleLeft);
         },
         (error) => {
           console.log(error);
@@ -356,7 +395,7 @@ export class VehiclesComponent implements OnInit {
       isPayVehicleBill: false,
       active: true,
     });
-    this.subscription = this.studentService.getTotalStudents().subscribe(
+    this.subscription = this.studentService.getTotoalStudentActive().subscribe(
       (data: any) => {
         this.studentList = data;
       },

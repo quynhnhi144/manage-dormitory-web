@@ -181,12 +181,6 @@ export class StudentsComponent implements OnInit {
           isPayWaterBill: data.isPayWaterBill,
           active: data.active,
         });
-        if (data.endingDateOfStay) {
-          this.modalStudentUpdate.endingDateOfStay = new Date(
-            data.endingDateOfStay
-          );
-        }
-
         this.arrRooms = [];
         if (data.roomDto) {
           this.selectedRoomIds = [data.roomDto.id];
@@ -250,7 +244,6 @@ export class StudentsComponent implements OnInit {
         email: this.modalStudentUpdate.email,
         address: this.modalStudentUpdate.address,
         startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
-        endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
         roomId: this.selectedRoomIds[0],
       };
 
@@ -288,7 +281,6 @@ export class StudentsComponent implements OnInit {
         email: this.modalStudentUpdate.email,
         address: this.modalStudentUpdate.address,
         startingDateOfStay: this.modalStudentUpdate.startingDateOfStay,
-        endingDateOfStay: this.modalStudentUpdate.endingDateOfStay,
         roomId: this.selectedRoomIds[0],
         waterPriceId: 2,
       });
@@ -297,9 +289,10 @@ export class StudentsComponent implements OnInit {
         billId: null,
         studentName: null,
         studentId: null,
+        studentIdCard: null,
         startDate: this.moneyRoomAndMoneyWater.roomStartDate,
         endDate: this.moneyRoomAndMoneyWater.roomEndDate,
-        price: this.moneyRoomAndMoneyWater.moneyOfRoomMustPay,
+        price: Math.abs(this.moneyRoomAndMoneyWater.moneyOfRoomMustPay),
         roomId: null,
         maxQuantity: null,
       });
@@ -310,7 +303,7 @@ export class StudentsComponent implements OnInit {
         studentId: null,
         startDate: this.moneyRoomAndMoneyWater.waterStartDate,
         endDate: this.moneyRoomAndMoneyWater.waterEndDate,
-        price: this.moneyRoomAndMoneyWater.moneyOfWaterMustPay,
+        price: Math.abs(this.moneyRoomAndMoneyWater.moneyOfWaterMustPay),
         roomId: null,
       });
 
@@ -356,6 +349,24 @@ export class StudentsComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  exportPDFForStudentRemove(studentRemove: StudentLeft) {
+    this.subscription = this.studentService
+      .exportPDFForStudentRemove(studentRemove)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${studentRemove.idCard}_${new Date()}.pdf`
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
   }
 
   exportExcelFile() {
@@ -465,6 +476,7 @@ export class StudentsComponent implements OnInit {
             message: 'Đã đổi trạng thái sinh viên thành công !!!',
             isSuccess: true,
           });
+          this.exportPDFForStudentRemove(this.studentLeft);
         },
         (error) => {
           console.log(error);
@@ -511,7 +523,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getAllRemaingRooms() {
-    this.roomService.getTotalRemainingRooms('').subscribe((data: any) => {
+    this.roomService.getEnoughConditionSwitchRooms().subscribe((data: any) => {
       this.remainingRooms = data;
     });
   }
@@ -530,6 +542,24 @@ export class StudentsComponent implements OnInit {
         (data: any) => {
           console.log('duration: ' + data);
           this.infoAboutMoneySwitchRoom = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  exportPDFForStudentSwitchRoom(studentSwitchRoom: InfoSwitchRoom) {
+    this.subscription = this.studentService
+      .exportPDFForStudentSwitchRoom(studentSwitchRoom)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${studentSwitchRoom.studentIdCard}_${new Date()}.pdf`
+          );
+          console.log(response);
         },
         (error) => {
           console.log(error);
@@ -563,6 +593,7 @@ export class StudentsComponent implements OnInit {
       billId: null,
       studentName: this.modalStudent.name,
       studentId: this.modalStudent.id,
+      studentIdCard: this.modalStudent.idCard,
       vehicleId: this.modalStudent.vehicleId,
       startDate: this.infoAboutMoneySwitchRoom.waterStartDate,
       endDate: this.infoAboutMoneySwitchRoom.waterEndDate,
@@ -596,6 +627,7 @@ export class StudentsComponent implements OnInit {
             message: 'Đã chuyển phòng cho sinh viên thành công !!!',
             isSuccess: true,
           });
+          this.exportPDFForStudentSwitchRoom(studentSwitchRoom);
         },
         (error) => {
           console.log(error);

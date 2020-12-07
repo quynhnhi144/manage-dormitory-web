@@ -39,7 +39,7 @@
                     <div class="input-group">
                         <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
                             (keydown.enter)="onSearch($event)"
-                            placeholder="Search by student name or user manager or room name" />
+                            placeholder="Tìm kiếm theo mã sinh viên, tên sinh viên, khu nhà, hoặc tên quản lý" />
                         <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
                             title="Search" width="20" />
                         <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcelFile()">
@@ -266,10 +266,6 @@
 
                 <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">NGÀY KẾT THÚC</div>
-                    <div class="col-xs-6 col-md-3">
-                        {{modalStudent.endingDateOfStay ? modalStudent.endingDateOfStay : 'N/A'}}
-                    </div>
                     <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
                     <div class="col-xs-6 col-md-3">
                         {{modalStudent.roomDto ? modalStudent.roomDto.userManager :'--'}}
@@ -453,15 +449,6 @@
                                     <input type="text" name="startDate" placeholder="Datepicker"
                                         [bsConfig]="{dateInputFormat: 'DD-MM-YYYY'}" class="form-control input-date"
                                         bsDatepicker [(ngModel)]="modalStudentUpdate.startingDateOfStay" />
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="endDate">Ngày kết thúc</label>
-                                    <input type="text" name="endDate" placeholder="Datepicker"
-                                        class="form-control input-date" bsDatepicker
-                                        [(ngModel)]="modalStudentUpdate.endingDateOfStay" />
                                 </div>
                             </div>
 
@@ -658,17 +645,17 @@
                                         <label for="id">Những khoản tiền mà sinh viên phải đóng hoặc được nhận
                                             lại:</label>
                                         <h5>Số tiền phòng mà sinh viên
-                                            {{infoAboutMoneySwitchRoom.durationRoomMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            {{infoAboutMoneySwitchRoom.durationRoomMoney < 0 ? 'được nhận lại' : 'phải trả'}}
                                             là:
                                             {{(infoAboutMoneySwitchRoom.durationRoomMoney |  positiveNumber | number) + 'đ'}}
                                         </h5>
                                         <h5>Số tiền nước mà sinh viên
-                                            {{infoAboutMoneySwitchRoom.durationWaterMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            {{infoAboutMoneySwitchRoom.durationWaterMoney < 0 ? 'được nhận lại' : 'phải trả'}}
                                             là:
                                             {{(infoAboutMoneySwitchRoom.durationWaterMoney |  positiveNumber | number | uppercase) + 'đ'}}
                                         </h5>
                                         <h5>Số tiền xe mà sinh viên
-                                            {{infoAboutMoneySwitchRoom.durationVehicleMoney > 0 ? 'được nhận lại' : 'phải trả'}}
+                                            {{infoAboutMoneySwitchRoom.durationVehicleMoney < 0 ? 'được nhận lại' : 'phải trả'}}
                                             là:
                                             {{(infoAboutMoneySwitchRoom.durationVehicleMoney |  positiveNumber | number) + 'đ'}}
                                         </h5>

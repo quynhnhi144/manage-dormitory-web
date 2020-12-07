@@ -2,6 +2,7 @@ export class RoomBill {
   billId: number;
   studentName: string;
   studentId: number;
+  studentIdCard: string;
   startDate: Date;
   endDate: Date;
   price: number;

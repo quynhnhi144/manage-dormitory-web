@@ -13,7 +13,6 @@ export class Room {
   students: Student[];
   isPayRoom: boolean;
   isPayWaterBill: boolean;
-  isPayVehicleBill: boolean;
 
   constructor(init?: Partial<Room>) {
     Object.assign(this, init);

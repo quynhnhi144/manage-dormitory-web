@@ -6,7 +6,7 @@
                 <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý tiền thuê</div>
             </div>
             <div class="create-student-btn" style="float: right;">
-                <button type="button" class="btn btn-round btn-new-student"
+                <button type="button" class="btn btn-round btn-new-price-list"
                     (click)="createPriceList(modalCreatePriceList)">+ Tạo tiền thuê</button>
             </div>
             <div style="clear: both"></div>
@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <div class="input-group">
                         <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-                            (keydown.enter)="onSearch($event)" placeholder="Search by room name" />
+                            (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm bởi tên tiền thuê" />
                         <img class="btn-search btn-search-price-list" (click)="onSearch($event)"
                             src="../../assets/images/search_icon.png" title="Search" width="20" />
 

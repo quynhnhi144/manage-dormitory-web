@@ -4,6 +4,9 @@ import { GlobalConstants } from '../../common/global-constants';
 import { Student } from './student.model';
 import { StudentNew } from './student-new.model';
 import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
+import { StudentLeft } from './student-left.model';
+import { StudentBill } from './student-bill.model';
+import { VehicleNew } from '../vehicles/vehicle-new.model';
 
 @Injectable({
   providedIn: 'root',
@@ -33,6 +36,11 @@ export class StudentsService {
 
   getTotalStudents() {
     let url = this.baseUrl + '/students/all';
+    return this.http.get<Student[]>(url);
+  }
+
+  getTotoalStudentActive() {
+    let url = this.baseUrl + '/students/allStudentActive';
     return this.http.get<Student[]>(url);
   }
 
@@ -100,6 +108,21 @@ export class StudentsService {
   exportPDF(studentNew: StudentNew) {
     let url = this.baseUrl + '/students' + '/exportPDF';
     return this.http.post(url, studentNew, { responseType: 'blob' });
+  }
+
+  exportPDFForStudentRemove(studentLeft: StudentLeft) {
+    let url = this.baseUrl + '/students' + '/exportPDFRemoveStudent';
+    return this.http.post(url, studentLeft, { responseType: 'blob' });
+  }
+
+  exportPDFForStudentSwitchRoom(studentSwitchRoom: InfoSwitchRoom) {
+    let url = this.baseUrl + '/students' + '/exportPDFSwitchRoomStudent';
+    return this.http.post(url, studentSwitchRoom, { responseType: 'blob' });
+  }
+
+  exportPDFForStudentPayment(studentBill: StudentBill) {
+    let url = this.baseUrl + '/students' + '/exportPDFStudentPayment';
+    return this.http.post(url, studentBill, { responseType: 'blob' });
   }
 
   exportExcelFile() {

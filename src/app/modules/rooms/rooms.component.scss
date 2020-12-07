@@ -64,3 +64,24 @@
     }
   }
 }
+
+.btn-payment {
+  width: 121px;
+  height: 45px;
+  background: #ffffff;
+  color: #3f434a;
+  border: 1px solid #898e93;
+  box-sizing: border-box;
+  border-radius: 14px;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 21px;
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  img {
+    margin-right: 10px;
+  }
+}

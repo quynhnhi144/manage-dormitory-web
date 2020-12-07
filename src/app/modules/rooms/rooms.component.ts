@@ -17,6 +17,8 @@ import { RoomBill } from '../../shared/model/room-bill.model';
 import { WaterBill } from '../../shared/model/water-bill.model';
 import { VehicleBill } from '../../shared/model/vehicle-bill.model';
 import { InfoSwitchRoom } from '../../shared/model/info-switch-room.model';
+import { RoomPayment } from './room-payment.model';
+import { StudentBill } from '../students/student-bill.model';
 
 @Component({
   selector: 'app-rooms',
@@ -64,7 +66,7 @@ export class RoomsComponent implements OnInit {
   remaingRoomId: number = -1;
   infoAboutMoneySwitchRoom = new InforAboutMoneySwitchRoom();
 
-  studentsInRoom = [];
+  roomPayment: RoomPayment = new RoomPayment();
 
   //modal Detail Room
   modalRoom = new Room({
@@ -85,7 +87,6 @@ export class RoomsComponent implements OnInit {
     ],
     isPayRoom: true,
     isPayWaterBill: true,
-    isPayVehicleBill: true,
   });
   currentRoomId = 0;
 
@@ -260,6 +261,7 @@ export class RoomsComponent implements OnInit {
     }
   }
 
+  // delete student
   openModalDeleteStudent(modalDeleteStudent, student: any) {
     this.currentStudentId = student.id;
     this.getRoomBill();
@@ -296,6 +298,8 @@ export class RoomsComponent implements OnInit {
             message: 'Đã xóa sinh viên thành công !!!',
             isSuccess: true,
           });
+
+          this.exportPDFForStudentRemove(this.studentLeft);
         },
         (error) => {
           console.log(error);
@@ -303,6 +307,24 @@ export class RoomsComponent implements OnInit {
             message: 'Có lỗi xảy ra !!!',
             isSuccess: false,
           });
+        }
+      );
+  }
+
+  exportPDFForStudentRemove(studentRemove: StudentLeft) {
+    this.subscription = this.studentService
+      .exportPDFForStudentRemove(studentRemove)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${studentRemove.idCard}_${new Date()}.pdf`
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
         }
       );
   }
@@ -348,7 +370,6 @@ export class RoomsComponent implements OnInit {
       students: this.newRoomForm.students,
       isPayRoom: this.newRoomForm.isPayRoom,
       isPayWaterBill: this.newRoomForm.isPayWaterBill,
-      isPayVehicleBill: this.newRoomForm.isPayVehicleBill,
     });
     this.subscription = this.roomService
       .updateRoom(this.currentRoomId, roomUpdate)
@@ -376,8 +397,8 @@ export class RoomsComponent implements OnInit {
   }
 
   // switch student
-  getAllRemaingRooms() {
-    this.roomService.getTotalRemainingRooms('').subscribe((data: any) => {
+  getEnoughConditionSwitchRooms() {
+    this.roomService.getEnoughConditionSwitchRooms().subscribe((data: any) => {
       this.remainingRooms = data;
     });
   }
@@ -396,7 +417,7 @@ export class RoomsComponent implements OnInit {
 
   switchRoom(modalSwitchRoom, student: any) {
     this.currentStudentId = student.id;
-    this.getAllRemaingRooms();
+    this.getEnoughConditionSwitchRooms();
     this.getDetailAStudent();
     this.openModal(modalSwitchRoom);
   }
@@ -408,6 +429,24 @@ export class RoomsComponent implements OnInit {
         (data: any) => {
           console.log('duration: ' + data);
           this.infoAboutMoneySwitchRoom = data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  exportPDFForStudentSwitchRoom(studentSwitchRoom: InfoSwitchRoom) {
+    this.subscription = this.studentService
+      .exportPDFForStudentSwitchRoom(studentSwitchRoom)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${studentSwitchRoom.studentIdCard}_${new Date()}.pdf`
+          );
+          console.log(response);
         },
         (error) => {
           console.log(error);
@@ -478,6 +517,7 @@ export class RoomsComponent implements OnInit {
             message: 'Đã chuyển phòng cho sinh viên thành công !!!',
             isSuccess: true,
           });
+          this.exportPDFForStudentSwitchRoom(studentSwitchRoom);
         },
         (error) => {
           console.log(error);
@@ -495,7 +535,7 @@ export class RoomsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           console.log('create payment: ', data);
-          this.studentsInRoom = data;
+          this.roomPayment = data;
         },
         (error) => {
           console.log(error);
@@ -509,7 +549,46 @@ export class RoomsComponent implements OnInit {
     this.openModal(modalCreatePaymetRoom);
   }
 
-  saveCreatePayment() {}
+  exportPDFForStudentPayment(studentBill: StudentBill) {
+    this.subscription = this.studentService
+      .exportPDFForStudentPayment(studentBill)
+      .subscribe(
+        (response: any) => {
+          this.downloadFile(
+            response,
+            'application/pdf',
+            `${studentBill.studentIdCard}_${new Date()}.pdf`
+          );
+          console.log(response);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+  }
+
+  saveCreatePayment(student: StudentBill) {
+    this.subscription = this.roomService.saveCreatePayment(student).subscribe(
+      (data: any) => {
+        let indexStudent = this.roomPayment.studentBills.findIndex(
+          (student) => student.studentId === data
+        );
+        this.roomPayment.studentBills.splice(indexStudent, 1);
+        this.getAllRooms(this.campusIndex, this.campusType);
+        this.notificationService.sendNotificationMessage({
+          message: 'Đã thanh toán thành công !!!',
+          isSuccess: true,
+        });
+        this.exportPDFForStudentPayment(student);
+      },
+      (error) => {
+        this.notificationService.sendNotificationMessage({
+          message: 'Có lỗi xảy ra !!!',
+          isSuccess: false,
+        });
+      }
+    );
+  }
 
   turnOffNotification() {
     setTimeout(() => {
