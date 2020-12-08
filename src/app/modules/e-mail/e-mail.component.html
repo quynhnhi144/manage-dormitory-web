@@ -1,0 +1,225 @@
+<div class="overlay" *ngIf="loadingFlag">
+    <div class="spinner-border text-secondary spinner-wrapper" role="status" style="width: 3rem; height: 3rem;">
+        <div><i class="fa fa-circle-o-notch fa-spin"></i></div>
+    </div>
+</div>
+<div class="content-wrapper">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-12">
+                <div style="float: left">
+                    <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý mail</div>
+                </div>
+                <div class="create-user-btn" style="float: right;">
+                    <button type="button" class="btn btn-round btn-new-mail" (click)="openNewmail(modalUpdateAMail)">+
+                        Tạo mới mail</button>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                                (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm theo tên" />
+                            <img class="btn-search btn-search-mail" (click)="onSearch($event)"
+                                src="../../assets/images/search_icon.png" title="Search" width="20" />
+                        </div>
+                        <div class="table-responsive table-rooms">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tên tiêu đề</th>
+                                        <th>Nội dung</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let mail of mails">
+                                        <td (click)="openModalDetailMail(modalDetailAMail,mail)">
+                                            {{mail.id}}
+                                        </td>
+                                        <td (click)="openModalDetailMail(modalDetailAMail,mail)">
+                                            {{mail.subject}}
+                                        </td>
+                                        <td (click)="openModalDetailMail(modalDetailAMail,mail)">
+                                            {{mail.content}}</td>
+
+                                        <td>
+                                            <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                                (click)="openModalUpdateAMail(modalUpdateAMail, mail)"></i>
+                                        </td>
+
+                                        <td>
+                                            <i class="icon-edit mdi mdi-24px mdi-delete-outline"
+                                                (click)="deleteMail(mail)"></i>
+                                        </td>
+
+                                        <td>
+                                            <i class="icon-edit mdi mdi-24px mdi-email-outline"
+                                                (click)="sendMail(mail)"></i>
+                                        </td>
+
+                                    </tr>
+                                    <tr *ngIf="mailTotal == 0">
+                                        <td colspan="7" class="no-data">Không có dữ liệu.</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            <div class="tbl-checkins-paging">
+                                <div *ngIf="mailTotal != 0" class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                    padding-left: 9px;
+                                    border: 1px solid #898E93;
+                                    border-radius: 16px;
+                                    background: white;">
+                                            <option>10</option>
+                                            <option>25</option>
+                                            <option>50</option>
+                                        </select>
+                                        <div
+                                            style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                            Kết quả mỗi trang</div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-6">
+
+                                        <div class="custom-paging-wrapper">
+                                            <ngb-pagination id="page" [collectionSize]="mailTotal" [(page)]="page"
+                                                [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                                [boundaryLinks]="true">
+                                                <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                        aria-hidden="true"></i>
+                                                </ng-template>
+                                                <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                        aria-hidden="true"></i>
+                                                </ng-template>
+                                                <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                                <ng-template ngbPaginationNext>Sau</ng-template>
+                                                <ng-template ngbPaginationEllipsis>...</ng-template>
+                                            </ngb-pagination>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- START ROOM DETAIL MODAL -->
+    <ng-template #modalDetailAMail let-modal class="modal fade" id="exampleModal-3"
+        aria-labelledby="exampleModalLabel-2">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="icon-bill-small" src="../../assets/images/gmail.svg" style="margin-right: 20px;" />
+                <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT MAIL</h3>
+                <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="section-info">
+                    <div class="row">
+                        <div class="col-xs-6 col-md-3">
+                            <img class="icon-bill" src="../../assets/images/gmail.svg" style="margin-bottom: 15px;" />
+                        </div>
+
+                        <div *ngIf="modalMail.id" class="col-xs-6 col-md-9" style="margin-top: 40px;">
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2 col-title">ID MAIL</div>
+                                <div class="col-xs-6 col-md-10">
+                                    {{ modalMail.id}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2 col-title">TIÊU ĐỀ</div>
+                                <div class="col-xs-6 col-md-10 custom-text">
+                                    {{ modalMail.subject}}
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-2 col-title">NỘI DUNG</div>
+                                <div class="col-xs-6 col-md-10 custom-text">
+                                    {{modalMail.content}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #modalUpdateAMail let-modal class="modal fade" id="modalUpdateAUser"
+        aria-labelledby="modalUpdateAUserLabel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="icon-bill-small" src="../../assets/images/gmail.svg" style="margin-right: 20px;" />
+                <h3 class="modal-title" id="modalUpdateAUserLabel">{{isNewMail ? 'TẠO ' : 'CẬP NHẬT '}}MAIL</h3>
+                <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row create-room-section">
+                    <div class="col-12">
+                        <div *ngIf="modalUpdateMail.id || isNewMail" class="section-info">
+
+                            <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                                <div *ngIf="!isNewMail" class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <label for="id">Id Mail</label>
+                                        <input name="id" [(ngModel)]="modalUpdateMail.id"
+                                            class="disable-input form-control" readonly />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <label for="subject">Tiêu đề</label>
+                                        <textarea name="subject" rows="3" [(ngModel)]="modalUpdateMail.subject"
+                                            class="form-control" required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-12">
+                                        <label for="content">Nội dung</label>
+                                        <textarea name="content" rows="3" [(ngModel)]="modalUpdateMail.content"
+                                            class="form-control" required></textarea>
+                                    </div>
+
+                                </div>
+
+                                <div *ngIf="mailError" class="row">
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <p class="alert alert-danger">{{mailError}}</p>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
+                                    <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+</div>

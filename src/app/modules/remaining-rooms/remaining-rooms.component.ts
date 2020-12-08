@@ -30,6 +30,8 @@ export class RemainingRoomsComponent implements OnInit {
 
   isClickSearch = false;
 
+  loadingFlag = false;
+
   currentRegisterRoomId: number;
 
   subscription: Subscription;
@@ -59,6 +61,7 @@ export class RemainingRoomsComponent implements OnInit {
   }
 
   getAllRegisterRoom(campusIndex, campusType, page = 1) {
+    this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
     let choosedCampus = '';
@@ -85,9 +88,11 @@ export class RemainingRoomsComponent implements OnInit {
           this.registerRoomList = data.data.data;
           this.registerRoomTotal = data.total;
           console.log('registerRoom: ' + this.registerRoomList);
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }
@@ -149,13 +154,10 @@ export class RemainingRoomsComponent implements OnInit {
       billId: null,
       studentName: null,
       studentId: null,
-      startDate: this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-        .roomStartDate,
-      endDate: this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-        .roomEndDate,
+      startDate: this.modalRegisterRoomPayment.infoMoneyDto.roomStartDate,
+      endDate: this.modalRegisterRoomPayment.infoMoneyDto.roomEndDate,
       price: Math.abs(
-        this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-          .moneyOfRoomMustPay
+        this.modalRegisterRoomPayment.infoMoneyDto.moneyOfRoomMustPay
       ),
       roomId: null,
       maxQuantity: null,
@@ -165,13 +167,10 @@ export class RemainingRoomsComponent implements OnInit {
       billId: null,
       studentName: null,
       studentId: null,
-      startDate: this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-        .waterStartDate,
-      endDate: this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-        .waterEndDate,
+      startDate: this.modalRegisterRoomPayment.infoMoneyDto.waterStartDate,
+      endDate: this.modalRegisterRoomPayment.infoMoneyDto.waterEndDate,
       price: Math.abs(
-        this.modalRegisterRoomPayment.roomPriceAndWaterPriceDto
-          .moneyOfWaterMustPay
+        this.modalRegisterRoomPayment.infoMoneyDto.moneyOfWaterMustPay
       ),
       roomId: null,
     });

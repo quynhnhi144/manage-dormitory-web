@@ -1,102 +1,107 @@
-<div class="main-content">
-
-    <div class="row">
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-danger card-img-holder text-white">
-                <div class="card-body" (click)="openModalUserCampus(modalUserCampus)">
-                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h4>
-                    <h5 class="mb-4">{{'Total Number Of Users: ' + dashboard.totalNumberUser}}</h5>
-                    <h5 class="mb-4">{{'Total Number Of Campuses: ' + dashboard.totalNumberCampus}}</h5>
+<div class="overlay" *ngIf="loadingFlag">
+    <div class="spinner-border text-secondary spinner-wrapper" role="status" style="width: 3rem; height: 3rem;">
+        <div><i class="fa fa-circle-o-notch fa-spin"></i></div>
+    </div>
+</div>
+<div class="content-wrapper">
+    <div class="main-content">
+        <div class="row">
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-danger card-img-holder text-white">
+                    <div class="card-body" (click)="openModalUserCampus(modalUserCampus)">
+                        <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <h4 class="font-weight-normal mb-4">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h4>
+                        <h5 class="mb-4">{{'Tổng số nhân viên: ' + dashboard.totalNumberUser}}</h5>
+                        <h5 class="mb-4">{{'Tổng số khu nhà: ' + dashboard.totalNumberCampus}}</h5>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <ng-template #modalUserCampus let-modal class="modal fade" id="modalUserCampus"
-            aria-labelledby="modalUserCampusLabel">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modalUserCampusLabel">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h3>
-                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid d-flex flex-column">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/manager.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Users: " + dashboard.totalNumberUser}}</span>
-                                    </div>
+            <ng-template #modalUserCampus let-modal class="modal fade" id="modalUserCampus"
+                aria-labelledby="modalUserCampusLabel">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="modalUserCampusLabel">TỔNG SỐ NHÂN VIÊN VÀ KHU NHÀ</h3>
+                        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid d-flex flex-column">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/manager.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số nhân viên: " + dashboard.totalNumberUser}}</span>
+                                        </div>
 
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        ID
+                                        <div *ngIf="users.length != 0" class="row">
+                                            <div class="col-12">
+                                                <div class="section-info">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-3">
+                                                            HỌ VÀ TÊN
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-6">
+                                                            KHU NHÀ
+                                                        </div>
                                                     </div>
+                                                    <div *ngFor="let user of users" class="row">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            {{user.id}}
+                                                        </div>
 
-                                                    <div class="col-xs-6 col-md-3">
-                                                        HỌ VÀ TÊN
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-6">
-                                                        KHU NHÀ
+                                                        <div class="col-xs-6 col-md-3">
+                                                            {{user.fullName}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-6">
+                                                            <span *ngFor="let campus of user.campuses">
+                                                                {{campus.name}}
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div *ngFor="let user of users" class="row">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        {{user.id}}
-                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                                    <div class="col-xs-6 col-md-3">
-                                                        {{user.fullName}}
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/campus.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số khu nhà: " + dashboard.totalNumberCampus}}</span>
+                                        </div>
+
+                                        <div *ngIf="campuses.length != 0" class="row">
+                                            <div class="col-12">
+                                                <div class="section-info">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-11">
+                                                            TÊN KHU NHÀ
+                                                        </div>
                                                     </div>
-                                                    <div class="col-xs-6 col-md-6">
-                                                        <span *ngFor="let campus of user.campuses">
+                                                    <div *ngFor="let campus of campuses" class="row">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            {{campus.id}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-11">
                                                             {{campus.name}}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/campus.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Campuses: " + dashboard.totalNumberCampus}}</span>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        ID
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-11">
-                                                        TÊN KHU NHÀ
-                                                    </div>
-                                                </div>
-                                                <div *ngFor="let campus of campuses" class="row">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        {{campus.id}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-11">
-                                                        {{campus.name}}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -104,271 +109,271 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-info card-img-holder text-white">
+                    <div class="card-body" (click)="openModalRoomAndRemainingRoom(modalRoomRemainingRoom)">
+                        <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <h4 class="font-weight-normal mb-4">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG</h4>
+                        <h5 class="mb-4">{{'Tổng số phòng: ' + dashboard.totalNumberRoom}}</h5>
+                        <h5 class="mb-4">{{'Tổng số phòng còn trống: ' + dashboard.totalNumberRemainingRoom}}
+                        </h5>
                     </div>
                 </div>
             </div>
-        </ng-template>
 
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-info card-img-holder text-white">
-                <div class="card-body" (click)="openModalRoomAndRemainingRoom(modalRoomRemainingRoom)">
-                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG</h4>
-                    <h5 class="mb-4">{{'Total Number Of Rooms: ' + dashboard.totalNumberRoom}}</h5>
-                    <h5 class="mb-4">{{'Total Number Of RemainingRooms: ' + dashboard.totalNumberRemainingRoom}}</h5>
+            <ng-template #modalRoomRemainingRoom let-modal class="modal fade" id="modalRoomRemainingRoom"
+                aria-labelledby="modalRoomRemainingRoomLabel">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="modalRoomRemainingRoomLabel">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG
+                        </h3>
+                        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid d-flex flex-column">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/room.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số phòng: " + dashboard.totalNumberRoom}}</span>
+                                        </div>
+
+                                        <div *ngIf="rooms.length != 0" class="row">
+                                            <div class="col-12">
+                                                <div class="section-info section-info-custom">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-2">
+                                                            TÊN PHÒNG
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-3">
+                                                            TỔNG SỐ SINH VIÊN
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-6">
+                                                            KHU NHÀ
+                                                        </div>
+                                                    </div>
+                                                    <div *ngFor="let room of rooms" class="row">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            {{room.id}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-2">
+                                                            {{room.name}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-3">
+                                                            {{room.students.length}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-6">
+                                                            {{room.campusName}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/room.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số phòng còn trống: " + dashboard.totalNumberRemainingRoom}}</span>
+                                        </div>
+
+                                        <div *ngIf="remainingRooms.length != 0" class="row">
+                                            <div class="col-12">
+                                                <div class="section-info section-info-custom">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-2">
+                                                            TÊN PHÒNG
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-3">
+                                                            SỐ LƯỢNG SINH VIÊN TỐI ĐA
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-4">
+                                                            SÔ LƯỢNG CHỖ CÒN TRỐNG
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-2">
+                                                            KHU NHÀ
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngFor="let remainingRoom of remainingRooms" class="row">
+                                                        <div class="col-xs-6 col-md-1">
+                                                            {{remainingRoom.id}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-2">
+                                                            {{remainingRoom.name}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-3">
+                                                            {{remainingRoom.typeRoom ? remainingRoom.typeRoom.maxQuantity: '--'}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-4">
+                                                            {{remainingRoom.typeRoom ? (remainingRoom.typeRoom.maxQuantity - remainingRoom.quantityStudent) : '--'}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-2">
+                                                            {{remainingRoom.campusName}}
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
+            <div class="col-md-4 stretch-card grid-margin">
+                <div class="card bg-gradient-success card-img-holder text-white">
+                    <div class="card-body" (click)="openModalStudentVehicle(modalStudentVehicle)">
+                        <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
+                        <h4 class="font-weight-normal mb-4">TỔNG SỐ SINH VIÊN VÀ XE</h4>
+                        <h5 class="mb-4">{{'Tổng số sinh viên: ' + dashboard.totalNumberStudent}}</h5>
+                        <h5 class="mb-4">{{'Tổng số xe: ' + dashboard.totalNumberVehicle}}</h5>
+                    </div>
                 </div>
             </div>
+
+            <ng-template #modalStudentVehicle let-modal class="modal fade" id="modalStudentVehicle"
+                aria-labelledby="modalStudentVehicleLabel">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="modalStudentVehicleLabel">TỔNG SỐ SINH VIÊN VÀ XE</h3>
+                        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid d-flex flex-column">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/student.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số sinh viên: " + dashboard.totalNumberStudent}}</span>
+                                        </div>
+
+                                        <div *ngIf="students.length != 0" class="row">
+                                            <div class="col-12">
+                                                <div class="section-info section-info-custom">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1"></div>
+                                                        <div class="col-xs-6 col-md-2">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-6">
+                                                            HỌ VÀ TÊN
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-3">
+                                                            TÊN PHÒNG
+                                                        </div>
+                                                    </div>
+                                                    <div *ngFor="let student of students" class="row">
+                                                        <div class="col-xs-6 col-md-1"></div>
+                                                        <div class="col-xs-6 col-md-2">
+                                                            {{student.id}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-6">
+                                                            {{student.name}}
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-3">
+                                                            {{student.roomDto.name}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div *ngIf="vehicles.length != 0" class="row">
+                                <div class="col-12">
+                                    <div class="section-info">
+                                        <div class="row titlte-sumary">
+                                            <img class="icon-title" src="../../assets/images/motorbike.svg"
+                                                style="margin-right: 20px;" />
+                                            <span>{{"Tổng số xe: " + dashboard.totalNumberVehicle}}</span>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="section-info section-info-custom">
+                                                    <div class="row title-detail">
+                                                        <div class="col-xs-6 col-md-1"></div>
+                                                        <div class="col-xs-6 col-md-2">
+                                                            ID
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-6">
+                                                            BIỂN SỐ XE
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-3">
+                                                            TÊN PHÒNG
+                                                        </div>
+                                                    </div>
+                                                    <div *ngFor="let vehicle of vehicles" class="row">
+                                                        <div class="col-xs-6 col-md-1">
+                                                        </div>
+                                                        <div class="col-xs-6 col-md-2">
+                                                            {{vehicle.id}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-6">
+                                                            {{vehicle.licensePlates}}
+                                                        </div>
+
+                                                        <div class="col-xs-6 col-md-3">
+                                                            {{vehicle.roomName}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+
         </div>
-
-        <ng-template #modalRoomRemainingRoom let-modal class="modal fade" id="modalRoomRemainingRoom"
-            aria-labelledby="modalRoomRemainingRoomLabel">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modalRoomRemainingRoomLabel">TỔNG SỐ PHÒNG VÀ NHỮNG PHÒNG CÒN TRỐNG</h3>
-                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid d-flex flex-column">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/room.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Rooms: " + dashboard.totalNumberRoom}}</span>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info section-info-custom">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        ID
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-2">
-                                                        TÊN PHÒNG
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-3">
-                                                        TỔNG SỐ SINH VIÊN
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-6">
-                                                        KHU NHÀ
-                                                    </div>
-                                                </div>
-                                                <div *ngFor="let room of rooms" class="row">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        {{room.id}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-2">
-                                                        {{room.name}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-3">
-                                                        {{room.students.length}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-6">
-                                                        {{room.campusName}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/room.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Remaining Rooms: " + dashboard.totalNumberRemainingRoom}}</span>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info section-info-custom">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        ID
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-2">
-                                                        TÊN PHÒNG
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-3">
-                                                        SỐ LƯỢNG SINH VIÊN TỐI ĐA
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-4">
-                                                        SÔ LƯỢNG CHỖ CÒN TRỐNG
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-2">
-                                                        KHU NHÀ
-                                                    </div>
-                                                </div>
-
-                                                <div *ngFor="let remainingRoom of remainingRooms" class="row">
-                                                    <div class="col-xs-6 col-md-1">
-                                                        {{remainingRoom.id}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-2">
-                                                        {{remainingRoom.name}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-3">
-                                                        {{remainingRoom.typeRoom ? remainingRoom.typeRoom.maxQuantity: '--'}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-4">
-                                                        {{remainingRoom.typeRoom ? (remainingRoom.typeRoom.maxQuantity - remainingRoom.quantityStudent) : '--'}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-2">
-                                                        {{remainingRoom.campusName}}
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-
-        <div class="col-md-4 stretch-card grid-margin">
-            <div class="card bg-gradient-success card-img-holder text-white">
-                <div class="card-body" (click)="openModalStudentVehicle(modalStudentVehicle)">
-                    <img src="assets/images/circle.svg" class="card-img-absolute" alt="circle-image" />
-                    <h4 class="font-weight-normal mb-4">TỔNG SỐ SINH VIÊN VÀ XE</h4>
-                    <h5 class="mb-4">{{'Total Number Of Students: ' + dashboard.totalNumberStudent}}</h5>
-                    <h5 class="mb-4">{{'Total Number Of Vehicle: ' + dashboard.totalNumberVehicle}}</h5>
-                </div>
-            </div>
-        </div>
-
-        <ng-template #modalStudentVehicle let-modal class="modal fade" id="modalStudentVehicle"
-            aria-labelledby="modalStudentVehicleLabel">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="modalStudentVehicleLabel">TỔNG SỐ SINH VIÊN VÀ XE</h3>
-                    <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid d-flex flex-column">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/student.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Students: " + dashboard.totalNumberStudent}}</span>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info section-info-custom">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1"></div>
-                                                    <div class="col-xs-6 col-md-2">
-                                                        ID
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-6">
-                                                        HỌ VÀ TÊN
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-3">
-                                                        TÊN PHÒNG
-                                                    </div>
-                                                </div>
-                                                <div *ngFor="let student of students" class="row">
-                                                    <div class="col-xs-6 col-md-1"></div>
-                                                    <div class="col-xs-6 col-md-2">
-                                                        {{student.id}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-6">
-                                                        {{student.name}}
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-3">
-                                                        {{student.roomDto.name}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="section-info">
-                                    <div class="row titlte-sumary">
-                                        <img class="icon-title" src="../../assets/images/motorbike.svg"
-                                            style="margin-right: 20px;" />
-                                        <span>{{"Total Number Of Campuses: " + dashboard.totalNumberVehicle}}</span>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div class="section-info section-info-custom">
-                                                <div class="row title-detail">
-                                                    <div class="col-xs-6 col-md-1"></div>
-                                                    <div class="col-xs-6 col-md-2">
-                                                        ID
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-6">
-                                                        BIỂN SỐ XE
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-3">
-                                                        TÊN PHÒNG
-                                                    </div>
-                                                </div>
-                                                <div *ngFor="let vehicle of vehicles" class="row">
-                                                    <div class="col-xs-6 col-md-1">
-                                                    </div>
-                                                    <div class="col-xs-6 col-md-2">
-                                                        {{vehicle.id}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-6">
-                                                        {{vehicle.licensePlates}}
-                                                    </div>
-
-                                                    <div class="col-xs-6 col-md-3">
-                                                        {{vehicle.roomName}}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-        </ng-template>
-
     </div>
 </div>

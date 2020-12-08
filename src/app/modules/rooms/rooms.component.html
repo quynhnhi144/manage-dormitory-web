@@ -1,168 +1,177 @@
-<div *ngIf="campuses" class="main-content">
-  <div class="row">
-    <div class="col-12">
-
-      <div style="float: left">
-        <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý phòng</div>
-      </div>
-      <div style="clear: both"></div>
-      <!-- START TABS -->
-      <div>
-        <div>
-          <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
-            (click)="getAllRooms(0, 'all')">
-            Tất cả
-          </div>
-
-          <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
-            [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllRooms(i + 1, campus.name)">
-            {{campus.name}}
-          </div>
-        </div>
-
-        <hr style="margin-top: 0" />
-
-        <div style="height: 10px"></div>
-      </div>
-      <!-- END TABS -->
-    </div>
+<div class="overlay" *ngIf="loadingFlag">
+  <div class="spinner-border text-secondary spinner-wrapper" role="status" style="width: 3rem; height: 3rem;">
+    <div><i class="fa fa-circle-o-notch fa-spin"></i></div>
   </div>
+</div>
+<div class="content-wrapper">
+  <div *ngIf="campuses" class="main-content">
+    <div class="row">
+      <div class="col-12">
 
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card">
-        <div class="card-body">
-          <div class="input-group">
-            <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-              (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm bởi tên phòng hoặc tên quản lý" />
-            <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png" title="Search"
-              width="20" />
-            <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcel()">
-              <img src="../../assets/images/export.png" width="15" />
-              Xuất file
-            </button>
+        <div style="float: left">
+          <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý phòng</div>
+        </div>
+        <div style="clear: both"></div>
+        <!-- START TABS -->
+        <div>
+          <div>
+            <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+              (click)="getAllRooms(0, 'all')">
+              Tất cả
+            </div>
+
+            <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+              [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllRooms(i + 1, campus.name)">
+              {{campus.name}}
+            </div>
           </div>
-          <div class="table-responsive table-rooms">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Id</th>
-                  <th>Tên phòng</th>
-                  <th>
-                    <div class="dropdown" ngbDropdown>
-                      <button
-                        class="btn btn-dropdown dropdown-toggle {{isClickBtnQuantityStudent ? 'btn-dropdown-active' : ''}}"
-                        type="button" id="quantityStudentDropdown" ngbDropdownToggle>
-                        Số lượng sinh viên
-                      </button>
-                      <div class="dropdown-menu dropdown-quantity-student" ngbDropdownMenu
-                        aria-labelledby="quantityStudentDropdown">
-                        <a *ngFor="let item of quantityStudentList" class="dropdown-item" href="javascript:void(0)"
-                          (click)="resetPageByQuantityStudent(item.id)">{{item.name}}</a>
+
+          <hr style="margin-top: 0" />
+
+          <div style="height: 10px"></div>
+        </div>
+        <!-- END TABS -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="input-group">
+              <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm bởi tên phòng hoặc tên quản lý" />
+              <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                title="Search" width="20" />
+              <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcel()">
+                <img src="../../assets/images/export.png" width="15" />
+                Xuất file
+              </button>
+            </div>
+            <div class="table-responsive table-rooms">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Tên phòng</th>
+                    <th>
+                      <div class="dropdown" ngbDropdown>
+                        <button
+                          class="btn btn-dropdown dropdown-toggle {{isClickBtnQuantityStudent ? 'btn-dropdown-active' : ''}}"
+                          type="button" id="quantityStudentDropdown" ngbDropdownToggle>
+                          Số lượng sinh viên
+                        </button>
+                        <div class="dropdown-menu dropdown-quantity-student" ngbDropdownMenu
+                          aria-labelledby="quantityStudentDropdown">
+                          <a *ngFor="let item of quantityStudentList" class="dropdown-item" href="javascript:void(0)"
+                            (click)="resetPageByQuantityStudent(item.id)">{{item.name}}</a>
+                        </div>
                       </div>
-                    </div>
-                  </th>
+                    </th>
 
-                  <th>
-                    <div class="dropdown" ngbDropdown>
-                      <button
-                        class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeRoom ? 'btn-dropdown-active' : ''}}"
-                        type="button" id="typeRoomDropdown" ngbDropdownToggle>
-                        Loại phòng
-                      </button>
-                      <div class="dropdown-menu dropdown-type-room" aria-labelledby="typeRoomDropdown" ngbDropdownMenu>
-                        <a *ngFor="let item of typeOfRoomList" class="dropdown-item" href="javascript:void(0)"
-                          (click)="resetPageByTypeOfRoom(item.id)">{{item.name}}</a>
+                    <th>
+                      <div class="dropdown" ngbDropdown>
+                        <button
+                          class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeRoom ? 'btn-dropdown-active' : ''}}"
+                          type="button" id="typeRoomDropdown" ngbDropdownToggle>
+                          Loại phòng
+                        </button>
+                        <div class="dropdown-menu dropdown-type-room" aria-labelledby="typeRoomDropdown"
+                          ngbDropdownMenu>
+                          <a *ngFor="let item of typeOfRoomList" class="dropdown-item" href="javascript:void(0)"
+                            (click)="resetPageByTypeOfRoom(item.id)">{{item.name}}</a>
+                        </div>
                       </div>
-                    </div>
-                  </th>
-                  <th>Khu nhà</th>
-                  <th>Quản lý nhà</th>
-                  <th>Tiền phòng</th>
-                  <th>Tiền nước</th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let room of rooms">
-                  <td (click)="openModalDetailARoom(modalDetailARoom, room)">{{room.id}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom, room)">
-                    {{room.name}}
-                  </td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.quantityStudent}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
-                    {{room.typeRoom == null ? '--' : room.typeRoom.name}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.campusName}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.userManager}}</td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
-                    <div *ngIf="room.isPayRoom" class="pill pill-1">
-                      ĐÃ TRẢ
-                    </div>
-                    <div *ngIf="!room.isPayRoom && room.quantityStudent > 0" class="pill pill-2">
-                      CHƯA&nbsp;TRẢ
-                    </div>
-                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
-                      KHÔNG&nbsp;DỮ LIỆU
-                    </div>
-                  </td>
-                  <td (click)="openModalDetailARoom(modalDetailARoom,room)">
-                    <div *ngIf="room.isPayWaterBill" class="pill pill-1">
-                      ĐÃ TRẢ
-                    </div>
-                    <div *ngIf="!room.isPayWaterBill && room.quantityStudent > 0" class="pill pill-2">
-                      CHƯA&nbsp;TRẢ
-                    </div>
-                    <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
-                      KHÔNG&nbsp;DỮ LIỆU
-                    </div>
-                  </td>
+                    </th>
+                    <th>Khu nhà</th>
+                    <th>Quản lý nhà</th>
+                    <th>Tiền phòng</th>
+                    <th>Tiền nước</th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let room of rooms">
+                    <td (click)="openModalDetailARoom(modalDetailARoom, room)">{{room.id}}</td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom, room)">
+                      {{room.name}}
+                    </td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.quantityStudent}}</td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                      {{room.typeRoom == null ? '--' : room.typeRoom.name}}</td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.campusName}}</td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">{{room.userManager}}</td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                      <div *ngIf="room.isPayRoom" class="pill pill-1">
+                        ĐÃ TRẢ
+                      </div>
+                      <div *ngIf="!room.isPayRoom && room.quantityStudent > 0" class="pill pill-2">
+                        CHƯA&nbsp;TRẢ
+                      </div>
+                      <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
+                        KHÔNG&nbsp;DỮ LIỆU
+                      </div>
+                    </td>
+                    <td (click)="openModalDetailARoom(modalDetailARoom,room)">
+                      <div *ngIf="room.isPayWaterBill" class="pill pill-1">
+                        ĐÃ TRẢ
+                      </div>
+                      <div *ngIf="!room.isPayWaterBill && room.quantityStudent > 0" class="pill pill-2">
+                        CHƯA&nbsp;TRẢ
+                      </div>
+                      <div *ngIf="room.quantityStudent == 0" class="pill pill-3">
+                        KHÔNG&nbsp;DỮ LIỆU
+                      </div>
+                    </td>
 
-                  <td>
-                    <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                      (click)="openModalUpdateARoom(modalUpdateARoom, room)"></i>
-                  </td>
+                    <td>
+                      <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                        (click)="openModalUpdateARoom(modalUpdateARoom, room)"></i>
+                    </td>
 
-                  <td>
-                    <i class="icon-edit mdi mdi-24px mdi-cash-usd-outline"
-                      (click)="openCreatePayment(modalCreatePaymetRoom, room)"></i>
-                  </td>
-                </tr>
-                <tr *ngIf="roomsTotal == 0">
-                  <td colspan="9" class="no-data">No data found.</td>
-                </tr>
+                    <td>
+                      <i *ngIf="!room.isPayRoom && !room.isPayWaterBill"
+                        class="icon-edit mdi mdi-24px mdi-cash-usd-outline"
+                        (click)="openCreatePayment(modalCreatePaymetRoom, room)"></i>
+                    </td>
+                  </tr>
+                  <tr *ngIf="roomsTotal == 0">
+                    <td colspan="9" class="no-data">No data found.</td>
+                  </tr>
 
-              </tbody>
-            </table>
-            <div class="tbl-checkins-paging">
-              <div *ngIf="roomsTotal != 0" class="row">
-                <div class="col-xs-12 col-md-6">
-                  <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
-                              padding-left: 9px;
-                              border: 1px solid #898E93;
-                              border-radius: 16px;
-                              background: white;">
-                    <option>10</option>
-                    <option>25</option>
-                    <option>50</option>
-                  </select>
-                  <div style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
-                    Kết quả mỗi trang</div>
-                </div>
+                </tbody>
+              </table>
+              <div class="tbl-checkins-paging">
+                <div *ngIf="roomsTotal != 0" class="row">
+                  <div class="col-xs-12 col-md-6">
+                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                padding-left: 9px;
+                                border: 1px solid #898E93;
+                                border-radius: 16px;
+                                background: white;">
+                      <option>10</option>
+                      <option>25</option>
+                      <option>50</option>
+                    </select>
+                    <div style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                      Kết quả mỗi trang</div>
+                  </div>
 
-                <div class="col-xs-12 col-md-6">
+                  <div class="col-xs-12 col-md-6">
 
-                  <div class="custom-paging-wrapper">
-                    <ngb-pagination id="page" [collectionSize]="roomsTotal" [(page)]="page" [maxSize]="5"
-                      [pageSize]="pageSize" (pageChange)="changePage($event)" [boundaryLinks]="true">
-                      <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left" aria-hidden="true"></i>
-                      </ng-template>
-                      <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right" aria-hidden="true"></i>
-                      </ng-template>
-                      <ng-template ngbPaginationPrevious>Trước</ng-template>
-                      <ng-template ngbPaginationNext>Sau</ng-template>
-                      <ng-template ngbPaginationEllipsis>...</ng-template>
-                    </ngb-pagination>
+                    <div class="custom-paging-wrapper">
+                      <ngb-pagination id="page" [collectionSize]="roomsTotal" [(page)]="page" [maxSize]="5"
+                        [pageSize]="pageSize" (pageChange)="changePage($event)" [boundaryLinks]="true">
+                        <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left" aria-hidden="true"></i>
+                        </ng-template>
+                        <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right" aria-hidden="true"></i>
+                        </ng-template>
+                        <ng-template ngbPaginationPrevious>Trước</ng-template>
+                        <ng-template ngbPaginationNext>Sau</ng-template>
+                        <ng-template ngbPaginationEllipsis>...</ng-template>
+                      </ngb-pagination>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -172,594 +181,594 @@
       </div>
     </div>
   </div>
-</div>
 
-<!-- START ROOM DETAIL MODAL -->
-<ng-template #modalDetailARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-2">
-  <div class="modal-content">
-    <div class="modal-header">
-      <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT PHÒNG</h3>
-      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+  <!-- START ROOM DETAIL MODAL -->
+  <ng-template #modalDetailARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-2">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
+        <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT PHÒNG</h3>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid d-flex flex-column">
+
+          <div class="row">
+            <div class="col-12">
+              <div *ngIf="modalRoom" class="section-info">
+                <div class="row">
+                  <div class="col-xs-6 col-md-1"></div>
+
+                  <div class="col-xs-6 col-md-3">
+                    <img class="icon-bill" src="../../assets/images/room.svg" style="margin-bottom: 15px;" />
+                  </div>
+                  <div class="col-xs-6 col-md-2"></div>
+
+                  <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
+                    <div class="row">
+                      <div class="col-xs-6 col-md-6 col-title">ID PHÒNG</div>
+                      <div class="col-xs-6 col-md-6">
+                        {{ modalRoom.id}}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
+                      <div class="col-xs-6 col-md-6">
+                        {{ modalRoom.name}}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-6 col-md-6 col-title">KIỂU PHÒNG</div>
+                      <div class="col-xs-6 col-md-6">
+                        {{modalRoom.typeRoom ? modalRoom.typeRoom.name: '--' }}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-6 col-md-6 col-title">SỐ LƯỢNG SINH VIÊN</div>
+                      <div class="col-xs-6 col-md-6">
+                        {{modalRoom.quantityStudent}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-6 col-md-1"></div>
+                  <div class="col-xs-6 col-md-2 col-title">TÊN KHU NHÀ</div>
+                  <div class="col-xs-6 col-md-3">
+                    {{modalRoom.campusName}}
+                  </div>
+                  <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
+                  <div class="col-xs-6 col-md-3">
+                    {{modalRoom.userManager}}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-6 col-md-1"></div>
+                  <div class="col-xs-6 col-md-2 col-title">GIÁ PHÒNG</div>
+                  <div class="col-xs-6 col-md-3">
+                    {{(modalRoom.priceRoom |number) + "đ / room"}}
+                  </div>
+                  <div class="col-xs-6 col-md-3 col-title">THANH TOÁN PHÒNG</div>
+                  <div class="col-xs-6 col-md-3"
+                    [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                    {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-6 col-md-1"></div>
+                  <div class="col-xs-6 col-md-2 col-title">GIÁ NƯỚC</div>
+                  <div class="col-xs-6 col-md-3">
+                    {{(modalRoom.priceWater | number ) + "đ / person"}}
+                  </div>
+                  <div class="col-xs-6 col-md-3 col-title">THANH TOÁN NƯỚC</div>
+                  <div class="col-xs-6 col-md-3"
+                    [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
+                    {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-6 col-md-1"></div>
+                  <div class="col-xs-6 col-md-2 col-title">GIÁ XE</div>
+                  <div class="col-xs-6 col-md-3">
+                    {{(modalRoom.priceVehicle | number ) + "đ / person"}}
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <!-- Student Detail in a Room -->
+              <div class="section-student-wrapper">
+                <div *ngIf="modalRoom.students" class="section-result">
+                  <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
+                    <div class="row">
+                      <div class="col-xs-12 col-section-title">Sinh viên</div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-6 col-md-1"></div>
+                      <div class="col-xs-6 col-md-3">
+                        <img class="icon-middle" src="../../assets/images/student.svg" />
+                      </div>
+                      <div class="col-xs-6 col-md-1"></div>
+
+                      <div class="col-xs-6 col-md-6">
+                        <div class="row">
+                          <div class="col-xs-6 col-md-6 col-title">ID</div>
+                          <div class="col-xs-6 col-md-6">
+                            {{ student.id }}
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-xs-6 col-md-6 col-title">HỌ VÀ TÊN</div>
+                          <div class="col-xs-6 col-md-6">
+                            {{ student.name |uppercase}}
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-xs-6 col-md-6 col-title">EMAIL</div>
+                          <div class="col-xs-6 col-md-6">
+                            {{student.email}}
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-xs-6 col-md-6 col-title">SỐ ĐIỆN THOẠI</div>
+                          <div class="col-xs-6 col-md-6">
+                            {{ student.phone }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="section-student" *ngIf=" modalRoom.students.length === 0">
+                    <div class="row">
+                      <div class="col-xs-12 col-section-title">Sinh viên</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="modal-body">
-      <div class="container-fluid d-flex flex-column">
+  </ng-template>
 
+  <!-- START UPDATE ROOM MODAL -->
+  <ng-template #modalUpdateARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-3">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
+        <h3 class="modal-title" id="exampleModalLabel-3">CẬP NHẬT PHÒNG</h3>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row create-room-section">
+          <div class="col-12">
+            <div *ngIf="newRoomForm.id" class="section-info">
+
+              <form name="newRoomForm" class="newRoomForm">
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <label for="roomId">Id Phòng</label>
+                    <input name="roomId" [(ngModel)]="newRoomForm.id" class="disable-input" readonly />
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-right">
+                    <label for="roomName">Tên phòng</label>
+                    <input name="roomName" [(ngModel)]="newRoomForm.name" class="disable-input" readonly />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <label for="userManager">Quản lý nhà</label>
+                    <input name="userManager" [(ngModel)]="newRoomForm.userManager" class="disable-input" readonly />
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-right">
+                    <label for="campusName">Khu nhà</label>
+                    <input name="campusName" [(ngModel)]="newRoomForm.campusName" class="disable-input" readonly />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+
+                    <label for="typeRoom">Loại phòng</label>
+                    <ng-select name="typeRoom" [items]="typeOfRoomList" [virtualScroll]="true" bindLabel="name"
+                      bindValue="id" [(ngModel)]="typeRoomId" (change)="checkQuantityStudent(typeRoomId)">
+                    </ng-select>
+                  </div>
+                </div>
+
+                <div class="row" *ngIf="typeRoomError">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+            <div class="section-student-room">
+              <div class="section-student" *ngFor="let student of newRoomForm.students; let i = index">
+                <div class="section-result">
+                  <div>
+                    <div class="row">
+                      <div class="col-xs-12 col-section-title">Sinh viên</div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12">
+                        <button class="btn btn-remove"
+                          (click)="openModalDeleteStudent( modalDeleteStudent,student)"><img
+                            src="../../assets/images/icon_cross.png" width="10" />Rời phòng</button>
+                      </div>
+                      <div class="col-xs-6 col-md-2 col-title">ID</div>
+                      <div class="col-xs-6 col-md-3">
+                        {{ student.id}}
+                      </div>
+                      <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
+                      <div class="col-xs-6 col-md-4">
+                        {{ student.email }}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12">
+                        <button class="btn btn-switch-room" (click)="switchRoom(modalSwitchRoom, student)"><img
+                            src="../../assets/images/icon_cross.png" width="10" />Đổi
+                          phòng</button>
+                      </div>
+                      <div class="col-xs-6 col-md-2 col-title">HỌ VÀ TÊN</div>
+                      <div class="col-xs-6 col-md-3">
+                        {{student.name| titlecase }}
+                      </div>
+                      <div class="col-xs-6 col-md-3 col-title">SỐ ĐIỆN THOẠI</div>
+                      <div class="col-xs-6 col-md-4">
+                        {{student.phone}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="section-related-people" *ngIf="newRoomForm.students.length == 0">
+                    <div class="row">
+                      <div class="col-xs-12 col-section-title">Sinh viên</div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
+        <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+      </div>
+    </div>
+  </ng-template>
+
+
+  <!-- Modal Delete Student -->
+  <ng-template #modalDeleteStudent let-modal class="modal fade modal-a" id="modalDelete"
+    aria-labelledby="modalDeleteStudentLabel">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
+        <h3 class="modal-title" id="modalDetailAStudentLabel">ĐỔI TRẠNG THÁI SINH VIÊN</h3>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center; font-family: Roboto;">
+        <div class="section-info">
+          <div class="row">
+            <div class="col-12">
+              <!-- Student Detail in a Room -->
+              <div class="section-student-wrapper">
+                <div class="section-result">
+                  <div class="row">
+                    <div class="col-xs-12 col-section-title">Sinh viên</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-xs-6 col-md-1"></div>
+                    <div class="col-xs-6 col-md-2">
+                      <img class="icon-middle" src="../../assets/images/student.svg" />
+                    </div>
+                    <div class="col-xs-6 col-md-1"></div>
+
+                    <div class="col-xs-6 col-md-7 text-left">
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title ">ID</div>
+                        <div class="col-xs-6 col-md-5">
+                          {{ studentLeft.id }}
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">HỌ VÀ TÊN</div>
+                        <div class="col-xs-6 col-md-5">
+                          {{ studentLeft.name |uppercase}}
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
+                          {{studentLeft.numberOfRoomMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{studentLeft.numberOfRoomMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
+                          {{studentLeft.numberOfWaterMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{studentLeft.numberOfWaterMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
+                          {{studentLeft.numberOfVehicleMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{studentLeft.numberOfVehicleMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
+        <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Modal Switch Room -->
+  <ng-template #modalSwitchRoom let-modal class="modal fade modal-a" id="modalSwitchRoom"
+    aria-labelledby="modalSwitchRoomLabel">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalDelmodalSwitchRoomete">CHUYỂN PHÒNG CHO SINH VIÊN</h3>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row create-room-section" *ngIf="modalStudent.roomDto">
+          <div class="col-12">
+            <div class="section-info">
+              <form name="newRoomForm" class="newRoomForm">
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <label for="id">Id sinh viên</label>
+                    <input name="id" [(ngModel)]="modalStudent.id" class="disable-input form-control" readonly />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <label for="name">Tên sinh viên</label>
+                    <input name="name" [(ngModel)]="modalStudent.name" class="disable-input form-control" readonly />
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                    <label for="oldRoom">Phòng cũ</label>
+                    <input name="oldRoom" [(ngModel)]="modalStudent.roomDto.name" class="form-control" readonly />
+
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-right">
+                    <label for="remainingRoomsData">Phòng mới</label>
+                    <ng-select name="remainingRoomsData" [items]="remainingRooms" [virtualScroll]="true"
+                      bindLabel="name" bindValue="id" [(ngModel)]="remaingRoomId" (change)="changeRoom()">
+                    </ng-select>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-xs-12 col-md-6 col-left">
+                  </div>
+                  <div class="col-xs-12 col-md-6 col-right">
+                    <div *ngIf="remaingRoomId > 0 && infoAboutMoneySwitchRoom">
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
+                          {{infoAboutMoneySwitchRoom.durationRoomMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{infoAboutMoneySwitchRoom.durationRoomMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
+                          {{infoAboutMoneySwitchRoom.durationWaterMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{infoAboutMoneySwitchRoom.durationWaterMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div *ngIf="modalStudent.vehicleId" class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
+                          {{infoAboutMoneySwitchRoom.durationVehicleMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{infoAboutMoneySwitchRoom.durationVehicleMoney | positiveNumber | number}} đ
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="saveSwitchRoom()">Lưu</button>
+        <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Modal create payment for room -->
+  <ng-template #modalCreatePaymetRoom let-modal class="modal fade modal-a" id="modalCreatePaymetRoom"
+    aria-labelledby="modalCreatePaymetRoomLabel">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
+        <h3 class="modal-title" id="modalCreatePaymetRoomLabel">THANH TOÁN TIỀN</h3>
+        <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" style="text-align: center; font-family: Roboto;">
         <div class="row">
           <div class="col-12">
             <div class="section-info">
               <div class="row">
                 <div class="col-xs-6 col-md-1"></div>
 
-                <div class="col-xs-6 col-md-3">
+                <div class="col-xs-6 col-md-2">
                   <img class="icon-bill" src="../../assets/images/room.svg" style="margin-bottom: 15px;" />
                 </div>
-                <div class="col-xs-6 col-md-2"></div>
+                <div class="col-xs-6 col-md-1"></div>
 
-                <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
+                <div class="col-xs-6 col-md-7 text-left" style="margin-top: 40px;">
                   <div class="row">
                     <div class="col-xs-6 col-md-6 col-title">ID PHÒNG</div>
                     <div class="col-xs-6 col-md-6">
-                      {{ modalRoom.id}}
+                      {{ roomPayment.roomId}}
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
                     <div class="col-xs-6 col-md-6">
-                      {{ modalRoom.name}}
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">KIỂU PHÒNG</div>
-                    <div class="col-xs-6 col-md-6">
-                      {{modalRoom.typeRoom ? modalRoom.typeRoom.name: '--' }}
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-xs-6 col-md-6 col-title">SỐ LƯỢNG SINH VIÊN</div>
-                    <div class="col-xs-6 col-md-6">
-                      {{modalRoom.quantityStudent}}
+                      {{ roomPayment.roomName}}
                     </div>
                   </div>
                 </div>
               </div>
-
-              <div class="row">
-                <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">TÊN KHU NHÀ</div>
-                <div class="col-xs-6 col-md-3">
-                  {{modalRoom.campusName}}
-                </div>
-                <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
-                <div class="col-xs-6 col-md-3">
-                  {{modalRoom.userManager}}
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">GIÁ PHÒNG</div>
-                <div class="col-xs-6 col-md-3">
-                  {{(modalRoom.priceRoom |number) + "đ / room"}}
-                </div>
-                <div class="col-xs-6 col-md-3 col-title">THANH TOÁN PHÒNG</div>
-                <div class="col-xs-6 col-md-3"
-                  [ngStyle]=" {'color': modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-                  {{modalRoom.isPayRoom && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayRoom && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">GIÁ NƯỚC</div>
-                <div class="col-xs-6 col-md-3">
-                  {{(modalRoom.priceWater | number ) + "đ / person"}}
-                </div>
-                <div class="col-xs-6 col-md-3 col-title">THANH TOÁN NƯỚC</div>
-                <div class="col-xs-6 col-md-3"
-                  [ngStyle]=" {'color': modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? ' #20a144' : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? '#f05c54' : '#ebdc10', 'font-weight': 'bold' } ">
-                  {{modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0 ? "ĐÃ TRẢ" : !modalRoom.isPayWaterBill && modalRoom.quantityStudent > 0? 'CHƯA TRẢ' : 'KHÔNG DỮ LIỆU'}}
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-6 col-md-1"></div>
-                <div class="col-xs-6 col-md-2 col-title">GIÁ XE</div>
-                <div class="col-xs-6 col-md-3">
-                  {{(modalRoom.priceVehicle | number ) + "đ / person"}}
-                </div>
-              </div>
-
             </div>
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12">
-            <!-- Student Detail in a Room -->
-            <div class="section-student-wrapper">
-              <div class="section-result">
-                <div *ngFor="let student of modalRoom.students; let i = index" class="section-student">
+        <div *ngFor="let student of roomPayment.studentBills" class="section-info">
+          <div class="row">
+            <div class="col-12">
+              <!-- Student Detail in a Room -->
+              <div class="section-student-wrapper">
+                <div class="section-result">
                   <div class="row">
                     <div class="col-xs-12 col-section-title">Sinh viên</div>
                   </div>
 
                   <div class="row">
                     <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-3">
+                    <div class="col-xs-6 col-md-2">
                       <img class="icon-middle" src="../../assets/images/student.svg" />
                     </div>
                     <div class="col-xs-6 col-md-1"></div>
 
-                    <div class="col-xs-6 col-md-6">
+                    <div class="col-xs-6 col-md-7 text-left">
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">ID</div>
-                        <div class="col-xs-6 col-md-6">
-                          {{ student.id }}
+                        <div class="col-xs-6 col-md-7 col-title ">ID</div>
+                        <div class="col-xs-6 col-md-5">
+                          {{ student.studentId }}
                         </div>
                       </div>
 
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">HỌ VÀ TÊN</div>
-                        <div class="col-xs-6 col-md-6">
-                          {{ student.name |uppercase}}
+                        <div class="col-xs-6 col-md-7 col-title ">MÃ SINH VIÊN</div>
+                        <div class="col-xs-6 col-md-5">
+                          {{ student.studentIdCard }}
                         </div>
                       </div>
 
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">EMAIL</div>
-                        <div class="col-xs-6 col-md-6">
-                          {{student.email}}
+                        <div class="col-xs-6 col-md-7 col-title">HỌ VÀ TÊN</div>
+                        <div class="col-xs-6 col-md-5">
+                          {{ student.studentName |uppercase}}
                         </div>
                       </div>
 
                       <div class="row">
-                        <div class="col-xs-6 col-md-6 col-title">SỐ ĐIỆN THOẠI</div>
-                        <div class="col-xs-6 col-md-6">
-                          {{ student.phone }}
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
+                          {{student.moneyOfRoomMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{student.moneyOfRoomMustPay | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
+                          {{student.moneyOfWaterMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{student.moneyOfWaterMustPay | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
+                          {{student.moneyOfVehicleMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                        </div>
+                        <div class="col-xs-6 col-md-5">
+                          {{student.moneyOfVehicleMustPay | positiveNumber | number}} đ
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class="col-xs-6 col-md-12">
+                          <button class="btn btn-payment" (click)="saveCreatePayment(student)"><img
+                              src="../../assets/images/icon_cross.png" width="10" />Thanh
+                            toán</button>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-                <div class="section-student" *ngIf=" modalRoom.students.length === 0">
-                  <div class="row">
-                    <div class="col-xs-12 col-section-title">Sinh viên</div>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào</div>
-                  </div>
-                </div>
-
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</ng-template>
-
-<!-- START UPDATE ROOM MODAL -->
-<ng-template #modalUpdateARoom let-modal class="modal fade" id="exampleModal-3" aria-labelledby="exampleModalLabel-3">
-  <div class="modal-content">
-    <div class="modal-header">
-      <img class="icon-bill-small" src="../../assets/images/room.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="exampleModalLabel-3">CẬP NHẬT PHÒNG</h3>
-      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="row create-room-section">
-        <div class="col-12">
-          <div class="section-info">
-
-            <form name="newRoomForm" class="newRoomForm">
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <label for="roomId">Id Phòng</label>
-                  <input name="roomId" [(ngModel)]="newRoomForm.id" class="disable-input" readonly />
-                </div>
-                <div class="col-xs-12 col-md-6 col-right">
-                  <label for="roomName">Tên phòng</label>
-                  <input name="roomName" [(ngModel)]="newRoomForm.name" class="disable-input" readonly />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <label for="userManager">Quản lý nhà</label>
-                  <input name="userManager" [(ngModel)]="newRoomForm.userManager" class="disable-input" readonly />
-                </div>
-                <div class="col-xs-12 col-md-6 col-right">
-                  <label for="campusName">Khu nhà</label>
-                  <input name="campusName" [(ngModel)]="newRoomForm.campusName" class="disable-input" readonly />
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-
-                  <label for="typeRoom">Loại phòng</label>
-                  <ng-select name="typeRoom" [items]="typeOfRoomList" [virtualScroll]="true" bindLabel="name"
-                    bindValue="id" [(ngModel)]="typeRoomId" (change)="checkQuantityStudent(typeRoomId)">
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="row" *ngIf="typeRoomError">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <p class="alert alert-danger" style="margin-bottom: 0;">{{typeRoomError}}</p>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          <div class="section-student-room">
-            <div class="section-student" *ngFor="let student of newRoomForm.students; let i = index">
-              <div class="section-result">
-                <div>
-                  <div class="row">
-                    <div class="col-xs-12 col-section-title">Sinh viên</div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-xs-12 col-md-12">
-                      <button class="btn btn-remove" (click)="openModalDeleteStudent( modalDeleteStudent,student)"><img
-                          src="../../assets/images/icon_cross.png" width="10" />Rời phòng</button>
-                    </div>
-                    <div class="col-xs-6 col-md-2 col-title">ID</div>
-                    <div class="col-xs-6 col-md-3">
-                      {{ student.id}}
-                    </div>
-                    <div class="col-xs-6 col-md-3 col-title">EMAIL</div>
-                    <div class="col-xs-6 col-md-4">
-                      {{ student.email }}
-                    </div>
-                  </div>
-
-                  <div class="row">
-                    <div class="col-xs-12 col-md-12">
-                      <button class="btn btn-switch-room" (click)="switchRoom(modalSwitchRoom, student)"><img
-                          src="../../assets/images/icon_cross.png" width="10" />Đổi
-                        phòng</button>
-                    </div>
-                    <div class="col-xs-6 col-md-2 col-title">HỌ VÀ TÊN</div>
-                    <div class="col-xs-6 col-md-3">
-                      {{student.name| titlecase }}
-                    </div>
-                    <div class="col-xs-6 col-md-3 col-title">SỐ ĐIỆN THOẠI</div>
-                    <div class="col-xs-6 col-md-4">
-                      {{student.phone}}
-                    </div>
-                  </div>
-                </div>
-                <div class="section-related-people" *ngIf="newRoomForm.students.length == 0">
-                  <div class="row">
-                    <div class="col-xs-12 col-section-title">Sinh viên</div>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-12 col-md-12 col-title">Không có bất kỳ sinh viên nào.</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="saveChange()">Lưu</button>
-      <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
-    </div>
-  </div>
-</ng-template>
-
-
-<!-- Modal Delete Student -->
-<ng-template #modalDeleteStudent let-modal class="modal fade modal-a" id="modalDelete"
-  aria-labelledby="modalDeleteStudentLabel">
-  <div class="modal-content">
-    <div class="modal-header">
-      <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="modalDetailAStudentLabel">ĐỔI TRẠNG THÁI SINH VIÊN</h3>
-      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body" style="text-align: center; font-family: Roboto;">
-      <div class="section-info">
-        <div class="row">
-          <div class="col-12">
-            <!-- Student Detail in a Room -->
-            <div class="section-student-wrapper">
-              <div class="section-result">
-                <div class="row">
-                  <div class="col-xs-12 col-section-title">Sinh viên</div>
-                </div>
-
-                <div class="row">
-                  <div class="col-xs-6 col-md-1"></div>
-                  <div class="col-xs-6 col-md-2">
-                    <img class="icon-middle" src="../../assets/images/student.svg" />
-                  </div>
-                  <div class="col-xs-6 col-md-1"></div>
-
-                  <div class="col-xs-6 col-md-7 text-left">
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title ">ID</div>
-                      <div class="col-xs-6 col-md-5">
-                        {{ studentLeft.id }}
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">HỌ VÀ TÊN</div>
-                      <div class="col-xs-6 col-md-5">
-                        {{ studentLeft.name |uppercase}}
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
-                        {{studentLeft.numberOfRoomMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{studentLeft.numberOfRoomMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
-                        {{studentLeft.numberOfWaterMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{studentLeft.numberOfWaterMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
-                        {{studentLeft.numberOfVehicleMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{studentLeft.numberOfVehicleMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
-      <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
-    </div>
-  </div>
-</ng-template>
-
-<!-- Modal Switch Room -->
-<ng-template #modalSwitchRoom let-modal class="modal fade modal-a" id="modalSwitchRoom"
-  aria-labelledby="modalSwitchRoomLabel">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3 class="modal-title" id="modalDelmodalSwitchRoomete">CHUYỂN PHÒNG CHO SINH VIÊN</h3>
-      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div class="row create-room-section" *ngIf="modalStudent.roomDto">
-        <div class="col-12">
-          <div class="section-info">
-            <form name="newRoomForm" class="newRoomForm">
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <label for="id">Id sinh viên</label>
-                  <input name="id" [(ngModel)]="modalStudent.id" class="disable-input form-control" readonly />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <label for="name">Tên sinh viên</label>
-                  <input name="name" [(ngModel)]="modalStudent.name" class="disable-input form-control" readonly />
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                  <label for="oldRoom">Phòng cũ</label>
-                  <input name="oldRoom" [(ngModel)]="modalStudent.roomDto.name" class="form-control" readonly />
-
-                </div>
-                <div class="col-xs-12 col-md-6 col-right">
-                  <label for="remainingRoomsData">Phòng mới</label>
-                  <ng-select name="remainingRoomsData" [items]="remainingRooms" [virtualScroll]="true" bindLabel="name"
-                    bindValue="id" [(ngModel)]="remaingRoomId" (change)="changeRoom()">
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-xs-12 col-md-6 col-left">
-                </div>
-                <div class="col-xs-12 col-md-6 col-right">
-                  <div *ngIf="remaingRoomId > 0 && infoAboutMoneySwitchRoom">
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
-                        {{infoAboutMoneySwitchRoom.durationRoomMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{infoAboutMoneySwitchRoom.durationRoomMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
-                        {{infoAboutMoneySwitchRoom.durationWaterMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{infoAboutMoneySwitchRoom.durationWaterMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div *ngIf="modalStudent.vehicleId" class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
-                        {{infoAboutMoneySwitchRoom.durationVehicleMoney < 0 ? 'NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{infoAboutMoneySwitchRoom.durationVehicleMoney | positiveNumber | number}} đ
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-success" (click)="saveSwitchRoom()">Lưu</button>
-      <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
-    </div>
-  </div>
-</ng-template>
-
-<!-- Modal create payment for room -->
-<ng-template #modalCreatePaymetRoom let-modal class="modal fade modal-a" id="modalCreatePaymetRoom"
-  aria-labelledby="modalCreatePaymetRoomLabel">
-  <div class="modal-content">
-    <div class="modal-header">
-      <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-      <h3 class="modal-title" id="modalCreatePaymetRoomLabel">THANH TOÁN TIỀN</h3>
-      <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body" style="text-align: center; font-family: Roboto;">
-      <div class="row">
-        <div class="col-12">
-          <div class="section-info">
-            <div class="row">
-              <div class="col-xs-6 col-md-1"></div>
-
-              <div class="col-xs-6 col-md-2">
-                <img class="icon-bill" src="../../assets/images/room.svg" style="margin-bottom: 15px;" />
-              </div>
-              <div class="col-xs-6 col-md-1"></div>
-
-              <div class="col-xs-6 col-md-7 text-left" style="margin-top: 40px;">
-                <div class="row">
-                  <div class="col-xs-6 col-md-6 col-title">ID PHÒNG</div>
-                  <div class="col-xs-6 col-md-6">
-                    {{ roomPayment.roomId}}
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
-                  <div class="col-xs-6 col-md-6">
-                    {{ roomPayment.roomName}}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div *ngFor="let student of roomPayment.studentBills" class="section-info">
-        <div class="row">
-          <div class="col-12">
-            <!-- Student Detail in a Room -->
-            <div class="section-student-wrapper">
-              <div class="section-result">
-                <div class="row">
-                  <div class="col-xs-12 col-section-title">Sinh viên</div>
-                </div>
-
-                <div class="row">
-                  <div class="col-xs-6 col-md-1"></div>
-                  <div class="col-xs-6 col-md-2">
-                    <img class="icon-middle" src="../../assets/images/student.svg" />
-                  </div>
-                  <div class="col-xs-6 col-md-1"></div>
-
-                  <div class="col-xs-6 col-md-7 text-left">
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title ">ID</div>
-                      <div class="col-xs-6 col-md-5">
-                        {{ student.studentId }}
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title ">MÃ SINH VIÊN</div>
-                      <div class="col-xs-6 col-md-5">
-                        {{ student.studentIdCard }}
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">HỌ VÀ TÊN</div>
-                      <div class="col-xs-6 col-md-5">
-                        {{ student.studentName |uppercase}}
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN PHÒNG SINH VIÊN
-                        {{student.moneyOfRoomMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{student.moneyOfRoomMustPay | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN NƯỚC SINH VIÊN
-                        {{student.moneyOfWaterMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{student.moneyOfWaterMustPay | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
-                        {{student.moneyOfVehicleMustPay < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
-                      </div>
-                      <div class="col-xs-6 col-md-5">
-                        {{student.moneyOfVehicleMustPay | positiveNumber | number}} đ
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-xs-6 col-md-12">
-                        <button class="btn btn-payment" (click)="saveCreatePayment(student)"><img
-                            src="../../assets/images/icon_cross.png" width="10" />Thanh
-                          toán</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>
+</div>

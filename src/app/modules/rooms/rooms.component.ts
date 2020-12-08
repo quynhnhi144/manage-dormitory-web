@@ -99,6 +99,8 @@ export class RoomsComponent implements OnInit {
   maxQuantityStudent: number;
   typeRoomError = null;
 
+  loadingFlag = false;
+
   subscription: Subscription;
 
   constructor(
@@ -124,6 +126,7 @@ export class RoomsComponent implements OnInit {
   }
 
   getAllRooms(campusIndex, campusType, page = 1) {
+    this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
     let choosedCampus = '';
@@ -158,9 +161,11 @@ export class RoomsComponent implements OnInit {
           this.rooms = data.data.data;
           console.log('rooms:', this.rooms);
           this.roomsTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }

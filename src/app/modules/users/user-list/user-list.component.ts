@@ -23,6 +23,7 @@ export class UserListComponent implements OnInit {
 
   campuses = [];
   isClickSearch = false;
+  loadingFlag = false;
 
   subscription: Subscription;
 
@@ -66,6 +67,7 @@ export class UserListComponent implements OnInit {
   }
 
   getAllUser(page = 1) {
+    this.loadingFlag = true;
     this.page = page;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
@@ -78,9 +80,11 @@ export class UserListComponent implements OnInit {
           console.log(data);
           this.users = data.data.data;
           this.userTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }
@@ -272,7 +276,7 @@ export class UserListComponent implements OnInit {
         address: this.modalUserUpdate.address,
         phone: this.modalUserUpdate.phone,
         campuses: choosedCampues,
-        role: ['ROLE_USER'],
+        role: ['user'],
       };
 
       this.subscription = this.userService.newUser(newUser).subscribe(

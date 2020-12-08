@@ -12,6 +12,7 @@ import { VehicleService } from './modules/vehicles/vehicle.service';
 import { UserService } from './modules/users/user.service';
 import { RemainingRoomService } from './modules/remaining-rooms/remaining-room.service';
 import { PriceListService } from './modules/price-list/price-list.service';
+import { EMailService } from './modules/e-mail/e-mail.service';
 @NgModule({
   providers: [
     DashboardService,
@@ -21,6 +22,7 @@ import { PriceListService } from './modules/price-list/price-list.service';
     VehicleService,
     UserService,
     PriceListService,
+    EMailService,
     RemainingRoomService,
     CampusService,
     TypeRoomService,

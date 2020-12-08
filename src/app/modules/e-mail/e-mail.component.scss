@@ -1,0 +1,33 @@
+.main-content {
+  .btn-new-mail {
+    font-family: Roboto;
+    background: #b66dff !important;
+    color: #ffffff !important;
+    margin-bottom: 17px;
+    border-radius: 14px;
+  }
+  .btn-search-mail {
+    right: 30px !important;
+  }
+}
+.section-info {
+  .custom-text {
+    word-break: break-word;
+  }
+}
+.newRoomForm {
+  textarea {
+    border: 1px solid #e5eaef;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 21px;
+    color: #2c2c2c;
+    width: 100%;
+    padding-left: 10px;
+    word-break: break-word;
+  }
+}

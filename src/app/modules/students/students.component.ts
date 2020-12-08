@@ -57,6 +57,8 @@ export class StudentsComponent implements OnInit {
 
   oldRoomId = 0;
 
+  loadingFlag = false;
+
   infoAboutMoneySwitchRoom = new InforAboutMoneySwitchRoom();
 
   subscription: Subscription;
@@ -86,6 +88,7 @@ export class StudentsComponent implements OnInit {
   }
 
   getAllStudents(campusIndex, campusType, page = 1) {
+    this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
     let choosedCampus = '';
@@ -108,9 +111,11 @@ export class StudentsComponent implements OnInit {
           this.students = data.data.data;
           console.log('students:', this.students);
           this.studentTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }
