@@ -12,7 +12,6 @@ import { VehicleLeft } from './vehicle-left.model';
 import { StudentDto } from '../students/student-dto.model';
 import { StudentsService } from '../students/students.service';
 import { VehicleBill } from '../../shared/model/vehicle-bill.model';
-import { endOf } from 'ngx-bootstrap/chronos';
 import { VehicleNew } from './vehicle-new.model';
 import * as FileSaver from 'file-saver';
 
@@ -34,6 +33,7 @@ export class VehiclesComponent implements OnInit {
 
   isClickSearch = false;
   isClickBtnTypeVehicle = false;
+  loadingFlag = false;
   typeOfVehicle = '';
   //modal
   modalVehicle = new Vehicle();
@@ -87,6 +87,7 @@ export class VehiclesComponent implements OnInit {
   }
 
   getAllVehicle(campusIndex, campusType, page = 1) {
+    this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
     let choosedCampus = '';
@@ -119,9 +120,11 @@ export class VehiclesComponent implements OnInit {
           this.vehicles = data.data.data;
           console.log('vehicles:', this.vehicles);
           this.vehicleTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }

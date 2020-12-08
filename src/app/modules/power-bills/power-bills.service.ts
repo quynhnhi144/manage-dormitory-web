@@ -80,4 +80,9 @@ export class PowerBillsService {
     let url = this.baseUrl + '/powerBills' + '/export?' + '&date=' + dateString;
     return this.http.get(url, { responseType: 'blob' });
   }
+
+  exportPDF(powerBillNew: PowerBill) {
+    let url = this.baseUrl + '/powerBills' + '/exportPDF';
+    return this.http.post(url, powerBillNew, { responseType: 'blob' });
+  }
 }

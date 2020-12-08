@@ -7,6 +7,7 @@ import { FindRoomModule } from './find-room.module';
 import { FindRoomNew } from './find-room-new.model';
 import { FindRoomService } from './find-room.service';
 import { NotificationService } from '../core/services/notification.service';
+import { RoomAndRegisterCount } from './room-and-registercount.model';
 
 @Component({
   selector: 'app-find-room',
@@ -16,6 +17,7 @@ import { NotificationService } from '../core/services/notification.service';
 export class FindRoomComponent implements OnInit {
   subscription: Subscription;
   remainingRooms: Room[] = [];
+  roomAndRegisterCountList: RoomAndRegisterCount[] = [];
   modalOption: NgbModalOptions = {};
   currentRemainingRoomId: number;
   modalRemainingRoom: Room = new Room();
@@ -44,7 +46,8 @@ export class FindRoomComponent implements OnInit {
       .getTotalRemainingRooms(paramSearchText)
       .subscribe((data: any) => {
         console.log('data: ' + data);
-        this.remainingRooms = data;
+        // this.remainingRooms = data;
+        this.roomAndRegisterCountList = data;
       });
   }
 
@@ -70,8 +73,11 @@ export class FindRoomComponent implements OnInit {
       );
   }
 
-  openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom: Room) {
-    this.currentRemainingRoomId = remainingRoom.id;
+  openModalRemainingRoom(
+    modalDetailARemainingRoom,
+    roomAndRegisterCount: RoomAndRegisterCount
+  ) {
+    this.currentRemainingRoomId = roomAndRegisterCount.detailRoomDto.id;
     this.getDetailRemainingRoom();
     this.openModal(modalDetailARemainingRoom);
   }
@@ -98,6 +104,7 @@ export class FindRoomComponent implements OnInit {
             message: 'Đã cập nhật thông tin sinh viên thành công !!!',
             isSuccess: true,
           });
+          this.getAllRemainingRooms();
         },
         (error) => {
           console.log(error);

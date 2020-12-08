@@ -21,6 +21,7 @@ export class PriceListComponent implements OnInit {
   isNewPriceList = false;
   currentPriceListId = 0;
   priceListError: string = null;
+  loadingFlag = false;
 
   modalPriceList = new PriceList();
 
@@ -41,6 +42,7 @@ export class PriceListComponent implements OnInit {
   }
 
   getAllPriceList(page = 1) {
+    this.loadingFlag = true;
     this.page = page;
     this.skip = (page - 1) * this.pageSize;
     let paramSearchText = this.isClickSearch
@@ -52,9 +54,11 @@ export class PriceListComponent implements OnInit {
         (data: any) => {
           this.priceList = data.data.data;
           this.priceListTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }

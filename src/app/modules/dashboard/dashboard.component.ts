@@ -38,6 +38,9 @@ export class DashboardComponent implements OnInit {
   searchText: string = '';
 
   subscription: Subscription;
+
+  loadingFlag = false;
+  loadingFlagModal = false;
   constructor(
     private modalService: NgbModal,
     private userService: UserService,
@@ -54,10 +57,12 @@ export class DashboardComponent implements OnInit {
   }
 
   getDashBoard() {
+    this.loadingFlag = true;
     this.subscription = this.dashboardService.getDashboard().subscribe(
       (data: any) => {
         console.log('dashboard: ', data);
         this.dashboard = data;
+        this.loadingFlag = false;
       },
       (error) => {
         console.log(error);
@@ -65,6 +70,7 @@ export class DashboardComponent implements OnInit {
           message: 'Có lỗi xảy ra !!!',
           isSuccess: false,
         });
+        this.loadingFlag = false;
       }
     );
   }

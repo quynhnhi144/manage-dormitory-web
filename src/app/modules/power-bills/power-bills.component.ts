@@ -49,6 +49,10 @@ export class PowerBillsComponent implements OnInit {
 
   isAuthenticated = false;
 
+  loadingFlag = false;
+
+  isPayment = false;
+
   constructor(
     private campusService: CampusService,
     private modalService: NgbModal,
@@ -91,6 +95,7 @@ export class PowerBillsComponent implements OnInit {
   }
 
   getAllPowerBills(campusIndex, campusType, page = 1) {
+    this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
     let choosedCampus = '';
@@ -116,9 +121,11 @@ export class PowerBillsComponent implements OnInit {
           console.log(data);
           this.rooms = data.data.data;
           this.roomTotal = data.total;
+          this.loadingFlag = false;
         },
         (error) => {
           console.log(error);
+          this.loadingFlag = false;
         }
       );
   }
@@ -186,6 +193,7 @@ export class PowerBillsComponent implements OnInit {
   // modal power bill update
   openModalUpdatePowerBill(modalUpdateAPowerBill, room: any) {
     this.currentRoomId = room.detailRoomDto.id;
+    this.isPayment = false;
     this.getPowerBillUpdate();
     this.openModal(modalUpdateAPowerBill);
   }
@@ -280,39 +288,108 @@ export class PowerBillsComponent implements OnInit {
         });
     }
   }
+  // modal payment
+  openModalPayment(modalUpdateAPowerBill, room: any) {
+    this.isPayment = true;
+    this.currentRoomId = room.detailRoomDto.id;
+    this.getPowerBillUpdate();
+    this.openModal(modalUpdateAPowerBill);
+  }
 
   saveUpdate() {
-    if (!this.modalRoomPowerBillUpdate.startDate) {
+    if (!this.isNew && !this.modalRoomPowerBillUpdate.startDate) {
       this.modalUpdatePowerBillError = 'Start Date is required';
       this.turnOffNotification();
       return;
     }
 
-    if (!this.modalRoomPowerBillUpdate.endDate) {
+    if (!this.isNew && !this.modalRoomPowerBillUpdate.endDate) {
       this.modalUpdatePowerBillError = 'End Date is required';
       this.turnOffNotification();
       return;
     }
 
-    if (this.modalRoomPowerBillUpdate.numberOfPowerBegin == null) {
+    if (
+      !this.isNew &&
+      this.modalRoomPowerBillUpdate.numberOfPowerBegin == null
+    ) {
       this.modalUpdatePowerBillError = 'Number of Power Begin is required';
       this.turnOffNotification();
       return;
     }
 
-    if (this.modalRoomPowerBillUpdate.numberOfPowerEnd == null) {
+    if (!this.isNew && this.modalRoomPowerBillUpdate.numberOfPowerEnd == null) {
       this.modalUpdatePowerBillError = 'Number of Power End is required';
       this.turnOffNotification();
       return;
     }
 
-    if (this.modalRoomPowerBillUpdate.numberOfPowerUsed == null) {
+    if (
+      !this.isNew &&
+      this.modalRoomPowerBillUpdate.numberOfPowerUsed == null
+    ) {
       this.modalUpdatePowerBillError = 'Number of Power Used is required';
       this.turnOffNotification();
       return;
     }
 
-    if (!this.isNew) {
+    //new power bill
+    if (this.isNew && !this.modalNewPowerBill.startDate) {
+      this.modalUpdatePowerBillError = 'Start Date is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.isNew && !this.modalNewPowerBill.endDate) {
+      this.modalUpdatePowerBillError = 'End Date is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.isNew && this.modalNewPowerBill.numberOfPowerBegin == null) {
+      this.modalUpdatePowerBillError = 'Number of Power Begin is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.isNew && this.modalNewPowerBill.numberOfPowerEnd == null) {
+      this.modalUpdatePowerBillError = 'Number of Power End is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.isNew && this.modalNewPowerBill.numberOfPowerUsed == null) {
+      this.modalUpdatePowerBillError = 'Number of Power Used is required';
+      this.turnOffNotification();
+      return;
+    }
+
+    if (this.isPayment) {
+      this.subscription = this.powerBillsService
+        .updatePowerBill(this.currentRoomId, this.modalRoomPowerBillUpdate)
+        .subscribe(
+          (data: any) => {
+            console.log('new payment: ', data);
+            let index = this.rooms.findIndex(
+              (room) => room.detailRoomDto.id === this.currentRoomId
+            );
+            this.rooms[index] = data;
+            this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã thêm hóa đơn điện thành công',
+              isSuccess: true,
+            });
+            this.exportPDF(this.modalRoomPowerBillUpdate);
+          },
+          (error) => {
+            console.log(error);
+            this.notificationService.sendNotificationMessage({
+              message: 'Lỗi! Có lỗi đã xảy ra. Hãy kiểm tra lại!!!',
+              isSuccess: false,
+            });
+          }
+        );
+    } else if (!this.isNew) {
       this.subscription = this.powerBillsService
         .updatePowerBill(this.currentRoomId, this.modalRoomPowerBillUpdate)
         .subscribe(
@@ -336,6 +413,7 @@ export class PowerBillsComponent implements OnInit {
           }
         );
     } else {
+      this.modalNewPowerBill.pay = true;
       this.subscription = this.powerBillsService
         .newPowerBill(this.currentRoomId, this.modalNewPowerBill)
         .subscribe(
@@ -350,6 +428,7 @@ export class PowerBillsComponent implements OnInit {
               message: 'Đã thêm hóa đơn điện thành công',
               isSuccess: true,
             });
+            this.exportPDF(this.modalNewPowerBill);
           },
           (error) => {
             console.log(error);
@@ -360,6 +439,22 @@ export class PowerBillsComponent implements OnInit {
           }
         );
     }
+  }
+
+  exportPDF(powerBill: PowerBill) {
+    this.subscription = this.powerBillsService.exportPDF(powerBill).subscribe(
+      (response: any) => {
+        this.downloadFile(
+          response,
+          'application/pdf',
+          `${powerBill.detailRoomDto.name} + ${new Date()} + .pdf`
+        );
+        console.log(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   // send power bill mail

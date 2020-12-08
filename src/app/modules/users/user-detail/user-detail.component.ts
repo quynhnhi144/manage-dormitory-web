@@ -20,6 +20,7 @@ export class UserDetailComponent implements OnInit {
   oldPassword: string = null;
   newPassword: string = null;
   isChangePassword = false;
+  loadingFlag = false;
   selectedCampusIds = [];
 
   constructor(
@@ -37,9 +38,17 @@ export class UserDetailComponent implements OnInit {
   }
 
   getProfile() {
-    this.userService.getProfile(this.username).subscribe((user: any) => {
-      this.user = user;
-    });
+    this.loadingFlag = true;
+    this.userService.getProfile(this.username).subscribe(
+      (user: any) => {
+        this.user = user;
+        this.loadingFlag = false;
+      },
+      (error) => {
+        console.log(error);
+        this.loadingFlag = false;
+      }
+    );
   }
 
   onUpdateProfile() {

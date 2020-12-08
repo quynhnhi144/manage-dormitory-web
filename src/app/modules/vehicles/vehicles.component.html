@@ -1,410 +1,421 @@
-<div *ngIf="campuses" class="main-content">
-    <div class="row">
-        <div class="col-12">
-
-            <div style="float: left">
-                <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý xe</div>
-            </div>
-            <div class="create-vehicle-btn" style="float: right;">
-                <button type="button" class="btn btn-round btn-new-vehicle"
-                    (click)="createNewVehicle(modalUpdateAVehicle)">+ Tạo xe</button>
-            </div>
-            <div style="clear: both"></div>
-            <!-- START TABS -->
-            <div>
-                <div>
-                    <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
-                        (click)="getAllVehicle(0, 'all')">
-                        Tất cả
-                    </div>
-
-                    <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
-                        [ngClass]="{ 'num-active': campusIndex == i + 1 }" (click)="getAllVehicle(i + 1, campus.name)">
-                        {{campus.name}}
-                    </div>
-                </div>
-
-                <hr style="margin-top: 0" />
-
-                <div style="height: 10px"></div>
-            </div>
-            <!-- END TABS -->
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <div class="input-group">
-                        <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
-                            (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm theo biển số xe" />
-                        <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
-                            title="Search" width="20" />
-                        <button type="button" class="btn-icon btn-round btn-export ml-3" (click)="exportExcelFile()">
-                            <img src="../../assets/images/export.png" width="15" />
-                            Xuất file
-                        </button>
-                    </div>
-                    <div class="table-responsive table-rooms">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Biển số xe</th>
-                                    <th>
-                                        <div class="dropdown" ngbDropdown>
-                                            <button
-                                                class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeVehicle ? 'btn-dropdown-active' : ''}}"
-                                                type="button" id="typeVehicleDropdown" ngbDropdownToggle>
-                                                Loại xe
-                                            </button>
-                                            <div class="dropdown-menu dropdown-type-room"
-                                                aria-labelledby="typeVehicleDropdown" ngbDropdownMenu>
-                                                <a *ngFor="let item of typeOfVehicleList" class="dropdown-item"
-                                                    href="javascript:void(0)"
-                                                    (click)="resetPageByTypeOfVehicle(item.name)">{{item.name}}</a>
-                                            </div>
-                                        </div>
-
-                                    </th>
-                                    <th>Mã sinh viên</th>
-                                    <th>Tên sinh viên</th>
-                                    <th>Thanh toán</th>
-                                    <th>Trạng thái</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let vehicle of vehicles">
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.id}}
-                                    </td>
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.licensePlates}}
-                                    </td>
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.typeVehicle.name}}</td>
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.studentDto.idCard}}
-                                    </td>
-
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        {{vehicle.studentDto.name}}
-                                    </td>
-
-                                    <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
-                                        <div *ngIf="vehicle.payVehicleBill" class="pill pill-1">
-                                            ĐÃ TRẢ
-                                        </div>
-                                        <div *ngIf="!vehicle.payVehicleBill" class="pill pill-2">
-                                            CHƯA&nbsp;TRẢ
-                                        </div>
-                                    </td>
-                                    <td [style]="!vehicle.active ? 'pointer-events:none': ''"
-                                        (click)="openModalDeleteVehicle(modalDeleteVehicle, vehicle)">
-                                        <div *ngIf="vehicle.active" class="pill pill-1">
-                                            HOẠT ĐỘNG
-                                        </div>
-                                        <div *ngIf="!vehicle.active" class="pill pill-2">
-                                            DỪNG
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <i *ngIf="vehicle.active" class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                                            (click)="openModalUpdateARoom(modalUpdateAVehicle, vehicle)"></i>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="vehicleTotal == 0">
-                                    <td colspan="7" class="no-data">Không tìm thấy dữ liệu.</td>
-                                </tr>
-
-                            </tbody>
-                        </table>
-                        <div class="tbl-checkins-paging">
-                            <div *ngIf="vehicleTotal != 0" class="row">
-                                <div class="col-xs-12 col-md-6">
-                                    <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
-                                padding-left: 9px;
-                                border: 1px solid #898E93;
-                                border-radius: 16px;
-                                background: white;">
-                                        <option>10</option>
-                                        <option>25</option>
-                                        <option>50</option>
-                                    </select>
-                                    <div
-                                        style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
-                                        Kết quả mỗi trang</div>
-                                </div>
-
-                                <div class="col-xs-12 col-md-6">
-
-                                    <div class="custom-paging-wrapper">
-                                        <ngb-pagination id="page" [collectionSize]="vehicleTotal" [(page)]="page"
-                                            [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
-                                            [boundaryLinks]="true">
-                                            <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
-                                                    aria-hidden="true"></i>
-                                            </ng-template>
-                                            <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
-                                                    aria-hidden="true"></i>
-                                            </ng-template>
-                                            <ng-template ngbPaginationPrevious>Trước</ng-template>
-                                            <ng-template ngbPaginationNext>Sau</ng-template>
-                                            <ng-template ngbPaginationEllipsis>...</ng-template>
-                                        </ngb-pagination>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="overlay" *ngIf="loadingFlag">
+    <div class="spinner-border text-secondary spinner-wrapper" role="status" style="width: 3rem; height: 3rem;">
+        <div><i class="fa fa-circle-o-notch fa-spin"></i></div>
     </div>
 </div>
+<div class="content-wrapper">
+    <div *ngIf="campuses" class="main-content">
+        <div class="row">
+            <div class="col-12">
 
-<!-- START ROOM DETAIL MODAL -->
-<ng-template #modalDetailAVehicle let-modal class="modal fade" id="exampleModal-3"
-    aria-labelledby="exampleModalLabel-2">
-    <div class="modal-content">
-        <div class="modal-header">
-            <img class="icon-bill-small" src="../../assets/images/motorbike.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT XE</h3>
-            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <div style="float: left">
+                    <div style="color: #595F69; font-size: 23px; margin-bottom: 17px">Quản lý xe</div>
+                </div>
+                <div class="create-vehicle-btn" style="float: right;">
+                    <button type="button" class="btn btn-round btn-new-vehicle"
+                        (click)="createNewVehicle(modalUpdateAVehicle)">+ Tạo xe</button>
+                </div>
+                <div style="clear: both"></div>
+                <!-- START TABS -->
+                <div>
+                    <div>
+                        <div class="tab-option clickable" [ngClass]="{ 'num-active': campusIndex == 0 }"
+                            (click)="getAllVehicle(0, 'all')">
+                            Tất cả
+                        </div>
+
+                        <div *ngFor="let campus of campuses; let i = index" class="tab-option clickable"
+                            [ngClass]="{ 'num-active': campusIndex == i + 1 }"
+                            (click)="getAllVehicle(i + 1, campus.name)">
+                            {{campus.name}}
+                        </div>
+                    </div>
+
+                    <hr style="margin-top: 0" />
+
+                    <div style="height: 10px"></div>
+                </div>
+                <!-- END TABS -->
+            </div>
         </div>
-        <div class="modal-body">
-            <div *ngIf="modalVehicle.studentDto" class="section-info">
-                <div class="row">
-                    <div class="col-xs-6 col-md-1"></div>
 
-                    <div class="col-xs-6 col-md-3">
-                        <img class="icon-bill" src="../../assets/images/motorbike.svg" style="margin-bottom: 15px;" />
-                    </div>
-                    <div class="col-xs-6 col-md-2"></div>
-                    <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
-                        <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">ID XE</div>
-                            <div class="col-xs-6 col-md-6">
-                                {{ modalVehicle.id}}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" value="" [(ngModel)]="searchText" class="form-control search-input"
+                                (keydown.enter)="onSearch($event)" placeholder="Tìm kiếm theo biển số xe" />
+                            <img class="btn-search" (click)="onSearch($event)" src="../../assets/images/search_icon.png"
+                                title="Search" width="20" />
+                            <button type="button" class="btn-icon btn-round btn-export ml-3"
+                                (click)="exportExcelFile()">
+                                <img src="../../assets/images/export.png" width="15" />
+                                Xuất file
+                            </button>
+                        </div>
+                        <div class="table-responsive table-rooms">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Biển số xe</th>
+                                        <th>
+                                            <div class="dropdown" ngbDropdown>
+                                                <button
+                                                    class="btn btn-dropdown dropdown-toggle {{isClickBtnTypeVehicle ? 'btn-dropdown-active' : ''}}"
+                                                    type="button" id="typeVehicleDropdown" ngbDropdownToggle>
+                                                    Loại xe
+                                                </button>
+                                                <div class="dropdown-menu dropdown-type-room"
+                                                    aria-labelledby="typeVehicleDropdown" ngbDropdownMenu>
+                                                    <a *ngFor="let item of typeOfVehicleList" class="dropdown-item"
+                                                        href="javascript:void(0)"
+                                                        (click)="resetPageByTypeOfVehicle(item.name)">{{item.name}}</a>
+                                                </div>
+                                            </div>
+
+                                        </th>
+                                        <th>Mã sinh viên</th>
+                                        <th>Tên sinh viên</th>
+                                        <th>Thanh toán</th>
+                                        <th>Trạng thái</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let vehicle of vehicles">
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            {{vehicle.id}}
+                                        </td>
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            {{vehicle.licensePlates}}
+                                        </td>
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            {{vehicle.typeVehicle.name}}</td>
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            {{vehicle.studentDto.idCard}}
+                                        </td>
+
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            {{vehicle.studentDto.name}}
+                                        </td>
+
+                                        <td (click)="openModalDetailVehicle(modalDetailAVehicle,vehicle)">
+                                            <div *ngIf="vehicle.payVehicleBill" class="pill pill-1">
+                                                ĐÃ TRẢ
+                                            </div>
+                                            <div *ngIf="!vehicle.payVehicleBill" class="pill pill-2">
+                                                CHƯA&nbsp;TRẢ
+                                            </div>
+                                        </td>
+                                        <td [style]="!vehicle.active ? 'pointer-events:none': ''"
+                                            (click)="openModalDeleteVehicle(modalDeleteVehicle, vehicle)">
+                                            <div *ngIf="vehicle.active" class="pill pill-1">
+                                                HOẠT ĐỘNG
+                                            </div>
+                                            <div *ngIf="!vehicle.active" class="pill pill-2">
+                                                DỪNG
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <i *ngIf="vehicle.active" class="icon-edit mdi mdi-24px mdi-pencil-outline"
+                                                (click)="openModalUpdateARoom(modalUpdateAVehicle, vehicle)"></i>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="vehicleTotal == 0">
+                                        <td colspan="7" class="no-data">Không tìm thấy dữ liệu.</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            <div class="tbl-checkins-paging">
+                                <div *ngIf="vehicleTotal != 0" class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <select [(ngModel)]="pageSize" (change)="resetPage()" style="padding: 11px;
+                                    padding-left: 9px;
+                                    border: 1px solid #898E93;
+                                    border-radius: 16px;
+                                    background: white;">
+                                            <option>10</option>
+                                            <option>25</option>
+                                            <option>50</option>
+                                        </select>
+                                        <div
+                                            style="display: inline; color: #8a9099; margin-left: 10px; font-size: 15px; line-height: 22px">
+                                            Kết quả mỗi trang</div>
+                                    </div>
+
+                                    <div class="col-xs-12 col-md-6">
+
+                                        <div class="custom-paging-wrapper">
+                                            <ngb-pagination id="page" [collectionSize]="vehicleTotal" [(page)]="page"
+                                                [maxSize]="5" [pageSize]="pageSize" (pageChange)="changePage($event)"
+                                                [boundaryLinks]="true">
+                                                <ng-template ngbPaginationFirst><i class="mdi mdi-chevron-double-left"
+                                                        aria-hidden="true"></i>
+                                                </ng-template>
+                                                <ng-template ngbPaginationLast><i class="mdi mdi-chevron-double-right"
+                                                        aria-hidden="true"></i>
+                                                </ng-template>
+                                                <ng-template ngbPaginationPrevious>Trước</ng-template>
+                                                <ng-template ngbPaginationNext>Sau</ng-template>
+                                                <ng-template ngbPaginationEllipsis>...</ng-template>
+                                            </ngb-pagination>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">BIỂN SỐ XE</div>
-                            <div class="col-xs-6 col-md-6">
-                                {{ modalVehicle.licensePlates}}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">LOẠI XE</div>
-                            <div class="col-xs-6 col-md-6">
-                                {{modalVehicle.typeVehicle.name}}
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
-                            <div class="col-xs-6 col-md-6">
-                                {{modalVehicle.roomName}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="row">
-                    <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">ID SINH VIÊN</div>
-                    <div class="col-xs-6 col-md-3">
-                        {{modalVehicle.studentDto.id}}
-                    </div>
-
-                    <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
-                    <div class="col-xs-6 col-md-3">
-                        {{modalVehicle.userManager}}
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">TÊN SINH VIÊN</div>
-                    <div class="col-xs-6 col-md-3">
-                        {{modalVehicle.studentDto.name}}
-                    </div>
-                    <div class="col-xs-6 col-md-3 col-title">THANH TOÁN XE</div>
-                    <div class="col-xs-6 col-md-3"
-                        [ngStyle]=" {'color': modalVehicle.isPayVehicleBill ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
-                        {{modalVehicle.isPayVehicleBill ? "ĐÃ TRẢ" :  'CHƯA TRẢ'}}
-                    </div>
-
-                </div>
-
-                <div class="row">
-                    <div class="col-xs-6 col-md-1"></div>
-                    <div class="col-xs-6 col-md-2 col-title">KHU NHÀ</div>
-                    <div class="col-xs-6 col-md-3">
-                        {{modalVehicle.campusName}}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</ng-template>
 
-<!-- Modal update/new vehicle -->
-<ng-template #modalUpdateAVehicle let-modal class="modal fade" id="modalUpdateAStudent"
-    aria-labelledby="modalUpdateAStudentLabel">
-    <div class="modal-content">
-        <div class="modal-header">
-            <img class="icon-bill-small" src="../../assets/images/motorbike.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewVehicle ? 'TẠO ' : 'CẬP NHẬT '}}XE</h3>
-            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <div class="row create-room-section">
-                <div class="col-12">
-                    <div *ngIf="(modalVehicleUpdate || isNewVehicle) && modalVehicleUpdate.studentDto"
-                        class="section-info">
+    <!-- START ROOM DETAIL MODAL -->
+    <ng-template #modalDetailAVehicle let-modal class="modal fade" id="exampleModal-3"
+        aria-labelledby="exampleModalLabel-2">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="icon-bill-small" src="../../assets/images/motorbike.svg" style="margin-right: 20px;" />
+                <h3 class="modal-title" id="exampleModalLabel-2">CHI TIẾT XE</h3>
+                <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="modalVehicle.studentDto" class="section-info">
+                    <div class="row">
+                        <div class="col-xs-6 col-md-1"></div>
 
-                        <form name="newRoomForm" class="newRoomForm" #form="ngForm">
+                        <div class="col-xs-6 col-md-3">
+                            <img class="icon-bill" src="../../assets/images/motorbike.svg"
+                                style="margin-bottom: 15px;" />
+                        </div>
+                        <div class="col-xs-6 col-md-2"></div>
+                        <div class="col-xs-6 col-md-6" style="margin-top: 40px;">
                             <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="id">Id Xe</label>
-                                    <input name="id" [(ngModel)]="modalVehicleUpdate.id"
-                                        class="disable-input form-control" readonly />
-                                </div>
-
-                                <div *ngIf="!isNewVehicle" class="col-xs-12 col-md-6 col-right">
-                                    <label for="studentName">Tên sinh viên</label>
-                                    <input name="studentName" [(ngModel)]="modalVehicleUpdate.studentDto.name"
-                                        class="disable-input form-control" readonly />
-                                </div>
-
-                                <div *ngIf="isNewVehicle" class="col-xs-12 col-md-6 col-right">
-                                    <label for="studentIdCard">Mã số sinh viên</label>
-                                    <ng-select name="studentIdCard" [items]="studentList" [virtualScroll]="true"
-                                        bindLabel="idCard" bindValue="id" [(ngModel)]="studentId"
-                                        (change)="showPaymentVehicle()">
-                                    </ng-select>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="licensePlates">Biển số xe</label>
-                                    <input ngModel #licensePlates="ngModel" name="licensePlates"
-                                        [(ngModel)]="modalVehicleUpdate.licensePlates" class="form-control" required
-                                        pattern="[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2,3}$" />
-                                </div>
-                                <div *ngIf="responseVehicleInfo.price" class="col-xs-12 col-md-6 col-right">
-                                    <div class=" col-xs-12 col-md-6 col-title">
-                                        Số tiền phải trả là
-                                    </div>
-                                    <div class=" col-xs-12 col-md-6">
-                                        {{responseVehicleInfo.price | number}} đ
-                                    </div>
+                                <div class="col-xs-6 col-md-6 col-title">ID XE</div>
+                                <div class="col-xs-6 col-md-6">
+                                    {{ modalVehicle.id}}
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <label for="typeRoom">Loại xe</label>
-                                    <ng-select name="typeRoom" [items]="typeOfVehicleList" [virtualScroll]="true"
-                                        bindLabel="name" bindValue="id" [(ngModel)]="typeVehicleId">
-                                    </ng-select>
+                                <div class="col-xs-6 col-md-6 col-title">BIỂN SỐ XE</div>
+                                <div class="col-xs-6 col-md-6">
+                                    {{ modalVehicle.licensePlates}}
                                 </div>
                             </div>
 
-                            <div class="row" *ngIf="vehicleUpdateError">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <p class="alert alert-danger" style="margin-bottom: 0;">{{vehicleUpdateError}}</p>
+                            <div class="row">
+                                <div class="col-xs-6 col-md-6 col-title">LOẠI XE</div>
+                                <div class="col-xs-6 col-md-6">
+                                    {{modalVehicle.typeVehicle.name}}
                                 </div>
                             </div>
-                            <div class="row"
-                                *ngIf="(!licensePlates.valid && licensePlates.touched) || licensePlates.errors?.pattern">
-                                <div class="col-xs-12 col-md-6 col-left">
-                                    <p class="alert alert-danger" style="margin-top: 10px;">
-                                        Biển số xe phải là một giá trị hợp lệ</p>
+
+                            <div class="row">
+                                <div class="col-xs-6 col-md-6 col-title">TÊN PHÒNG</div>
+                                <div class="col-xs-6 col-md-6">
+                                    {{modalVehicle.roomName}}
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-success" [disabled]="!form.valid"
-                                    (click)="saveChange()">Lưu</button>
-                                <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
-                            </div>
-                        </form>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-1"></div>
+                        <div class="col-xs-6 col-md-2 col-title">ID SINH VIÊN</div>
+                        <div class="col-xs-6 col-md-3">
+                            {{modalVehicle.studentDto.id}}
+                        </div>
+
+                        <div class="col-xs-6 col-md-3 col-title">QUẢN LÝ NHÀ</div>
+                        <div class="col-xs-6 col-md-3">
+                            {{modalVehicle.userManager}}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-1"></div>
+                        <div class="col-xs-6 col-md-2 col-title">TÊN SINH VIÊN</div>
+                        <div class="col-xs-6 col-md-3">
+                            {{modalVehicle.studentDto.name}}
+                        </div>
+                        <div class="col-xs-6 col-md-3 col-title">THANH TOÁN XE</div>
+                        <div class="col-xs-6 col-md-3"
+                            [ngStyle]=" {'color': modalVehicle.isPayVehicleBill ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
+                            {{modalVehicle.isPayVehicleBill ? "ĐÃ TRẢ" :  'CHƯA TRẢ'}}
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xs-6 col-md-1"></div>
+                        <div class="col-xs-6 col-md-2 col-title">KHU NHÀ</div>
+                        <div class="col-xs-6 col-md-3">
+                            {{modalVehicle.campusName}}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</ng-template>
+    </ng-template>
 
-<!-- Modal Delete Student -->
-<ng-template #modalDeleteVehicle let-modal class="modal fade modal-a" id="modalDelete"
-    aria-labelledby="modalDeleteStudentLabel">
-    <div class="modal-content">
-        <div class="modal-header">
-            <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
-            <h3 class="modal-title" id="modalDetailAStudentLabel">ĐỔI TRẠNG THÁI XE</h3>
-            <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body" style="text-align: center; font-family: Roboto;">
-            <div class="section-info">
-                <div class="row">
+    <!-- Modal update/new vehicle -->
+    <ng-template #modalUpdateAVehicle let-modal class="modal fade" id="modalUpdateAStudent"
+        aria-labelledby="modalUpdateAStudentLabel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="icon-bill-small" src="../../assets/images/motorbike.svg" style="margin-right: 20px;" />
+                <h3 class="modal-title" id="modalUpdateAStudentLabel">{{isNewVehicle ? 'TẠO ' : 'CẬP NHẬT '}}XE</h3>
+                <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row create-room-section">
                     <div class="col-12">
-                        <!-- Student Detail in a Room -->
-                        <div class="section-student-wrapper">
-                            <div class="section-result">
+                        <div *ngIf="(modalVehicleUpdate || isNewVehicle) && modalVehicleUpdate.studentDto"
+                            class="section-info">
+
+                            <form name="newRoomForm" class="newRoomForm" #form="ngForm">
                                 <div class="row">
-                                    <div class="col-xs-12 col-section-title">Xe</div>
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <label for="id">Id Xe</label>
+                                        <input name="id" [(ngModel)]="modalVehicleUpdate.id"
+                                            class="disable-input form-control" readonly />
+                                    </div>
+
+                                    <div *ngIf="!isNewVehicle" class="col-xs-12 col-md-6 col-right">
+                                        <label for="studentName">Tên sinh viên</label>
+                                        <input name="studentName" [(ngModel)]="modalVehicleUpdate.studentDto.name"
+                                            class="disable-input form-control" readonly />
+                                    </div>
+
+                                    <div *ngIf="isNewVehicle" class="col-xs-12 col-md-6 col-right">
+                                        <label for="studentIdCard">Mã số sinh viên</label>
+                                        <ng-select name="studentIdCard" [items]="studentList" [virtualScroll]="true"
+                                            bindLabel="idCard" bindValue="id" [(ngModel)]="studentId"
+                                            (change)="showPaymentVehicle()">
+                                        </ng-select>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <label for="licensePlates">Biển số xe</label>
+                                        <input ngModel #licensePlates="ngModel" name="licensePlates"
+                                            [(ngModel)]="modalVehicleUpdate.licensePlates" class="form-control" required
+                                            pattern="[0-9]{2}[A-Z]{1}[0-9]{1}-[0-9]{3}.[0-9]{2,3}$" />
+                                    </div>
+                                    <div *ngIf="responseVehicleInfo.price" class="col-xs-12 col-md-6 col-right">
+                                        <div class=" col-xs-12 col-md-6 col-title">
+                                            Số tiền phải trả là
+                                        </div>
+                                        <div class=" col-xs-12 col-md-6">
+                                            {{responseVehicleInfo.price | number}} đ
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-xs-6 col-md-1"></div>
-                                    <div class="col-xs-6 col-md-2">
-                                        <img class="icon-middle" src="../../assets/images/motorbike.svg" />
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <label for="typeRoom">Loại xe</label>
+                                        <ng-select name="typeRoom" [items]="typeOfVehicleList" [virtualScroll]="true"
+                                            bindLabel="name" bindValue="id" [(ngModel)]="typeVehicleId">
+                                        </ng-select>
                                     </div>
-                                    <div class="col-xs-6 col-md-1"></div>
+                                </div>
 
-                                    <div class="col-xs-6 col-md-7 text-left">
-                                        <div class="row">
-                                            <div class="col-xs-6 col-md-7 col-title ">ID</div>
-                                            <div class="col-xs-6 col-md-5">
-                                                {{ vehicleLeft.id }}
-                                            </div>
+                                <div class="row" *ngIf="vehicleUpdateError">
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <p class="alert alert-danger" style="margin-bottom: 0;">{{vehicleUpdateError}}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="row"
+                                    *ngIf="(!licensePlates.valid && licensePlates.touched) || licensePlates.errors?.pattern">
+                                    <div class="col-xs-12 col-md-6 col-left">
+                                        <p class="alert alert-danger" style="margin-top: 10px;">
+                                            Biển số xe phải là một giá trị hợp lệ</p>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" [disabled]="!form.valid"
+                                        (click)="saveChange()">Lưu</button>
+                                    <button type="button" class="btn btn-light" (click)="modal.close()">Hủy</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+
+    <!-- Modal Delete Student -->
+    <ng-template #modalDeleteVehicle let-modal class="modal fade modal-a" id="modalDelete"
+        aria-labelledby="modalDeleteStudentLabel">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="icon-bill-small" src="../../assets/images/student.svg" style="margin-right: 20px;" />
+                <h3 class="modal-title" id="modalDetailAStudentLabel">ĐỔI TRẠNG THÁI XE</h3>
+                <button type="button" class="close" (click)="modal.dismiss()" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: center; font-family: Roboto;">
+                <div class="section-info">
+                    <div class="row">
+                        <div class="col-12">
+                            <!-- Student Detail in a Room -->
+                            <div class="section-student-wrapper">
+                                <div class="section-result">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-section-title">Xe</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-xs-6 col-md-1"></div>
+                                        <div class="col-xs-6 col-md-2">
+                                            <img class="icon-middle" src="../../assets/images/motorbike.svg" />
                                         </div>
+                                        <div class="col-xs-6 col-md-1"></div>
 
-                                        <div class="row">
-                                            <div class="col-xs-6 col-md-7 col-title ">BIỂN SỐ XE</div>
-                                            <div class="col-xs-6 col-md-5">
-                                                {{ vehicleLeft.licensePlates }}
+                                        <div class="col-xs-6 col-md-7 text-left">
+                                            <div class="row">
+                                                <div class="col-xs-6 col-md-7 col-title ">ID</div>
+                                                <div class="col-xs-6 col-md-5">
+                                                    {{ vehicleLeft.id }}
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="col-xs-6 col-md-7 col-title ">TÊN CHỦ XE</div>
-                                            <div class="col-xs-6 col-md-5">
-                                                {{ vehicleLeft.studentName }}
+                                            <div class="row">
+                                                <div class="col-xs-6 col-md-7 col-title ">BIỂN SỐ XE</div>
+                                                <div class="col-xs-6 col-md-5">
+                                                    {{ vehicleLeft.licensePlates }}
+                                                </div>
                                             </div>
-                                        </div>
 
-
-                                        <div class="row">
-                                            <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
-                                                {{vehicleLeft.numberOfVehicleMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                                            <div class="row">
+                                                <div class="col-xs-6 col-md-7 col-title ">TÊN CHỦ XE</div>
+                                                <div class="col-xs-6 col-md-5">
+                                                    {{ vehicleLeft.studentName }}
+                                                </div>
                                             </div>
-                                            <div class="col-xs-6 col-md-5">
-                                                {{vehicleLeft.numberOfVehicleMoney | positiveNumber | number}} đ
+
+
+                                            <div class="row">
+                                                <div class="col-xs-6 col-md-7 col-title">TIỀN XE SINH VIÊN
+                                                    {{vehicleLeft.numberOfVehicleMoney < 0 ? 'ĐƯỢC NHẬN LẠI' : 'PHẢI TRẢ'}}
+                                                </div>
+                                                <div class="col-xs-6 col-md-5">
+                                                    {{vehicleLeft.numberOfVehicleMoney | positiveNumber | number}} đ
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -413,12 +424,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
+                <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
+            </div>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-success" (click)="saveDelete()">Submit</button>
-            <button type="button" class="btn btn-light" (click)="modal.close()">Cancel</button>
-        </div>
-    </div>
-</ng-template>
+    </ng-template>
+</div>

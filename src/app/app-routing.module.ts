@@ -11,15 +11,7 @@ const appRoutes: Routes = [
     path: '',
     component: HomePageComponent,
     children: [
-      { path: '', redirectTo: '/news', pathMatch: 'full' },
-      {
-        path: 'notification',
-        loadChildren: () =>
-          import('./notification/notification.module').then(
-            (m) => m.NotificationModule
-          ),
-      },
-
+      { path: '', redirectTo: '/find-room', pathMatch: 'full' },
       {
         path: 'find-room',
         loadChildren: () =>
@@ -89,6 +81,11 @@ const appRoutes: Routes = [
           import('./modules/price-list/price-list.module').then(
             (m) => m.PriceListModule
           ),
+      },
+      {
+        path: 'e-mail',
+        loadChildren: () =>
+          import('./modules/e-mail/e-mail.module').then((m) => m.EMailModule),
       },
     ],
   },

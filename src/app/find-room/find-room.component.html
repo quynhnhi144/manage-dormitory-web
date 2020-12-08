@@ -20,28 +20,37 @@
     <div class="row">
         <div class="col-xs-6 col-md-12 d-flex justify-content-center">
             <div class="grid-container">
-                <div *ngFor="let remainingRoom of remainingRooms" class="grid-item">
-                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
-                        <div class="col-xs-6 col-md-12">
-                            <img class="icon-bill-middle" src="../../assets/images/room.svg" />
-                        </div>
-                    </div>
+                <div *ngFor="let roomAndRegister of roomAndRegisterCountList" class="grid-item">
+                    <div class="panel"
+                        [ngClass]="(roomAndRegister.count == roomAndRegister.detailRoomDto.typeRoom.maxQuantity - roomAndRegister.detailRoomDto.quantityStudent) ? 'disable-panel' : ''"
+                        (click)="openModalRemainingRoom(modalDetailARemainingRoom, roomAndRegister)">
 
-                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
-                        <div class="col-xs-6 col-md-12">
-                            <span>{{remainingRoom.name}}</span>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-12">
+                                <img class="icon-bill-middle" src="../../assets/images/room.svg" />
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
-                        <div class="col-xs-6 col-md-12">
-                            <span>{{remainingRoom.typeRoom.name}}</span>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-12">
+                                <span>{{roomAndRegister.detailRoomDto.name}}</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="row" (click)="openModalRemainingRoom(modalDetailARemainingRoom, remainingRoom)">
-                        <div class="col-xs-6 col-md-12">
-                            <span>{{remainingRoom.quantityStudent}}/{{remainingRoom.typeRoom.maxQuantity}}</span>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-12">
+                                <span>{{roomAndRegister.detailRoomDto.typeRoom.name}}</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-12">
+                                <span>{{roomAndRegister.detailRoomDto.quantityStudent}}/{{roomAndRegister.detailRoomDto.typeRoom.maxQuantity}}
+                                    người</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 col-md-12">
+                                <span>{{roomAndRegister.count}}/{{roomAndRegister.detailRoomDto.typeRoom.maxQuantity - roomAndRegister.detailRoomDto.quantityStudent}}
+                                    đăng ký</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,8 +131,7 @@
                             <div class="col-xs-6 col-md-6 col-title">SỐ CHỖ TRỐNG
                             </div>
                             <div class="col-xs-6 col-md-6">
-                                {{ modalRemainingRoom.typeRoom.maxQuantity - modalRemainingRoom.quantityStudent}} /
-                                người
+                                {{ modalRemainingRoom.typeRoom.maxQuantity - modalRemainingRoom.quantityStudent}}
                             </div>
                         </div>
                     </div>
