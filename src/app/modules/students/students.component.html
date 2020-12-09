@@ -206,7 +206,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-xs-6 col-md-6 col-title">Mã số sinh viên</div>
+                                <div class="col-xs-6 col-md-6 col-title">MÃ SỐ SINH VIÊN</div>
                                 <div class="col-xs-6 col-md-6">
                                     {{ modalStudent.idCard}}
                                 </div>
@@ -284,17 +284,19 @@
 
                     <div class="row">
                         <div class="col-xs-6 col-md-1"></div>
-                        <div class="col-xs-6 col-md-2 col-title">THANH TOÁN PHÒNG</div>
+                        <div class="col-xs-6 col-md-2 col-title">TIỀN NƯỚC</div>
+                        <div class="col-xs-6 col-md-3"
+                            [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
+                            {{modalStudent.isPayWaterBill  ? "ĐÃ TRẢ" : 'CHƯA TRẢ'}}
+                        </div>
+
+                        <div class="col-xs-6 col-md-3 col-title">TIỀN PHÒNG</div>
                         <div class="col-xs-6 col-md-3"
                             [ngStyle]=" {'color': modalStudent.isPayRoom ? ' #20a144' :  '#f05c54', 'font-weight': 'bold' } ">
                             {{modalStudent.isPayRoom ? "ĐÃ TRẢ" :  'CHƯA TRẢ'}}
                         </div>
 
-                        <div class="col-xs-6 col-md-3 col-title">WATER PAYMENT</div>
-                        <div class="col-xs-6 col-md-3"
-                            [ngStyle]=" {'color': modalStudent.isPayWaterBill ? ' #20a144' :'#f05c54', 'font-weight': 'bold' } ">
-                            {{modalStudent.isPayWaterBill  ? "ĐÃ TRẢ" : 'CHƯA TRẢ'}}
-                        </div>
+
                     </div>
 
                     <div class="row">
