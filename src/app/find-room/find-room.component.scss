@@ -25,11 +25,17 @@
   height: 120px;
 }
 
-.btn-search-find-room {
-  cursor: pointer;
-  position: absolute;
-  right: 30px;
-  top: 8px;
+.input-group {
+  .btn-search-find-room {
+    cursor: pointer;
+    position: absolute;
+    right: 30px;
+    top: 12px;
+  }
+
+  .search-input {
+    height: 44px;
+  }
 }
 
 .disable-panel {
