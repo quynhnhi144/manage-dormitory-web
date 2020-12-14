@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RoomService } from '../modules/rooms/room.service';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { Room } from '../modules/rooms/room.model';
 import { NgbModalOptions, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FindRoomModule } from './find-room.module';
@@ -8,6 +8,7 @@ import { FindRoomNew } from './find-room-new.model';
 import { FindRoomService } from './find-room.service';
 import { NotificationService } from '../core/services/notification.service';
 import { RoomAndRegisterCount } from './room-and-registercount.model';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-find-room',
@@ -101,15 +102,22 @@ export class FindRoomComponent implements OnInit {
         (data: any) => {
           this.modalService.dismissAll();
           this.notificationService.sendNotificationMessage({
-            message: 'Đã cập nhật thông tin sinh viên thành công !!!',
+            message: 'Đã đăng ký thành công!!!',
             isSuccess: true,
           });
-          this.getAllRemainingRooms();
+          forkJoin([
+            this.roomService.getTotalRemainingRooms(''),
+            this.findRoomService.sendMail(findRemainingRoomNew),
+          ]).subscribe((data: any) => {
+            this.roomAndRegisterCountList = data[0];
+            console.log(data[1]);
+            findRemainingRoomNew = new FindRoomNew();
+          });
         },
-        (error) => {
+        (error: HttpErrorResponse) => {
           console.log(error);
           this.notificationService.sendNotificationMessage({
-            message: 'Đã cập nhật thông tin sinh viên thành công !!!',
+            message: error.error.message,
             isSuccess: false,
           });
         }

@@ -7,6 +7,8 @@ import { CampusService } from 'src/app/core/services/campus.service';
 import { NotificationService } from '../../../core/services/notification.service';
 import { UserUpdate } from '../user-update.model';
 import { SignUpForm } from '../sign-up-form.model';
+import { UserAuth } from '../../../auth/user-auth.model';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-user-list',
@@ -54,15 +56,20 @@ export class UserListComponent implements OnInit {
 
   isChangePassword = false;
   userError = null;
+  loginedUser: UserAuth;
 
   constructor(
     private modalService: NgbModal,
     private userService: UserService,
     private campusService: CampusService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.subscription = this.authService.userAuth.subscribe((user) => {
+      this.loginedUser = user;
+    });
     this.getAllUser(1);
   }
 

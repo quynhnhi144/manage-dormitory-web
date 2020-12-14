@@ -57,6 +57,7 @@
                                         <th>Mã số sinh viên</th>
                                         <th>Khu nhà</th>
                                         <th></th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -75,6 +76,11 @@
                                         <td>
                                             <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                                 (click)="openModalInfo(modalRegisterRoom, registerRoom)"></i>
+                                        </td>
+
+                                        <td>
+                                            <i class="icon-edit mdi mdi-24px mdi-delete-outline"
+                                                (click)="deleteRegisterRoom(registerRoom)"></i>
                                         </td>
                                     </tr>
                                     <tr *ngIf="registerRoomTotal == 0">

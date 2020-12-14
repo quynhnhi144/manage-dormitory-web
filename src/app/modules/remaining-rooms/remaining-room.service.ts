@@ -43,4 +43,27 @@ export class RemainingRoomService {
       'addStudent';
     return this.http.post(url, studentNew);
   }
+
+  deleteRegisterRoom(id: number) {
+    let url = this.baseUrl + '/registerRooms' + '/' + id;
+    return this.http.delete(url);
+  }
+
+  sendMailSuccessFullyAddStudentFromRegistering(studentNew: StudentNew) {
+    let url =
+      this.baseUrl +
+      '/registerRooms' +
+      '/sendMail' +
+      '/notification-about-successfully-register';
+    return this.http.post(url, studentNew);
+  }
+
+  sendMailRejectRegisterRoom() {
+    let url =
+      this.baseUrl +
+      '/registerRooms' +
+      '/sendMail' +
+      '/notification-about-delete-register-room';
+    return this.http.get(url);
+  }
 }

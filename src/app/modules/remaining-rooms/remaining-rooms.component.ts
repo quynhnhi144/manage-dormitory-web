@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, forkJoin } from 'rxjs';
 import { CampusService } from 'src/app/core/services/campus.service';
 import { RegisterRoom } from './register-room.model';
 import { RemainingRoomService } from './remaining-room.service';
@@ -11,6 +11,8 @@ import { WaterBill } from '../../shared/model/water-bill.model';
 import { StudentNew } from '../students/student-new.model';
 import { StudentsService } from '../students/students.service';
 import { NotificationService } from '../../core/services/notification.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-remaining-rooms',
@@ -183,20 +185,52 @@ export class RemainingRoomsComponent implements OnInit {
     this.subscription = this.remainingRoomService
       .addStudentFromRegisterRoom(this.currentRegisterRoomId, studentNewDto)
       .subscribe(
-        (data) => {
+        async (data: any) => {
           console.log('data new: ' + data);
-          this.getAllRegisterRoom(0, 'all', 1);
           this.modalService.dismissAll();
           this.notificationService.sendNotificationMessage({
             message: 'Đã thêm sinh viên thành công !!!',
             isSuccess: true,
           });
+
+          await this.remainingRoomService
+            .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
+            .toPromise();
+
+          this.getAllRegisterRoom(0, 'all', 1);
         },
         (error) => {
           console.log(error);
           this.notificationService.sendNotificationMessage({
             message:
               'Mã số sinh viên hoặc email đã bị trùng. Hãy kiểm tra lại !!!',
+            isSuccess: false,
+          });
+        }
+      );
+  }
+
+  deleteRegisterRoom(registerRoom: RegisterRoom) {
+    this.currentRegisterRoomId = registerRoom.id;
+    this.subscription = this.remainingRoomService
+      .deleteRegisterRoom(this.currentRegisterRoomId)
+      .subscribe(
+        async (data: any) => {
+          console.log(data);
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xóa thành công !!!',
+            isSuccess: true,
+          });
+          await this.remainingRoomService
+            .sendMailRejectRegisterRoom()
+            .toPromise();
+
+          this.getAllRegisterRoom(0, 'all', 1);
+        },
+        (error: HttpErrorResponse) => {
+          console.log(error);
+          this.notificationService.sendNotificationMessage({
+            message: error.error.message,
             isSuccess: false,
           });
         }

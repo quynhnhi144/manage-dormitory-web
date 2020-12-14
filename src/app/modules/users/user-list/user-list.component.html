@@ -80,8 +80,9 @@
                                         </td>
 
                                         <td>
-                                            <i class="icon-edit mdi mdi-24px mdi-pencil-outline"
-                                                (click)="openModalUpdateAUser(modalUpdateAUser, user)"></i>
+                                            <i *ngIf="loginedUser.username !== user.username" +
+                                                class="icon-edit mdi mdi-24px mdi-delete-outline"
+                                                (click)="deleteUser(user)"></i>
                                         </td>
 
                                         <td>
@@ -309,14 +310,14 @@
                                             class="alert alert-danger" style="margin-top: 10px;">
                                             Số điện thoại phải từ 10-11 số</p>
                                     </div>
-                                    <div class="col-xs-12 col-md-6 col-right">
+                                    <div *ngIf="isNewUser" class="col-xs-12 col-md-6 col-right">
                                         <label for="password">Mật khẩu</label>
                                         <input name="password" type="password" [(ngModel)]="newPassword" />
                                     </div>
 
-                                    <div *ngIf="!isChangePassword" class="col-xs-12 col-md-6 col-right col-title">
+                                    <div *ngIf="!isChangePassword && !isNewUser"
+                                        class="col-xs-12 col-md-6 col-right col-title">
                                         <a (click)="showOrNot()"> Đổi mật khẩu</a></div>
-
                                     <div *ngIf="isChangePassword && !isNewUser" class="col-xs-12 col-md-6 col-right">
                                         <label for="oldPassword">Mật khẩu cũ</label>
                                         <input name="oldPassword" type="password" [(ngModel)]="oldPassword" />
