@@ -573,12 +573,12 @@ export class PowerBillsComponent implements OnInit {
             .then((data: any) => {
               this.rooms = data.data.data;
               this.roomTotal = data.total;
+              this.modalService.dismissAll();
+              this.notificationService.sendNotificationMessage({
+                message: 'Đã thực hiện thành công!!!',
+                isSuccess: true,
+              });
             });
-          this.modalService.dismissAll();
-          this.notificationService.sendNotificationMessage({
-            message: 'Đã thực hiện thành công!!!',
-            isSuccess: true,
-          });
         },
         (error) => {
           console.log(error);
