@@ -70,10 +70,7 @@ export class PowerBillsService {
   importExcelFile(dateString: string, formData: FormData) {
     let url =
       this.baseUrl + '/powerBills' + '/uploadFile?' + '&date=' + dateString;
-    return this.http.post(url, formData, {
-      reportProgress: true,
-      observe: 'events',
-    });
+    return this.http.post(url, formData);
   }
 
   exportExcelFile(dateString: string) {
