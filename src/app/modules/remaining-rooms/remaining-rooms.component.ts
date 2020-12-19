@@ -186,18 +186,17 @@ export class RemainingRoomsComponent implements OnInit {
       .addStudentFromRegisterRoom(this.currentRegisterRoomId, studentNewDto)
       .subscribe(
         async (data: any) => {
-          console.log('data new: ' + data);
-          this.modalService.dismissAll();
-          this.notificationService.sendNotificationMessage({
-            message: 'Đã thêm sinh viên thành công !!!',
-            isSuccess: true,
-          });
-
           await this.remainingRoomService
             .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
             .toPromise();
 
           this.getAllRegisterRoom(0, 'all', 1);
+
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã thêm sinh viên thành công !!!',
+            isSuccess: true,
+          });
         },
         (error) => {
           console.log(error);

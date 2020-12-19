@@ -100,11 +100,6 @@ export class FindRoomComponent implements OnInit {
       .registerRoomStudent(findRemainingRoomNew)
       .subscribe(
         (data: any) => {
-          this.modalService.dismissAll();
-          this.notificationService.sendNotificationMessage({
-            message: 'Đã đăng ký thành công!!!',
-            isSuccess: true,
-          });
           forkJoin([
             this.roomService.getTotalRemainingRooms(''),
             this.findRoomService.sendMail(findRemainingRoomNew),
@@ -112,6 +107,11 @@ export class FindRoomComponent implements OnInit {
             this.roomAndRegisterCountList = data[0];
             console.log(data[1]);
             findRemainingRoomNew = new FindRoomNew();
+          });
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã đăng ký thành công!!!',
+            isSuccess: true,
           });
         },
         (error: HttpErrorResponse) => {

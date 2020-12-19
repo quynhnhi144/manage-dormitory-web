@@ -540,9 +540,8 @@ export class PowerBillsComponent implements OnInit {
   }
 
   submit() {
-    if (!this.selectedFile && !this.progress) {
+    if (!this.selectedFile) {
       this.isExtention = false;
-      this.progress = null;
       setTimeout(() => {
         this.isExtention = true;
       }, 3000);
@@ -550,59 +549,43 @@ export class PowerBillsComponent implements OnInit {
     }
     if (!this.isSubmit) {
       this.isExtention = false;
-      this.progress = null;
       setTimeout(() => {
         this.isExtention = true;
       }, 3000);
       return;
     }
-    this.progress = 1;
     const formData = new FormData();
     formData.append('file', this.selectedFile);
     this.subscription = this.powerBillsService
       .importExcelFile(this.formatDate(this.currentDate), formData)
       .subscribe(
-        async (event: any) => {
-          switch (event.type) {
-            case HttpEventType.Response:
-              this.progress = null;
-              console.log('event: ', event.body);
-              break;
-            case HttpEventType.UploadProgress:
-              if (
-                Math.round(this.progress) !==
-                Math.round((event.loaded / event.total) * 100)
-              ) {
-                this.progress = (event.loaded / event.total) * 100;
-              }
-              await this.powerBillsService
-                .getAllPowerBills(
-                  this.skip,
-                  this.pageSize,
-                  this.formatDate(this.currentDate),
-                  '',
-                  ''
-                )
-                .toPromise()
-                .then((data: any) => {
-                  this.rooms = data.data.data;
-                  this.roomTotal = data.total;
-                });
-              this.modalService.dismissAll();
-              this.notificationService.sendNotificationMessage({
-                message: 'Đã thực hiện thành công!!!',
-                isSuccess: true,
-              });
-              break;
-          }
+        (data: any) => {
+          console.log('importFile: ', data);
+          this.powerBillsService
+            .getAllPowerBills(
+              this.skip,
+              this.pageSize,
+              this.formatDate(this.currentDate),
+              '',
+              ''
+            )
+            .toPromise()
+            .then((data: any) => {
+              this.rooms = data.data.data;
+              this.roomTotal = data.total;
+            });
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã thực hiện thành công!!!',
+            isSuccess: true,
+          });
         },
         (error) => {
           console.log(error);
           this.notificationService.sendNotificationMessage({
-            message: 'Lỗi! Một lỗi đã xảy ra. Hãy kiểm tra lại!!!',
+            message: error.error.message,
             isSuccess: false,
           });
-          this.progress = null;
         }
       );
   }
