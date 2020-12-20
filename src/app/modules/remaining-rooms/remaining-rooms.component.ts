@@ -42,6 +42,9 @@ export class RemainingRoomsComponent implements OnInit {
 
   modalRegisterRoomPayment = new RegisterRoomPayment();
 
+  choosedCampus = '';
+  paramSearchText = '';
+
   constructor(
     private campusService: CampusService,
     private remainingRoomService: RemainingRoomService,
@@ -66,15 +69,15 @@ export class RemainingRoomsComponent implements OnInit {
     this.loadingFlag = true;
     this.campusIndex = campusIndex;
     this.campusType = campusType;
-    let choosedCampus = '';
+    // let choosedCampus = '';
 
     if (campusType !== 'all') {
-      choosedCampus = '&campusName=' + campusType;
+      this.choosedCampus = '&campusName=' + campusType;
     }
     this.page = page;
     this.skip = (page - 1) * this.pageSize;
 
-    let paramSearchText = this.isClickSearch
+    this.paramSearchText = this.isClickSearch
       ? `&searchText=${this.searchText}`
       : ``;
 
@@ -82,8 +85,8 @@ export class RemainingRoomsComponent implements OnInit {
       .getAllRegisterRoom(
         this.skip,
         this.pageSize,
-        choosedCampus,
-        paramSearchText
+        this.choosedCampus,
+        this.paramSearchText
       )
       .subscribe(
         (data: any) => {
@@ -185,17 +188,39 @@ export class RemainingRoomsComponent implements OnInit {
     this.subscription = this.remainingRoomService
       .addStudentFromRegisterRoom(this.currentRegisterRoomId, studentNewDto)
       .subscribe(
-        async (data: any) => {
-          await this.remainingRoomService
-            .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
-            .toPromise();
+        (data: any) => {
+          // await this.remainingRoomService
+          //   .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
+          //   .toPromise();
 
-          this.getAllRegisterRoom(0, 'all', 1);
+          // await this.remainingRoomService
+          //   .getAllRegisterRoom(
+          //     this.skip,
+          //     this.pageSize,
+          //     this.choosedCampus,
+          //     this.paramSearchText
+          //   )
+          //   .toPromise();
+          // // this.getAllRegisterRoom(0, 'all', 1);
 
-          this.modalService.dismissAll();
-          this.notificationService.sendNotificationMessage({
-            message: 'Đã thêm sinh viên thành công !!!',
-            isSuccess: true,
+          forkJoin([
+            this.remainingRoomService.sendMailSuccessFullyAddStudentFromRegistering(
+              studentNewDto
+            ),
+            this.remainingRoomService.getAllRegisterRoom(
+              this.skip,
+              this.pageSize,
+              this.choosedCampus,
+              this.paramSearchText
+            ),
+          ]).subscribe((data: any) => {
+            this.registerRoomList = data[1].data.data;
+            this.registerRoomTotal = data[1].total;
+            this.modalService.dismissAll();
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã thêm sinh viên thành công !!!',
+              isSuccess: true,
+            });
           });
         },
         (error) => {
@@ -214,17 +239,38 @@ export class RemainingRoomsComponent implements OnInit {
     this.subscription = this.remainingRoomService
       .deleteRegisterRoom(this.currentRegisterRoomId)
       .subscribe(
-        async (data: any) => {
+        (data: any) => {
           console.log(data);
-          this.notificationService.sendNotificationMessage({
-            message: 'Đã xóa thành công !!!',
-            isSuccess: true,
-          });
-          await this.remainingRoomService
-            .sendMailRejectRegisterRoom()
-            .toPromise();
+          // await this.remainingRoomService
+          //   .sendMailRejectRegisterRoom()
+          //   .toPromise();
 
-          this.getAllRegisterRoom(0, 'all', 1);
+          // // this.getAllRegisterRoom(0, 'all', 1);
+          // await this.remainingRoomService
+          //   .getAllRegisterRoom(
+          //     this.skip,
+          //     this.pageSize,
+          //     this.choosedCampus,
+          //     this.paramSearchText
+          //   )
+          //   .toPromise();
+
+          forkJoin([
+            this.remainingRoomService.sendMailRejectRegisterRoom(),
+            this.remainingRoomService.getAllRegisterRoom(
+              this.skip,
+              this.pageSize,
+              this.choosedCampus,
+              this.paramSearchText
+            ),
+          ]).subscribe((data: any) => {
+            this.registerRoomList = data[1].data.data;
+            this.registerRoomTotal = data[1].total;
+            this.notificationService.sendNotificationMessage({
+              message: 'Đã xóa thành công !!!',
+              isSuccess: true,
+            });
+          });
         },
         (error: HttpErrorResponse) => {
           console.log(error);

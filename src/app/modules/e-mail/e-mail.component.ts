@@ -15,7 +15,7 @@ export class EMailComponent implements OnInit {
   searchText: string = '';
   mails: EMail[] = [];
   mailTotal = 0;
-  pageSize: number = 5;
+  pageSize: number = 10;
   page: number = 1;
   skip = 0;
   isClickSearch = false;
