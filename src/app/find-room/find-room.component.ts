@@ -25,6 +25,7 @@ export class FindRoomComponent implements OnInit {
   modalRemainingRoomNew: FindRoomNew = new FindRoomNew();
   isRegisterRoom = false;
   isClickSearch = false;
+  isShowStudent = false;
 
   searchText: string = '';
 
@@ -132,9 +133,14 @@ export class FindRoomComponent implements OnInit {
   cancel() {
     this.modalRemainingRoomNew = new FindRoomNew();
     this.isRegisterRoom = false;
+    this.isShowStudent = false;
   }
 
   showOrNot() {
     this.isRegisterRoom = true;
+  }
+
+  showStudentOrNot() {
+    this.isShowStudent = true;
   }
 }
