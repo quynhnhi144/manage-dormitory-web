@@ -189,39 +189,27 @@ export class RemainingRoomsComponent implements OnInit {
       .addStudentFromRegisterRoom(this.currentRegisterRoomId, studentNewDto)
       .subscribe(
         (data: any) => {
-          // await this.remainingRoomService
-          //   .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
-          //   .toPromise();
+          let index = this.registerRoomList.findIndex(
+            (registerRoom) => registerRoom.id === this.currentRegisterRoomId
+          );
 
-          // await this.remainingRoomService
-          //   .getAllRegisterRoom(
-          //     this.skip,
-          //     this.pageSize,
-          //     this.choosedCampus,
-          //     this.paramSearchText
-          //   )
-          //   .toPromise();
-          // // this.getAllRegisterRoom(0, 'all', 1);
-
-          forkJoin([
-            this.remainingRoomService.sendMailSuccessFullyAddStudentFromRegistering(
-              studentNewDto
-            ),
-            this.remainingRoomService.getAllRegisterRoom(
-              this.skip,
-              this.pageSize,
-              this.choosedCampus,
-              this.paramSearchText
-            ),
-          ]).subscribe((data: any) => {
-            this.registerRoomList = data[1].data.data;
-            this.registerRoomTotal = data[1].total;
-            this.modalService.dismissAll();
-            this.notificationService.sendNotificationMessage({
-              message: 'Đã thêm sinh viên thành công !!!',
-              isSuccess: true,
-            });
+          this.registerRoomList.splice(index, 1);
+          this.modalService.dismissAll();
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã thêm sinh viên thành công !!!',
+            isSuccess: true,
           });
+
+          this.remainingRoomService
+            .sendMailSuccessFullyAddStudentFromRegistering(studentNewDto)
+            .subscribe(
+              (data: any) => {
+                console.log(data);
+              },
+              (error) => {
+                console.log(error);
+              }
+            );
         },
         (error) => {
           console.log(error);
@@ -241,36 +229,25 @@ export class RemainingRoomsComponent implements OnInit {
       .subscribe(
         (data: any) => {
           console.log(data);
-          // await this.remainingRoomService
-          //   .sendMailRejectRegisterRoom()
-          //   .toPromise();
 
-          // // this.getAllRegisterRoom(0, 'all', 1);
-          // await this.remainingRoomService
-          //   .getAllRegisterRoom(
-          //     this.skip,
-          //     this.pageSize,
-          //     this.choosedCampus,
-          //     this.paramSearchText
-          //   )
-          //   .toPromise();
+          let index = this.registerRoomList.findIndex(
+            (registerRoom) => registerRoom.id === this.currentRegisterRoomId
+          );
 
-          forkJoin([
-            this.remainingRoomService.sendMailRejectRegisterRoom(),
-            this.remainingRoomService.getAllRegisterRoom(
-              this.skip,
-              this.pageSize,
-              this.choosedCampus,
-              this.paramSearchText
-            ),
-          ]).subscribe((data: any) => {
-            this.registerRoomList = data[1].data.data;
-            this.registerRoomTotal = data[1].total;
-            this.notificationService.sendNotificationMessage({
-              message: 'Đã xóa thành công !!!',
-              isSuccess: true,
-            });
+          this.registerRoomList.splice(index, 1);
+          this.notificationService.sendNotificationMessage({
+            message: 'Đã xóa thành công !!!',
+            isSuccess: true,
           });
+
+          this.remainingRoomService.sendMailRejectRegisterRoom().subscribe(
+            (data: any) => {
+              console.log(data);
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
         },
         (error: HttpErrorResponse) => {
           console.log(error);

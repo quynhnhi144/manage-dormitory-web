@@ -118,7 +118,8 @@
                                         </td>
 
                                         <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
-                                            {{room.numberOfMoneyMustPay != null ? ((room.numberOfMoneyMustPay | number) + "đ") : "--"}}
+                                            {{room.numberOfMoneyMustPay != null ? ((room.numberOfMoneyMustPay | number)
+                                            + "đ") : "--"}}
                                         </td>
 
                                         <td (click)="openModalDetailAPowerBill(modalDetailAPowerBill,room)">
@@ -134,13 +135,13 @@
                                         </td>
 
                                         <td>
-                                            <i [style]="!room.billId && !room.pay ? 'pointer-events:none': ''"
+                                            <i *ngIf="room.billId && room.pay != null"
                                                 class="icon-edit mdi mdi-24px mdi-pencil-outline"
                                                 (click)="openModalUpdatePowerBill(modalUpdateAPowerBill,room)"></i>
                                         </td>
 
                                         <td>
-                                            <i [style]="!room.billId && !room.pay ? 'pointer-events:none': ''"
+                                            <i *ngIf="room.billId && !room.pay"
                                                 class="icon-edit mdi mdi-24px mdi-cash-usd-outline"
                                                 (click)="openModalPayment(modalUpdateAPowerBill,room)"></i>
                                         </td>
@@ -149,7 +150,8 @@
                                             <div class="dropdown dropdown-mail" ngbDropdown>
                                                 <button class="btn btn-dropdown dropdown-toggle " type="button"
                                                     id="sendMailDropdown" ngbDropdownToggle>
-                                                    <i class="icon-delete mdi mdi-24px mdi-dots-vertical"></i>
+                                                    <i *ngIf="room.billId"
+                                                        class="icon-delete mdi mdi-24px mdi-dots-vertical"></i>
                                                 </button>
                                                 <div class="dropdown-menu" ngbDropdownMenu
                                                     aria-labelledby="sendMailDropdown">
@@ -159,7 +161,7 @@
                                             </div>
                                         </td>
                                         <td>
-                                            <i *ngIf="room.pay" class="icon-edit mdi mdi-24px mdi-plus"
+                                            <i *ngIf="room.billId && room.pay" class="icon-edit mdi mdi-24px mdi-plus"
                                                 (click)="openModalNewPowerBill(modalPowerBillNew,room)"></i>
                                         </td>
                                     </tr>
